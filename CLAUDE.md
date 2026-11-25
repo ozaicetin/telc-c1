@@ -2,7 +2,7 @@
 
 Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github.io/telc-c1/ (GitHub Pages, `main`, kök klasör).
 Öğrencinin ilerlemesi, hataları ve kişisel notları **burada değil**, claude.ai'daki „TELC C1 Ve Logistik Lernen“ Projesindedir:
-`claude/00-telc-c1-ogretmen-rehberi.md` (kurallar, akış) ve `claude/01-telc-c1-ilerleme-gunlugu.md` (puanlar, hatalar, kelimeler). Her oturumda önce ikisini oku.
+`claude/00-telc-c1-ogretmen-rehberi.md` (kurallar, akış), `claude/01-telc-c1-ilerleme-gunlugu.md` (puanlar, hatalar, kelimeler) ve `claude/03-kararlar-ve-oturum-gecmisi.md` (kararlar, sistem haritası, bekleyen işler, her gün için kontrol listesi). Her oturumda önce bunları oku. Sesli mod: `claude/02-sprechpartner-sesli-mod.md`. Tam yedek: `claude/yedek/son-yedek.md` (haftada bir yenilenir, öğrenciye de gönderilir).
 
 **Depo herkese açık.** Puan, hata listesi, öğretmen notu, yazdığı metinler gibi kişisel bilgileri buraya koyma; onlar Projede kalır.
 
