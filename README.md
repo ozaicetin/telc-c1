@@ -1,4 +1,4 @@
-# Linie C1
+# C1-Heft
 
 Kişisel telc Deutsch C1 çalışma sitesi: 40 günlük plan, deneme sınavları, 1-3-7-14 kelime tekrarı (DE · EN · TR).
 

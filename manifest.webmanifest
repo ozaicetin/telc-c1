@@ -1,11 +1,11 @@
 {
- "name": "Linie C1 · telc Deutsch C1",
- "short_name": "Linie C1",
+ "name": "C1-Heft · telc Deutsch C1",
+ "short_name": "C1-Heft",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
- "background_color": "#15163a",
- "theme_color": "#15163a",
+ "background_color": "#fbfbf6",
+ "theme_color": "#fbfbf6",
  "lang": "tr",
  "icons": [
   {
