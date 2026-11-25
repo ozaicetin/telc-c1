@@ -1,5 +1,5 @@
 window.MANIFEST = {
- "current": "day4",
+ "current": "day5",
  "planV": "s2",
  "updated": "2026-11-25",
  "days": [
@@ -999,6 +999,240 @@ window.MANIFEST = {
      "ex": "Die Schule muss die Sicherheit der Kinder jederzeit gewährleisten.",
      "exEn": "The school must ensure the children’s safety at all times.",
      "exTr": "Okul çocukların güvenliğini her zaman sağlamak zorunda."
+    }
+   ]
+  },
+  {
+   "id": "day5",
+   "no": 5,
+   "week": 1,
+   "date": "26.11.2026",
+   "title": "Lesen 2 + 3 und Hören 1: Wohnen und Stadtleben",
+   "short": "Lesen 2 + 3 · Hören 1",
+   "focus": "Leseverstehen 2 · Leseverstehen 3 · Hörverstehen 1 · Sprechen 1A",
+   "file": "data/day5.js",
+   "v": "1",
+   "words": [
+    {
+     "dom": "G",
+     "de": "die Wohnungsnot",
+     "info": "Nomen · die, kein Plural",
+     "en": "housing shortage",
+     "tr": "konut sıkıntısı",
+     "ex": "In vielen Großstädten herrscht seit Jahren Wohnungsnot.",
+     "exEn": "Many big cities have had a housing shortage for years.",
+     "exTr": "Birçok büyük şehirde yıllardır konut sıkıntısı var."
+    },
+    {
+     "dom": "G",
+     "de": "erschwinglich",
+     "info": "Adjektiv · ≈ bezahlbar",
+     "en": "affordable",
+     "tr": "uygun fiyatlı, karşılanabilir",
+     "ex": "Für Familien mit mittlerem Einkommen gibt es kaum noch erschwingliche Wohnungen.",
+     "exEn": "There are hardly any affordable flats left for middle-income families.",
+     "exTr": "Orta gelirli aileler için neredeyse hiç uygun fiyatlı daire kalmadı.",
+     "q": [
+      "wtest_w02"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "die Mietpreisbremse",
+     "info": "Nomen · die, -n",
+     "en": "rent cap (limit on rent increases)",
+     "tr": "kira artış freni",
+     "ex": "Die Mietpreisbremse soll verhindern, dass die Mieten bei Neuvermietung zu stark steigen.",
+     "exEn": "The rent cap is meant to prevent rents from rising too much when a flat is re-let.",
+     "exTr": "Kira freni, yeniden kiralamada kiraların çok fazla artmasını önlemeli."
+    },
+    {
+     "dom": "G",
+     "de": "die Verdrängung",
+     "info": "Nomen · die, -en · verdrängen",
+     "en": "displacement (being pushed out)",
+     "tr": "yerinden edilme, dışarı itilme",
+     "ex": "Viele alteingesessene Bewohner fürchten die Verdrängung aus ihrem Viertel.",
+     "exEn": "Many long-established residents fear being pushed out of their neighbourhood.",
+     "exTr": "Uzun süredir orada yaşayan birçok kişi semtinden dışarı itilmekten korkuyor."
+    },
+    {
+     "dom": "G",
+     "de": "etw. sanieren",
+     "info": "Verb · sanierte, hat saniert",
+     "en": "to renovate (thoroughly)",
+     "tr": "(binayı) elden geçirmek, kapsamlı yenilemek",
+     "ex": "Nachdem das Haus saniert worden war, stieg die Miete um dreißig Prozent.",
+     "exEn": "After the building had been renovated, the rent went up by thirty per cent.",
+     "exTr": "Bina yenilendikten sonra kira yüzde otuz arttı."
+    },
+    {
+     "dom": "G",
+     "de": "der Leerstand",
+     "info": "Nomen · der, kein Plural",
+     "en": "vacancy (empty buildings)",
+     "tr": "boş duran konutlar, boşluk oranı",
+     "ex": "Während in den Städten Wohnungen fehlen, gibt es auf dem Land viel Leerstand.",
+     "exEn": "While cities lack flats, there are many empty buildings in the countryside.",
+     "exTr": "Şehirlerde daire eksikken kırsalda çok sayıda boş konut var.",
+     "q": [
+      "wtest_w01"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "die Nachverdichtung",
+     "info": "Nomen · die, -en · verdichten",
+     "en": "densification (building more on existing land)",
+     "tr": "mevcut alanda yapılaşmayı artırma",
+     "ex": "Durch Nachverdichtung, etwa durch Dachausbauten, entsteht Wohnraum ohne neue Flächen.",
+     "exEn": "Densification, for example loft conversions, creates housing without using new land.",
+     "exTr": "Örneğin çatı katı eklemek gibi yoğunlaştırmayla yeni arazi kullanmadan konut alanı oluşur."
+    },
+    {
+     "dom": "G",
+     "de": "das Wohneigentum",
+     "info": "Nomen · das, kein Plural",
+     "en": "home ownership",
+     "tr": "kendi evi olma, konut mülkiyeti",
+     "ex": "In Deutschland lebt nur knapp die Hälfte der Haushalte im Wohneigentum.",
+     "exEn": "In Germany only just under half of households live in a home they own.",
+     "exTr": "Almanya’da hanelerin ancak yarısına yakını kendi evinde oturuyor."
+    },
+    {
+     "dom": "G",
+     "de": "der Zuzug",
+     "info": "Nomen · der, Zuzüge · ↔ der Wegzug",
+     "en": "influx, people moving in",
+     "tr": "bir yere taşınıp gelme, göç",
+     "ex": "Der starke Zuzug in die Ballungsräume treibt die Mieten nach oben.",
+     "exEn": "The strong influx into the conurbations is pushing rents up.",
+     "exTr": "Büyük kent bölgelerine yoğun göç kiraları yükseltiyor."
+    },
+    {
+     "dom": "G",
+     "de": "etw. vorantreiben",
+     "info": "Verb · trieb voran, hat vorangetrieben",
+     "en": "to push ahead, to drive forward",
+     "tr": "hızlandırmak, ileriye taşımak",
+     "ex": "Die Stadt will den Bau neuer Sozialwohnungen vorantreiben.",
+     "exEn": "The city wants to push ahead with building new social housing.",
+     "exTr": "Şehir yeni sosyal konutların yapımını hızlandırmak istiyor."
+    },
+    {
+     "dom": "G",
+     "de": "sich abzeichnen",
+     "info": "Verb · zeichnete sich ab, hat sich abgezeichnet",
+     "en": "to become apparent, to emerge",
+     "tr": "belirginleşmek, ortaya çıkmaya başlamak",
+     "ex": "Schon jetzt zeichnet sich ab, dass das Bauziel verfehlt wird.",
+     "exEn": "It is already becoming apparent that the building target will be missed.",
+     "exTr": "İnşaat hedefinin tutturulamayacağı şimdiden belli olmaya başladı.",
+     "q": [
+      "wtest_w07"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "etw. eindämmen",
+     "info": "Verb · dämmte ein, hat eingedämmt",
+     "en": "to curb, to contain",
+     "tr": "sınırlamak, önünü almak",
+     "ex": "Mit strengeren Regeln will die Regierung den Mietanstieg eindämmen.",
+     "exEn": "The government wants to curb rent increases with stricter rules.",
+     "exTr": "Hükümet daha sıkı kurallarla kira artışının önünü almak istiyor.",
+     "q": [
+      "wtest_w03"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "auf etw. ausweichen",
+     "info": "Verb · wich aus, ist ausgewichen",
+     "en": "to switch to (as an alternative)",
+     "tr": "(alternatif olarak) …e yönelmek",
+     "ex": "Viele Familien weichen auf das Umland aus, weil die Stadt zu teuer ist.",
+     "exEn": "Many families move out to the surrounding area because the city is too expensive.",
+     "exTr": "Şehir çok pahalı olduğu için birçok aile çevre bölgelere yöneliyor.",
+     "q": [
+      "wtest_w04"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "die Anbindung",
+     "info": "Nomen · die, -en · an + Akk.",
+     "en": "connection, transport link",
+     "tr": "bağlantı (ulaşım)",
+     "ex": "Ohne gute Anbindung an Bus und Bahn ist das Leben auf dem Land schwierig.",
+     "exEn": "Without good bus and rail links, life in the countryside is difficult.",
+     "exTr": "Otobüs ve trene iyi bağlantı olmadan kırsalda yaşam zor."
+    },
+    {
+     "dom": "G",
+     "de": "das Quartier",
+     "info": "Nomen · das, -e · ≈ das Viertel",
+     "en": "neighbourhood, district",
+     "tr": "semt, mahalle",
+     "ex": "In dem neuen Quartier sollen Wohnen, Arbeiten und Einkaufen nah beieinanderliegen.",
+     "exEn": "In the new district, living, working and shopping are meant to be close together.",
+     "exTr": "Yeni semtte oturmak, çalışmak ve alışveriş birbirine yakın olmalı."
+    },
+    {
+     "dom": "G",
+     "de": "etw. in Anspruch nehmen",
+     "info": "Nomen-Verb-Verbindung",
+     "en": "to make use of; to take up (time)",
+     "tr": "(bir hizmetten) yararlanmak; (zaman) almak",
+     "ex": "Nur wenige Mieter nehmen eine kostenlose Beratung in Anspruch.",
+     "exEn": "Only a few tenants make use of free advice.",
+     "exTr": "Ücretsiz danışmanlıktan yalnızca az sayıda kiracı yararlanıyor.",
+     "q": [
+      "wtest_w06"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "Abhilfe schaffen",
+     "info": "Nomen-Verb-Verbindung",
+     "en": "to remedy (a problem)",
+     "tr": "çare bulmak, sorunu gidermek",
+     "ex": "Neue Wohnungen allein können kurzfristig keine Abhilfe schaffen.",
+     "exEn": "New flats alone cannot remedy the situation in the short term.",
+     "exTr": "Tek başına yeni daireler kısa vadede çare olamaz.",
+     "q": [
+      "wtest_w05"
+     ]
+    },
+    {
+     "dom": "G",
+     "de": "der Ansturm",
+     "info": "Nomen · der, kein Plural (meist)",
+     "en": "rush, onslaught",
+     "tr": "akın, hücum",
+     "ex": "Bei der Besichtigung gab es einen regelrechten Ansturm: Über hundert Interessenten kamen.",
+     "exEn": "There was a real rush at the viewing: over a hundred people came.",
+     "exTr": "Ev gezisinde tam bir akın vardı: yüzden fazla kişi geldi."
+    },
+    {
+     "dom": "G",
+     "de": "die Auflage",
+     "info": "Nomen · die, -n",
+     "en": "requirement, condition (official)",
+     "tr": "(resmî) şart, koşul",
+     "ex": "Bauherren müssen strenge Auflagen zum Energiesparen erfüllen.",
+     "exEn": "Developers have to meet strict energy-saving requirements.",
+     "exTr": "Yapı sahipleri enerji tasarrufuyla ilgili sıkı şartları yerine getirmek zorunda."
+    },
+    {
+     "dom": "G",
+     "de": "zumutbar",
+     "info": "Adjektiv · ↔ unzumutbar",
+     "en": "reasonable, acceptable (to expect of sb.)",
+     "tr": "makul, katlanılabilir",
+     "ex": "Eine Pendelzeit von einer Stunde halten viele noch für zumutbar.",
+     "exEn": "Many people still consider an hour’s commute acceptable.",
+     "exTr": "Birçok kişi bir saatlik yol süresini hâlâ katlanılabilir buluyor."
     }
    ]
   }
