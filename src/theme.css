@@ -288,6 +288,43 @@ button.md{cursor:pointer;box-shadow:2px 2px 0 var(--ink)} button.md:hover{backgr
 .md.done{background:var(--mint-soft)}
 .md.isboss.future{border-color:var(--ink);border-style:dashed}
 .goal-flag{justify-self:end;font:800 22px/1 var(--f-ui);background:var(--ink);color:var(--hl);border-radius:10px;padding:12px 18px;box-shadow:4px 4px 0 var(--pink);transform:rotate(-2deg)}
+.goal-flag small{display:block;margin-top:5px;font:700 14px/1 var(--f-ui);color:#fff}
+/* phases on the map: a hand-written divider, like a new chapter in the exercise book */
+.mph{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-top:8px;padding-bottom:4px;border-bottom:2px dashed #f19a9a}
+.mph:first-child{margin-top:0}
+.mph .pn{font:700 26px/1 var(--f-hand);color:var(--red)} .mph b{font:800 18px var(--f-ui)} .mph [lang]{color:var(--ink2);font-size:14px}
+.mph .pd{margin-left:auto;font:600 13.5px var(--f-ui);color:var(--ink2)}
+.md .bz.big{background:var(--red);color:#fff}
+.md.isbig{border-color:var(--red)} .md.isbig.future{border-color:var(--red);border-style:dashed}
+.mbuf{border:2px dashed var(--ink2);border-radius:10px;padding:8px 12px;font-size:14.5px;color:var(--ink2);background:rgba(255,255,255,.7)} .mbuf b{color:var(--ink)}
+.ch-row.wks{grid-template-columns:repeat(8,minmax(0,1fr))}
+.cd.wk b{font-size:28px;transform:rotate(-4deg)} .cd.wk.done{background:var(--mint-soft)} .cd.wk.done b{color:var(--ok)}
+.cd.wk i{font-size:10.5px}
+/* plan: road to the exam */
+.road{display:grid;gap:12px}
+.road h3{font:800 18px var(--f-ui);margin-top:6px}
+.phases{list-style:none;margin:0;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.ph{position:relative;border:2px solid var(--ink);border-radius:12px;padding:12px 14px;background:#fff;display:grid;gap:6px;align-content:start}
+.ph p{margin:0;font-size:15px}
+.ph-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px} .ph-h b{font:800 18px var(--f-ui)} .ph-h [lang]{font-size:13.5px;color:var(--ink2)}
+.ph .pn{font:700 24px/1 var(--f-hand);color:var(--red)}
+.ph .pd{font:600 13.5px var(--f-ui);color:var(--ink2)}
+.ph .tg{border-top:2px dashed var(--line2);padding-top:6px;font-weight:600} .ph .tg span{font:700 18px var(--f-hand);color:var(--accent);margin-right:4px}
+.ph.now{background:var(--hl-soft);box-shadow:3px 3px 0 var(--ink)}
+.ph.now::after{content:"şu an";position:absolute;top:-12px;right:12px;font:700 20px/1 var(--f-hand);color:#fff;background:var(--red);padding:3px 9px 4px;border-radius:6px;transform:rotate(3deg)}
+.ph.buf{border-style:dashed;background:rgba(255,255,255,.7);grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.ph .nw{white-space:nowrap}
+.md .bz.bil{background:#fff;color:var(--red);box-shadow:inset 0 0 0 1.5px var(--red)}
+.miles{list-style:none;margin:0;padding:0 0 0 18px;border-left:3px solid var(--ink);display:grid;gap:8px}
+.miles li{position:relative;display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 12px;align-items:baseline;font-size:15px}
+.miles li::before{content:"";position:absolute;left:-26px;top:5px;width:11px;height:11px;border:2px solid var(--ink);border-radius:50%;background:#fff}
+.miles .hw{font-size:21px;line-height:1.1;color:var(--ink2)}
+.miles li.bg::before{background:var(--red);border-color:var(--red)} .miles li.bg .hw{color:var(--red)}
+.miles li.rg::before{background:var(--pink)} .miles li.rg span:last-child{background:var(--pink-soft);border-radius:6px;padding:2px 6px}
+.miles li.ex::before{background:var(--hl);width:15px;height:15px;left:-28px;top:3px}
+.miles li.ex span:last-child{font-weight:800}
+.pill.pbig{border-color:var(--red);color:var(--red)} .pill.pbig[aria-pressed="true"]{background:var(--red);color:#fff;border-color:var(--red)}
+@media (max-width:640px){.miles li{grid-template-columns:minmax(0,1fr)}.mph .pd{margin-left:0;width:100%}}
 .srsrow b{font:800 20px var(--f-ui)}
 .skel{border:2px solid var(--ink);border-radius:999px;overflow:hidden;height:16px}
 .skel i:nth-child(odd){background:var(--hl)} .skel i:nth-child(even){background:var(--pink)}

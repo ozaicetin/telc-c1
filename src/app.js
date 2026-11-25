@@ -625,7 +625,8 @@ function stepHTML(day, sec, i) {
     <div class="task ${sec.dom === 'SG' ? '' : sec.dom}"><div class="bi${ui.en && sec.taskEn ? ' en-on' : ''}"><div class="col de"><p class="pl" lang="de">${esc(sec.task)}</p></div>${sec.taskEn ? `<div class="col en"><span class="collab" lang="en">English version</span><p class="pl" lang="en">${esc(sec.taskEn)}</p></div>` : ''}</div>${trBox(esc(sec.taskTr), 'task_' + sec.id)}</div></div>
     <div id="body"${mockLive(sec) ? ` class="mock-live${TTS ? ' tts' : ''}"` : ''}>${stepBody(sec)}</div>`;
 }
-const TOTAL_DAYS = 40;
+let TOTAL_DAYS = 90;
+const WEEK_GOAL = 3;
 const RANKS = ['Neuling', 'Lehrling', 'Wortsammler', 'Satzbauer', 'Grammatik-Ass', 'Textprofi', 'Prüfungsjäger', 'C1-Kandidat', 'Fast C1', 'C1-Legende'];
 const XP_LEVEL = 500;
 function todayKey(t) { const d = t ? new Date(t) : new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -645,13 +646,21 @@ function xpInfo() {
   const lvl = Math.floor(xp / XP_LEVEL) + 1, into = xp % XP_LEVEL;
   return { xp, lvl, rank: RANKS[Math.min(lvl, RANKS.length) - 1], into, need: XP_LEVEL - into, pct: Math.round(100 * into / XP_LEVEL) };
 }
+function isoWeek(d) { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1)); return Math.ceil(((t - y0) / 864e5 + 1) / 7); }
 function chainInfo() {
-  const log = state.log || {}, out = [], d = new Date(), today = todayKey();
-  while (out.length < 10) { const wd = d.getDay(); if (wd !== 0 && wd !== 6) { const k = todayKey(d); out.unshift({ k, wd, today: k === today, done: (log[k] || 0) >= 60 }); } d.setDate(d.getDate() - 1); }
-  let i = out.length - 1, streak = 0; if (!out[i].done && out[i].today) i--;
-  for (; i >= 0 && out[i].done; i--) streak++;
-  return { days: out, streak };
+  // Weekly chain: a week counts when it has at least WEEK_GOAL study days (3–4 days a week is the plan).
+  const log = state.log || {}, weeks = [], now = new Date();
+  const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate()); mon.setDate(mon.getDate() - ((mon.getDay() + 6) % 7));
+  for (let w = 7; w >= 0; w--) {
+    const s = new Date(mon); s.setDate(s.getDate() - 7 * w); let n = 0;
+    for (let k = 0; k < 7; k++) { const x = new Date(s); x.setDate(x.getDate() + k); if ((log[todayKey(x)] || 0) >= 60) n++; }
+    weeks.push({ kw: isoWeek(s), n, cur: w === 0, done: n >= WEEK_GOAL });
+  }
+  let i = weeks.length - 1, streak = 0; if (!weeks[i].done) i--;
+  for (; i >= 0 && weeks[i].done; i--) streak++;
+  return { weeks, streak, thisWeek: weeks[weeks.length - 1].n };
 }
+function weeksToExam() { if (!window.PLAN || !PLAN.examDate) return null; return Math.max(0, Math.ceil((new Date(PLAN.examDate + 'T09:00:00') - Date.now()) / 6048e5)); }
 function celebrate(title, sub) {
   const el = document.createElement('div'); el.className = 'pop'; el.setAttribute('role', 'status');
   el.innerHTML = `<b>${esc(title)}</b><span>${esc(sub)}</span>`;
@@ -674,12 +683,12 @@ function routeHTML(day) {
   for (let n = 1; n <= TOTAL_DAYS; n++) {
     const id = 'day' + n, d = state.days[id], m = LD(id);
     const st = (n === day.no ? 'cur' : d && d.closed ? 'done' : m ? 'ready' : 'future') + ((n - 1) % 5 === 0 ? ' wks' : '');
-    const wk = (n - 1) % 5 === 0 ? `<span class="wkl">H${(n - 1) / 5 + 1}</span>` : '';
+    const wk = (n - 1) % 5 === 0 ? `<span class="wkl">E${(n - 1) / 5 + 1}</span>` : '';
     const inner = `${wk}<span class="dot"></span><span class="n">${n}</span>`;
     stops.push(m && n !== day.no ? `<li class="stop ${st}"><button type="button" data-act="openday" data-id="${id}" aria-label="Tag ${n} aç">${inner}</button></li>` : `<li class="stop ${st}"${n === day.no ? ' aria-current="step"' : ''}>${inner}</li>`);
   }
   stops.push('<li class="stop end"><span class="dot"></span><span class="n">Prüfung</span></li>');
-  return `<div class="route" id="route"><ol class="stops" aria-label="40 çalışma günü, sonunda sınav">${stops.join('')}</ol></div>`;
+  return `<div class="route" id="route"><ol class="stops" aria-label="${TOTAL_DAYS} çalışma günü, sonunda sınav">${stops.join('')}</ol></div>`;
 }
 function startHTML(day) {
   const d = D(), md = MD(ui.day) || {};
@@ -696,7 +705,8 @@ function startHTML(day) {
     const reward = s.kind === 'quiz' ? 25 + its * 10 + (s.mock ? 50 : 0) : s.kind === 'wrap' ? 100 : (s.kind === 'write' || s.kind === 'speak') ? 60 : 20;
     return `<li class="ms ${st.st}${s.mock ? ' boss' : ''}"><button type="button" data-act="go" data-i="${i}"><span class="box" aria-hidden="true">${st.st === 'done' ? '✓' : ''}</span><span class="mt"><span class="mti">${esc(s.title)}</span><span class="mex"><span lang="de">${esc(s.exam)}</span> · ${s.min} dk${st.txt ? ' · ' + esc(st.txt) : ''}</span></span>${s.mock ? '<span class="bosstag">Boss</span>' : ''}<span class="xp">+${reward}</span></button></li>`;
   }).join('');
-  const chain = ch.days.map(x => `<span class="cd${x.done ? ' done' : ''}${x.today ? ' today' : ''}" title="${x.k}"><i>${['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'][x.wd]}</i>${x.done ? '<b aria-label="çalışıldı">✗</b>' : ''}</span>`).join('');
+  const chain = ch.weeks.map(x => `<span class="cd wk${x.done ? ' done' : ''}${x.cur ? ' today' : ''}" title="KW ${x.kw}: ${x.n} çalışma günü"><i>KW${x.kw}</i>${x.n ? `<b aria-label="${x.n} gün">${x.n}</b>` : ''}</span>`).join('');
+  const wl = weeksToExam();
   const note = day.teacherNote || '';
   const nextReady = LD('day' + (day.no + 1));
   const waitBox = d.closed && !nextReady ? `<div class="waitnext"><b>Tag ${day.no} bitti.</b> <span>Tag ${day.no + 1} sonuçlarına göre hazırlanacak: Karne’de „Sonuç dosyasını indir“e bas, dosyayı Claude’daki telc C1 Projesine „${day.no}. günü bitirdim“ diye gönder. Yeni gün bu adreste açılır.</span><button class="btn sm" type="button" data-act="tab" data-view="report">Karne’ye git</button></div>` : (d.closed && nextReady ? `<div class="waitnext ok"><b>Tag ${day.no + 1} hazır!</b><button class="btn sm primary" type="button" data-act="openday" data-id="day${day.no + 1}">Tag ${day.no + 1}’i aç</button></div>` : '');
@@ -708,9 +718,9 @@ function startHTML(day) {
       <aside class="stack">
         ${note ? `<div class="rednote"><span class="rn-h">Hocanın notu</span><p class="hw">${esc(note)}</p></div>` : ''}
         <div class="lvl"><div class="lvl-top"><span class="lv">Level ${xi.lvl}</span><span class="rk" lang="de">${esc(xi.rank)}</span></div><div class="pencil" role="img" aria-label="Level ilerlemesi yüzde ${xi.pct}"><i style="width:${xi.pct}%"></i></div><p class="lvl-sub"><b>${xi.xp} XP</b> · Level ${xi.lvl + 1} için ${xi.need} XP daha</p></div>
-        <div class="chain"><div class="ch-top"><span>Zincir</span><b class="hw">${ch.streak ? ch.streak + ' gün üst üste' : 'Bugün başlat'}</b></div><div class="ch-row">${chain}</div><p class="hint">Hafta içi her çalıştığın güne bir çarpı. Zinciri koparma.</p></div>
+        <div class="chain"><div class="ch-top"><span>Zincir</span><b class="hw">${ch.streak ? ch.streak + ' hafta üst üste' : 'Bu hafta ' + ch.thisWeek + '/' + WEEK_GOAL + ' gün'}</b></div><div class="ch-row wks">${chain}</div><p class="hint">Kutudaki sayı o hafta çalıştığın gün sayısı. Haftada ${WEEK_GOAL} gün olunca kutu dolar ve zincir uzar.</p></div>
         <div class="sp-home"><b>Sprechpartner</b><span>Claude’la sesli Almanca konuş: günün sunumu, tartışma, gündelik hayat</span><span class="sp-links"><a href="${FREE_PARTNER}" target="_blank" rel="noopener">Laptopta ücretsiz</a> · <a href="sprechen/">Telefonda</a></span></div>
-        <div class="minis"><div class="mini m1"><b>${daysLeft}</b><span>gün kaldı<br>sınav durağına</span></div><div class="mini m2"><b>${srs.active}</b><span>kelime<br>tekrarda</span></div><div class="mini m3"><b>${allWords}</b><span>kelime<br>albümde</span></div></div>
+        <div class="minis">${wl !== null ? `<div class="mini m1" title="Hedef sınav: ${esc(PLAN.examShort || '')} · ${daysLeft} çalışma günü kaldı"><b>${wl}</b><span>hafta kaldı<br>sınava</span></div>` : `<div class="mini m1"><b>${daysLeft}</b><span>gün kaldı<br>sınav durağına</span></div>`}<div class="mini m2"><b>${srs.active}</b><span>kelime<br>tekrarda</span></div><div class="mini m3"><b>${allWords}</b><span>kelime<br>albümde</span></div></div>
       </aside>
     </div>
     ${hasSector(day) ? '' : mockOverview(day)}
@@ -730,9 +740,9 @@ function sideHTML(day) {
   const list = day.sections.map((s, i) => { const st = secStatus(s); return `<button class="sl ${st.st}${i === ui.step ? ' cur' : ''}" type="button" data-act="go" data-i="${i}"><span class="dm ${s.dom}"></span><span class="dot"></span><span class="rt">${esc(s.title)}</span><span class="rs">${esc(st.txt) || s.min + '′'}</span></button>`; }).join('');
   const wk = PLAN.weeks[day.week - 1], pdIdx = (day.no - 1) % 5, pd = wk.days[pdIdx], nx = wk.days[pdIdx + 1];
   return `<aside class="side" aria-label="Çalışma planı"><div class="panel"><h3>Günün akışı</h3><div class="meter"><i style="width:${Math.round(100 * planned / tot)}%"></i></div><div class="minfo"><span>${planned} / ${tot} dk planlı</span><span>Süren: ${fmtMin(spent)} dk</span></div><div>${list}</div></div>
-    <div class="panel ctx"><h3>Çalışma planı</h3><p><b>Hafta ${wk.w}: ${esc(wk.title)}</b></p><p class="k nocap">Tag ${day.no} · <span lang="de">${esc(pd.focus)}</span></p>
+    <div class="panel ctx"><h3>Çalışma planı</h3><p><b>Etap ${wk.w}: ${esc(wk.title)}</b></p><p class="k nocap">Tag ${day.no} · <span lang="de">${esc(pd.focus)}</span></p>
     <div class="sd"><span class="k">${esc(PLAN.labS || 'Sektör')}</span><p>${esc(pd.s)}</p></div><div class="gd"><span class="k">${esc(PLAN.labG || 'Genel C1')}</span><p>${esc(pd.g)}</p></div><p>${esc(pd.detail)}</p>
-    ${nx ? `<p class="k nocap">Yarın: <span lang="de">${esc(nx.focus)}</span></p>` : ''}<button class="btn sm" type="button" data-act="tab" data-view="plan">Tüm planı aç</button></div></aside>`;
+    ${nx ? `<p class="k nocap">Sonraki gün: <span lang="de">${esc(nx.focus)}</span></p>` : ''}<button class="btn sm" type="button" data-act="tab" data-view="plan">Tüm planı aç</button></div></aside>`;
 }
 function hudHTML(day) {
   const xi = xpInfo(), i = ui.step, sec = day.sections[i];
@@ -815,19 +825,25 @@ function reportHTML(day) {
 function progressHTML() {
   const ms = liveDays(); if (!ms.length) return '';
   const last = ms[ms.length - 1], st = srsStats(last.no), cur = MD(ui.day) ? MD(ui.day).no : 0;
-  const weeks = [];
-  for (let w = 1; w <= 8; w++) {
+  const weeks = [], W = PLAN.weeks, ph = PLAN.phases || [];
+  for (let w = 1; w <= W.length; w++) {
+    const p = ph.find(x => x.from === w);
+    if (p) weeks.push(`<div class="mph"><span class="pn">Faz ${p.n}</span><b>${esc(p.t)}</b> <span lang="de">(${esc(p.de)})</span><span class="pd">${esc(p.dates)}</span></div>`);
     const cells = [];
     for (let k = 1; k <= 5; k++) {
-      const n = (w - 1) * 5 + k, id = 'day' + n, d = state.days[id], m = LD(id), boss = n === 4 || (n >= 10 && n % 5 === 0);
+      const n = (w - 1) * 5 + k, id = 'day' + n, d = state.days[id], m = LD(id), pd = (W[w - 1].days || [])[k - 1] || {};
+      const bigD = !!pd.big, bil = !!pd.bil, boss = !bigD && !bil && (pd.boss !== undefined ? !!pd.boss : (n === 4 || (n >= 10 && n % 5 === 0) && !PLAN.phases));
       const cls = d && d.closed ? 'done' : n === cur ? 'cur' : m ? 'ready' : 'future';
       const sm = d ? (DAYS[id] ? summary(id) : d.sum) : null, sc = sm && sm.total && sm.total[1] ? Math.round(100 * sm.total[0] / sm.total[1]) + '%' : '';
-      const inner = `<span class="dn">${n}</span>${boss ? '<span class="bz">Boss</span>' : ''}${d && d.closed ? `<span class="ok">✓</span><span class="sc">${sc}</span>` : ''}`;
-      cells.push(m ? `<button class="md ${cls}${boss ? ' isboss' : ''}" type="button" data-act="openday" data-id="${id}" aria-label="Tag ${n} aç">${inner}</button>` : `<span class="md ${cls}${boss ? ' isboss' : ''}">${inner}</span>`);
+      const tag = bigD ? '<span class="bz big">Deneme</span>' : bil ? '<span class="bz bil">Bilanz</span>' : boss ? '<span class="bz">Boss</span>' : '';
+      const inner = `<span class="dn">${n}</span>${tag}${d && d.closed ? `<span class="ok">✓</span><span class="sc">${sc}</span>` : ''}`;
+      const xc = (boss ? ' isboss' : '') + (bigD ? ' isbig' : '');
+      cells.push(m ? `<button class="md ${cls}${xc}" type="button" data-act="openday" data-id="${id}" aria-label="Tag ${n} aç">${inner}</button>` : `<span class="md ${cls}${xc}" title="${esc(pd.focus || '')}">${inner}</span>`);
     }
-    weeks.push(`<div class="mw"><span class="wl">Hafta ${w}</span><div class="wc">${cells.join('')}</div></div>`);
+    weeks.push(`<div class="mw"><span class="wl" title="${esc(W[w - 1].title)}${W[w - 1].dates ? ' · ' + esc(W[w - 1].dates) : ''}">Etap ${w}</span><div class="wc">${cells.join('')}</div></div>`);
   }
-  return `<div class="card map"><h2>Harita: 40 gün, sonunda sınav</h2><p class="hint">Hazır günlere dokunarak açabilirsin. Her hafta bir „Boss“: süreli deneme sınavı.</p><div class="mws">${weeks.join('')}<div class="goal-flag">Prüfung</div></div>
+  const buf = PLAN.buffer ? `<p class="mbuf"><b>Tampon</b> ${esc(PLAN.buffer.dates)} · ${esc(PLAN.buffer.t)}</p>` : '';
+  return `<div class="card map"><h2>Harita: ${TOTAL_DAYS} gün, sonunda sınav</h2><p class="hint">Hazır günlere dokunarak açabilirsin. Her etabın sonunda bir „Boss“; her fazın sonunda dört günlük büyük deneme sınavı.</p><div class="mws">${weeks.join('')}${buf}<div class="goal-flag">Prüfung${PLAN.examShort ? `<small>${esc(PLAN.examShort)}</small>` : ''}</div></div>
     <div class="srsrow"><span><b>${st.active}</b> kelime tekrar sırasında</span><span><b>${st.next}</b> kelime bir sonraki gün gelecek</span><span><b>${st.learned}</b> kelime öğrenildi (14. gün tekrarı geçti)</span></div></div>`;
 }
 function backupHTML() {
@@ -879,18 +895,25 @@ function planHTML() {
   const date = i => W.dateList && W.dateList[i] ? ` <small>${esc(W.dateList[i])}</small>` : '';
   const rows = W.days.map((x, i) => `<tr class="${LD('day' + dayNo(i)) ? 'today' : ''}"><td class="dn">Tag ${dayNo(i)}${date(i)}${tagOf(i)}</td><td class="fo">${esc(x.focus)}</td><td class="cs">${esc(x.s)}</td><td class="cg">${esc(x.g)}</td><td>${esc(x.detail)}</td></tr>`).join('');
   const cards = W.days.map((x, i) => `<div class="dc${LD('day' + dayNo(i)) ? ' today' : ''}"><div class="h"><span>Tag ${dayNo(i)}${W.dateList && W.dateList[i] ? ' · ' + esc(W.dateList[i]) : ''}</span><span class="chip" lang="de">${esc(x.focus)}</span></div>${tagOf(i) ? `<div>${tagOf(i)}</div>` : ''}<div class="s"><span class="k">${esc(PLAN.labS || 'Sektör')}</span>${esc(x.s)}</div><div class="g"><span class="k">${esc(PLAN.labG || 'Genel C1')}</span>${esc(x.g)}</div><div><span class="k">Ne öğreneceğiz</span>${esc(x.detail)}</div></div>`).join('');
-  return `<div class="stage rep"><div class="card intro"><h1>Sekiz haftalık çalışma planı</h1><p>${esc(PLAN.intro)}</p></div>
+  const curW = MD(ui.day) ? MD(ui.day).week : 1;
+  const phases = (PLAN.phases || []).map(p => `<li class="ph${curW >= p.from && curW <= p.to ? ' now' : ''}"><div class="ph-h"><span class="pn">Faz ${p.n}</span><b>${esc(p.t)}</b> <span lang="de">${esc(p.de)}</span></div><p class="pd">${esc(p.dates)} · <span class="nw">Etap ${p.from}–${p.to}</span></p><p>${esc(p.goal)}</p><p class="tg"><span>Hedef</span> ${esc(p.target)}</p></li>`).join('')
+    + (PLAN.buffer ? `<li class="ph buf"><div class="ph-h"><b>${esc(PLAN.buffer.t)}</b></div><p class="pd">${esc(PLAN.buffer.dates)}</p><p>${esc(PLAN.buffer.d)}</p></li>` : '');
+  const miles = (PLAN.milestones || []).map(m => `<li class="${m.exam ? 'ex' : m.reg ? 'rg' : m.big ? 'bg' : ''}"><span class="hw">${esc(m.d)}</span><span>${esc(m.t)}</span></li>`).join('');
+  const road = PLAN.phases ? `<div class="card road"><h2>Haziran 2027’ye giden yol</h2><ol class="phases">${phases}</ol>${miles ? `<h3>Önemli duraklar</h3><ul class="miles">${miles}</ul>` : ''}</div>` : '';
+  const phOf = w => (PLAN.phases || []).find(p => w >= p.from && w <= p.to);
+  return `<div class="stage rep"><div class="card intro"><h1>${PLAN.examDate ? 'Haziran 2027’ye kadar çalışma planı' : 'Çalışma planı'}</h1><p>${esc(PLAN.intro)}</p></div>
+    ${road}
     ${progressHTML()}
     ${backupHTML()}
     <div class="card"><h2>Çalışma kuralları</h2><ul class="rules">${PLAN.rules.map(r => `<li><b>${esc(r.t)}</b><span>${esc(r.d)}</span></li>`).join('')}</ul></div>
     <div class="card"><h2>Günlük iskelet (90 dakika)</h2><div class="skel" role="img" aria-label="Günlük süre dağılımı">${skBar}</div><ul class="skl">${PLAN.skeleton.map(s => `<li><span class="m">${s.min}′</span><span><b>${esc(s.t)}</b><br>${esc(s.d)}</span></li>`).join('')}</ul></div>
-    <div class="card"><h2>Haftanın ritmi (5 gün + 2 gün dinlenme)</h2><div class="wd">${PLAN.weekdays.map(x => `<div><b>${esc(x.d)}</b><span class="f">${esc(x.f)}</span><span>${esc(x.n)}</span></div>`).join('')}<div><b>Hafta sonu</b><span class="f">Dinlenme</span><span>Çalışma yok. Dinlenmek de öğrenmenin parçası.</span></div></div></div>
+    <div class="card"><h2>Bir etabın ritmi (5 çalışma günü)</h2><div class="wd">${PLAN.weekdays.map(x => `<div><b>${esc(x.d)}</b><span class="f">${esc(x.f)}</span><span>${esc(x.n)}</span></div>`).join('')}<div><b>Boş günler</b><span class="f">Dinlenme</span><span>Haftada 3–4 gün çalış, gerisi dinlenme. Bir etap takvimde yaklaşık 1,5 hafta sürer. Büyük deneme etaplarında ilk dört gün sınavın dört bölümüdür.</span></div></div></div>
     <div class="card"><h2>Telc Deutsch C1: sınav formatı ve bizim çalışma karşılığı</h2><div class="tw"><table class="exam"><thead><tr><th>Bölüm</th><th>Format</th><th>Puan</th><th>Süre</th><th>Bizde</th></tr></thead><tbody>${PLAN.exam.map(r => `<tr><td>${esc(r.part)}</td><td>${esc(r.fmt)}</td><td>${esc(r.pts)}</td><td>${esc(r.time)}</td><td>${esc(r.ours)}</td></tr>`).join('')}</tbody></table></div><p class="hint">${esc(PLAN.examNote)}</p></div>
-    <div class="card"><h2>Hafta hafta: ne öğreneceğiz</h2><div class="pills" role="group" aria-label="Hafta seç">${PLAN.weeks.map(w => `<button class="pill" type="button" data-act="week" data-w="${w.w}" aria-pressed="${w.w === ui.planWeek}">Hafta ${w.w}</button>`).join('')}</div>
-      <div class="wk"><h3>Hafta ${W.w}: ${esc(W.title)}${W.dates ? ` <small class="wdate">${esc(W.dates)}</small>` : ''}</h3>${W.note ? `<p class="hint">${esc(W.note)}</p>` : ''}
+    <div class="card"><h2>Etap etap: ne öğreneceğiz</h2><div class="pills" role="group" aria-label="Etap seç">${PLAN.weeks.map(w => `<button class="pill${w.days.some(x => x.big) ? ' pbig' : ''}" type="button" data-act="week" data-w="${w.w}" aria-pressed="${w.w === ui.planWeek}">Etap ${w.w}</button>`).join('')}</div>
+      <div class="wk"><h3>Etap ${W.w}: ${esc(W.title)}${W.dates ? ` <small class="wdate">${esc(W.dates)}</small>` : ''}</h3>${phOf(W.w) ? `<p class="k nocap">Faz ${phOf(W.w).n} · ${esc(phOf(W.w).t)}</p>` : ''}${W.note ? `<p class="hint">${esc(W.note)}</p>` : ''}
       <div class="wk-top"><div class="s"><span class="k">${esc(PLAN.labWS || 'Sektör teması')}</span>${esc(W.sector)}</div><div class="g"><span class="k">${esc(PLAN.labWG || 'Genel C1 teması')}</span>${esc(W.general)}</div><div><span class="k">Dilbilgisi</span>${esc(W.grammar)}</div><div><span class="k" lang="de">Schreiben</span>${esc(W.writing)}</div><div><span class="k" lang="de">Sprechen</span>${esc(W.speaking)}</div></div>
       <div class="tw"><table class="dtab"><thead><tr><th>Gün</th><th>Odak (sınav bölümü)</th><th>${esc(PLAN.labS || 'Sektör')}</th><th>${esc(PLAN.labG || 'Genel C1')}</th><th>Ne öğreneceğiz (ayrıntı)</th></tr></thead><tbody>${rows}</tbody></table></div><div class="dcards">${cards}</div>
-      <div><span class="collab">Hafta sonunda yapabileceklerin</span><ul class="outc">${W.outcome.map(o => `<li>${esc(o)}</li>`).join('')}</ul></div></div></div>
+      <div><span class="collab">Etap sonunda yapabileceklerin</span><ul class="outc">${W.outcome.map(o => `<li>${esc(o)}</li>`).join('')}</ul></div></div></div>
     <div class="card"><h2>Nasıl çalışıyoruz</h2><ol class="steps">${PLAN.method.map(m => `<li>${esc(m)}</li>`).join('')}</ol></div></div>`;
 }
 function topHTML() {
@@ -1224,7 +1247,7 @@ loadScript('data/manifest.js', String(Date.now())).then(() => {
   ui.day = pickStartDay(); ui.glDay = ui.day;
   const wk = MD(ui.day) && MD(ui.day).week; if (wk) ui.planWeek = wk;
   return Promise.all([loadScript('data/plan.js', MAN().planV || '1'), ensureDay(ui.day)]);
-}).then(() => { if (!window.PLAN) throw new Error('plan'); render(); }).catch(e => {
+}).then(() => { if (!window.PLAN) throw new Error('plan'); if (PLAN.weeks && PLAN.weeks.length) TOTAL_DAYS = PLAN.weeks.length * 5; render(); }).catch(e => {
   $('#app').innerHTML = '<div class="boot err">Sayfa yüklenemedi. Lütfen sayfayı yenile. (' + esc(e && e.message || '') + ')</div>';
 });
 window.addEventListener('beforeunload', () => { stopSpeech(); saveLocal(); });
