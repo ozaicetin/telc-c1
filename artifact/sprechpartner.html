@@ -36,6 +36,7 @@ a{color:var(--blue)}
 .tasks{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
 .task{text-align:left;font:inherit;color:inherit;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;display:grid;gap:4px;box-shadow:2px 2px 0 var(--ink)}
 .task[aria-pressed=true]{background:var(--hl);color:#1d1f2c}
+.glbl{grid-column:1/-1;margin:4px 0 0;font-weight:800;font-size:15px}
 .task .t{font-weight:700;line-height:1.25}.task .k{font-size:14px;color:inherit;opacity:.75}
 .chip{display:inline-block;font:800 12.5px/1 "Bricolage Grotesque",sans-serif;background:var(--ink);color:var(--hl);border-radius:6px;padding:4px 7px}
 .row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
@@ -137,19 +138,30 @@ details summary{cursor:pointer;color:var(--blue);font-size:15px}
 </div>
 <script>
 {
-const TASKS = [
-  { id: 'd4-1a', day: 4, teil: 'Teil 1A', kind: 'present', title: 'Ehrenamtliches Engagement – ein Gewinn für alle?', target: 210,
-    points: ['Einleitung: Thema nennen und Gliederung ankündigen', 'Situation in Deutschland und in der Türkei, ein Beispiel', 'Vorteile für die Gesellschaft und für die Engagierten', 'Probleme und Grenzen (Zeitmangel, Ersatz für bezahlte Arbeit)', 'Eigene Meinung mit Begründung und Schluss'],
-    follow: 'Sollte ein soziales Jahr nach der Schule für alle Pflicht sein?' },
-  { id: 'b-homeoffice', teil: 'Teil 1B', kind: 'summary', title: 'Homeoffice – Freiheit oder Falle?', target: 90 },
-  { id: 'b-autofrei', teil: 'Teil 1B', kind: 'summary', title: 'Autofreie Innenstädte', target: 90 },
+const TODAY = {"id": "day4-1a", "dayId": "day4", "day": 4, "teil": "Teil 1A", "kind": "present", "title": "Ehrenamtliches Engagement – ein Gewinn für alle?", "target": 210, "points": ["Einleitung: Thema nennen und Gliederung ankündigen", "Situation: Wie verbreitet ist Ehrenamt in Deutschland und in der Türkei? Ein Beispiel", "Vorteile für die Gesellschaft und für die Engagierten", "Probleme und Grenzen (Zeitmangel, Ersatz für bezahlte Arbeit)", "Eigene Meinung mit Begründung und Schluss"], "follow": "Sollte ein soziales Jahr nach der Schule Pflicht sein?"};
+/* Shared task list for both speaking-partner pages (site page and the free claude.ai page).
+   Edit here, then run python3 tools/build.py. */
+const GENERAL = [
+  { id: 'b-homeoffice', teil: 'Teil 1B', kind: 'summary', title: 'Homeoffice – Freiheit oder Falle?' },
+  { id: 'b-autofrei', teil: 'Teil 1B', kind: 'summary', title: 'Autofreie Innenstädte' },
+  { id: 'b-social', teil: 'Teil 1B', kind: 'summary', title: 'Smartphones im Unterricht' },
   { id: 'd-noten', teil: 'Teil 2', kind: 'discuss', title: 'Schulnoten sollten abgeschafft werden.' },
   { id: 'd-ki', teil: 'Teil 2', kind: 'discuss', title: 'Künstliche Intelligenz wird mehr Arbeitsplätze schaffen als vernichten.' },
   { id: 'd-reparatur', teil: 'Teil 2', kind: 'discuss', title: 'Hersteller sollten gesetzlich verpflichtet werden, Geräte reparierbar zu bauen.' },
   { id: 'd-viertage', teil: 'Teil 2', kind: 'discuss', title: 'Die Vier-Tage-Woche sollte gesetzlich eingeführt werden.' },
-  { id: 'frei', teil: 'Warm-up', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?' }
+  { id: 'd-demokratie', teil: 'Teil 2', kind: 'discuss', title: 'Soziale Medien schaden der Demokratie mehr, als sie ihr nützen.' },
+  { id: 'frei', teil: 'Alltag', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?', tr: 'Rahat sohbet: günün, işin, boş zamanın, planların.' },
+  { id: 'r-arzt', teil: 'Alltag', kind: 'role', title: 'Beim Hausarzt: Beschwerden schildern', who: 'Frau Dr. Brandt, Hausärztin in Berlin', me: 'ein Patient, der seit einer Woche starke Rückenschmerzen hat und arbeiten muss', goal: 'Lass mich meine Beschwerden genau beschreiben, frag nach Details (seit wann, wo, wie stark, Auslöser), schlag eine Behandlung vor und kläre, ob ich eine Krankschreibung brauche.', tr: 'Sen hastasın: bir haftadır sırtın ağrıyor. Şikâyetini ayrıntılı anlat, soru sor, gerekirse rapor (Krankschreibung) iste.' },
+  { id: 'r-wohnung', teil: 'Alltag', kind: 'role', title: 'Wohnungsbesichtigung', who: 'Herr Lehmann, Vermieter einer Zweizimmerwohnung in Berlin-Lichtenberg', me: 'ein Interessent, der die Wohnung besichtigt', goal: 'Beantworte meine Fragen zu Miete, Nebenkosten, Kaution, Heizung und Einzugstermin, frag mich nach Beruf und Einkommensnachweis und bring eine kleine Komplikation ein (zum Beispiel viele andere Interessenten).', tr: 'Ev bakmaya geldin: kira, yan giderler, depozito, taşınma tarihi hakkında soru sor; kendini iyi tanıt.' },
+  { id: 'r-amt', teil: 'Alltag', kind: 'role', title: 'Im Bürgeramt: Wohnsitz ummelden', who: 'Frau Weber, Sachbearbeiterin im Bürgeramt', me: 'ein Bürger, der nach einem Umzug seinen Wohnsitz ummelden möchte', goal: 'Frag nach den Unterlagen. Es fehlt die Wohnungsgeberbestätigung; wir müssen gemeinsam eine Lösung finden. Bleib freundlich, aber bürokratisch genau.', tr: 'Taşındın, adresini değiştirmek istiyorsun. Bir belge eksik çıkıyor: nazikçe çözüm bul.' },
+  { id: 'r-reklamation', teil: 'Alltag', kind: 'role', title: 'Am Telefon: Reklamation beim Online-Shop', who: 'Herr Schulz vom Kundenservice eines Elektronik-Onlineshops', me: 'ein Kunde, dessen neue Kopfhörer nach zwei Wochen kaputt sind', goal: 'Nimm den Anruf an, frag nach Bestellnummer und Problem und biete zuerst nur eine Reparatur an. Ich soll höflich, aber bestimmt Ersatz oder Geld zurück verlangen.', tr: 'Telefonla şikâyet: iki haftalık kulaklığın bozuldu. Kibar ama kararlı ol, yenisini ya da paranı iste.' },
+  { id: 'r-pause', teil: 'Alltag', kind: 'role', title: 'Smalltalk mit einer Kollegin in der Pause', who: 'Sandra, eine freundliche Kollegin aus einem anderen Team', me: 'ihr Kollege in der Mittagspause', goal: 'Führ ein lockeres Gespräch über das Wochenende, Essen, Hobbys und Pläne, erzähl auch von dir und stell Rückfragen.', tr: 'Öğle arasında bir iş arkadaşınla rahat sohbet: hafta sonu, yemek, hobiler, planlar.' },
+  { id: 'r-chef', teil: 'Alltag', kind: 'role', title: 'Mit der Teamleitung: Urlaub und Schichttausch', who: 'Frau Krüger, Teamleiterin', me: 'ein Mitarbeiter, der im Dezember eine Woche Urlaub möchte und dafür eine Schicht tauschen will', goal: 'Sei zuerst skeptisch, weil im Dezember viel zu tun ist, und lass dich nur mit guten Argumenten und einem Kompromissvorschlag überzeugen.', tr: 'Yöneticinden Aralık’ta bir hafta izin istiyorsun. İlk önce olmaz der; iyi gerekçe ve uzlaşma önerisiyle ikna et.' },
+  { id: 'r-nachbar', teil: 'Alltag', kind: 'role', title: 'Konflikt mit dem Nachbarn: Lärm', who: 'Herr Neumann, der Nachbar von oben', me: 'ein Nachbar, der seit Wochen nachts durch laute Musik gestört wird', goal: 'Reagier zuerst etwas genervt und rechtfertige dich, lass dich dann auf eine höfliche Vereinbarung ein.', tr: 'Üst kattaki komşun geceleri gürültü yapıyor. Kibar ama net konuş, birlikte bir anlaşma bulun.' }
 ];
-const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Partner kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, partner karşı görüşte', chat: 'Serbest sohbet, ısınma' };
+
+const TASKS = (TODAY ? [TODAY] : []).concat(GENERAL);
+const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Claude kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, Claude karşı görüşte', chat: 'Serbest sohbet, ısınma', role: 'Gündelik hayat: rol oyunu' };
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
@@ -160,12 +172,14 @@ const SRC = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 const fromHash = TASKS.find(t => t.id === location.hash.slice(1)); if (fromHash) sel = fromHash;
 
 function voicePhrase() {
-  const a = sel.kind === 'present' ? 'Präsentation' : sel.kind === 'summary' ? 'Zusammenfassung, ' + sel.title : sel.kind === 'discuss' ? 'Diskussion, ' + sel.title.replace(/\.$/, '') : 'freies Gespräch';
+  const a = sel.kind === 'present' ? 'Präsentation' : sel.kind === 'summary' ? 'Zusammenfassung, ' + sel.title : sel.kind === 'discuss' ? 'Diskussion, ' + sel.title.replace(/\.$/, '') : sel.kind === 'role' ? 'Rollenspiel, ' + sel.title : 'freies Gespräch';
   return '„Sprechpartner, ' + a + ', ' + (mode === 'train' ? 'Training' : 'Prüfung') + '“';
 }
 function renderPhrase() { const n = document.getElementById('phrase'); if (n) n.textContent = voicePhrase(); }
+function taskBtn(t) { return `<button class="task" type="button" data-id="${t.id}" aria-pressed="${t === sel}"><span><span class="chip">${esc(t.teil)}</span>${t.day ? ` <span class="hw" style="font-size:19px">Tag ${t.day} · bugün</span>` : ''}</span><span class="t" lang="de">${esc(t.title)}</span><span class="k">${esc(t.kind === 'role' && t.tr ? t.tr : KIND[t.kind])}</span></button>`; }
 function renderTasks() {
-  $('#tasks').innerHTML = TASKS.map(t => `<button class="task" type="button" data-id="${t.id}" aria-pressed="${t === sel}"><span><span class="chip">${esc(t.teil)}</span>${t.day ? ` <span class="hw" style="font-size:19px">Tag ${t.day}</span>` : ''}</span><span class="t" lang="de">${esc(t.title)}</span><span class="k">${esc(KIND[t.kind])}</span></button>`).join('');
+  const exam = TASKS.filter(t => t.teil !== 'Alltag'), life = TASKS.filter(t => t.teil === 'Alltag');
+  $('#tasks').innerHTML = `<p class="glbl">Sınav görevleri</p>${exam.map(taskBtn).join('')}<p class="glbl">Gündelik hayat</p>${life.map(taskBtn).join('')}`;
   $('#pickNote').textContent = sel.title;
   renderPhrase();
 }
@@ -316,7 +330,8 @@ function brief() {
   if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1, Teil 1A/1B. Ich halte eine Präsentation zum Thema „${t.title}“. Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage dazu (wie in Teil 1B, z. B. „${t.follow}“), nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und setzt "ende": true.`;
   if (t.kind === 'summary') role = `Situation: telc Deutsch C1, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage, nach meiner Antwort reagierst du kurz, bedankst dich und setzt "ende": true.`;
   if (t.kind === 'discuss') role = `Situation: telc Deutsch C1, Teil 2 (Diskussion). These: „${t.title}“ Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: gehe auf meine Argumente ein, bringe neue Gegenargumente mit Beispielen, frage nach, und wenn ich einen Kompromiss vorschlage, suche mit mir eine gemeinsame Lösung.`;
-  if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, Arbeit, Freizeit und Pläne. Stelle interessierte Fragen.';
+  if (t.kind === 'role') role = `Situation: Rollenspiel aus dem Alltag in Deutschland. Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle, sprich so natürlich wie im echten Leben (gern auch umgangssprachlich, wenn es passt), reagiere realistisch und stell Rückfragen. Nach etwa zehn Wortwechseln oder wenn das Anliegen geklärt ist, verabschiedest du dich passend und setzt "ende": true.`;
+  if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, Arbeit, Freizeit und Pläne. Stelle interessierte Fragen und erzähl auch kurz etwas von dir.';
   const corr = S.mode === 'train'
     ? 'Korrigiere zuerst meine LETZTE Äußerung: nenne nur Sätze, die Fehler enthalten, jeweils mit originalem und korrigiertem Satz, ohne jede Erklärung. Die Äußerung kommt aus der Spracherkennung: ignoriere fehlende Satzzeichen und Großschreibung. Ist alles korrekt, ist "korrektur" [].'
     : 'Korrigiere nichts (Prüfungsmodus): "korrektur" ist immer [].';
@@ -363,6 +378,7 @@ $('#go').addEventListener('click', async () => {
   $('#tCard').innerHTML = sel.kind === 'present' ? `<b>Präsentation, ca. 3–4 Minuten.</b> Gehe auf diese Punkte ein:<ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol>`
     : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Dein Partner hält einen kurzen Vortrag. Fasse ihn danach in eigenen Worten zusammen (ca. 1–1,5 Minuten) und beantworte seine Frage.'
     : sel.kind === 'discuss' ? `<b>These:</b> <span lang="de">„${esc(sel.title)}“</span><br>Wähle deine Position. Dein Partner vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende vielleicht einen Kompromiss.`
+    : sel.kind === 'role' ? `<b>Rollenspiel.</b> ${esc(sel.tr || '')}`
     : 'Unterhaltet euch locker. Antworte ausführlich, stelle auch selbst Fragen.';
   clearInterval(clockT); clockT = setInterval(() => { $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000);
   window.scrollTo(0, 0);
@@ -373,8 +389,8 @@ $('#go').addEventListener('click', async () => {
       const v = await ask(`Halte als mein Prüfungspartner (telc Deutsch C1, Teil 1A) einen kurzen Vortrag zum Thema „${sel.title}“: 160 bis 200 Wörter, gesprochene Sprache, klare Gliederung (Einleitung, zwei bis drei Punkte mit Beispiel, eigene Meinung, Schluss). Gib NUR JSON zurück: {"vortrag":"..."}`, 'default');
       S.vortrag = String(v.vortrag || ''); setBusy(false);
       await partnerSays(S.vortrag, true); status('Şimdi özetle. Mikrofona bas ya da yaz.');
-    } else if (sel.kind === 'chat') {
-      setBusy(true, 'Partner düşünüyor…'); const v = await ask(messages('Eröffne das Gespräch mit einer Begrüßung und einer Frage.')); setBusy(false); await partnerSays(String(v.antwort || ''));
+    } else if (sel.kind === 'chat' || sel.kind === 'role') {
+      setBusy(true, 'Claude düşünüyor…'); const v = await ask(messages(sel.kind === 'role' ? 'Beginne das Gespräch in deiner Rolle mit einem passenden, natürlichen ersten Satz.' : 'Eröffne das Gespräch mit einer Begrüßung und einer Frage.')); setBusy(false); await partnerSays(String(v.antwort || ''));
     } else status('Önce görüşünü seç: dafür ya da dagegen.');
   } catch (e) { setBusy(false); status(''); $('#dockNote').innerHTML = `<span class="err">${esc(e.message || 'Bir hata oldu, tekrar dene.')}</span>`; }
 });
@@ -435,6 +451,7 @@ function appPrompt() {
   if (t.kind === 'present') { role = `Ich halte eine Präsentation (3 bis 4 Minuten) zum Thema „${t.title}“ mit diesen Punkten: ${t.points.join('; ')}. Unterbrich mich nicht, bis ich „fertig“ sage. Danach stellst du mir als Prüfungspartner eine Anschlussfrage, zum Beispiel „${t.follow}“, und nach meiner Antwort noch eine zweite.`; start = 'sag mir, dass ich beginnen kann.'; }
   if (t.kind === 'summary') { role = `Halte zuerst einen kurzen Vortrag (etwa anderthalb Minuten) zum Thema „${t.title}“ mit klarer Gliederung und eigener Meinung. Ich fasse ihn danach zusammen, dann stellst du mir eine Anschlussfrage.`; start = 'beginne mit deinem Vortrag.'; }
   if (t.kind === 'discuss') { role = `Wir diskutieren die These „${t.title}“ (Teil 2). Frag mich zuerst nach meiner Position und vertritt dann sachlich die Gegenposition: reagiere auf meine Argumente, bring Gegenargumente mit Beispielen, frag nach, und versuch am Ende, mit mir einen Kompromiss zu finden.`; start = 'frag mich nach meiner Position.'; }
+  if (t.kind === 'role') { role = `Rollenspiel aus dem Alltag in Deutschland: Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle und sprich so natürlich wie im echten Leben.`; start = 'beginne das Gespräch in deiner Rolle.'; }
   if (t.kind === 'chat') { role = 'Wir führen ein lockeres Gespräch über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell mir interessierte Fragen.'; start = 'begrüß mich und stell mir die erste Frage.'; }
   const corr = train ? 'Wenn ich Fehler mache, sag zuerst nur die korrigierte Fassung meines Satzes, ohne Erklärung, und antworte dann.' : 'Korrigiere mich während des Gesprächs nicht, wie in der echten Prüfung.';
   return `Du bist mein Gesprächspartner für die mündliche Prüfung telc Deutsch C1 (${t.teil}). Wir sprechen nur Deutsch. ${role}\n\nRegeln: Sprich natürliches, eher schnelles Deutsch auf C1-Niveau. Antworte kurz, in 2 bis 4 Sätzen, und beende deine Beiträge meist mit einer Frage oder einem Gegenargument. ${corr}\n\nWenn ich „Bewertung, bitte“ sage, bewerte mich nach den telc-C1-Kriterien Aufgabenbewältigung, Interaktion und Flüssigkeit, Korrektheit sowie Wortschatz und Ausdruck (je 0 bis 5 Punkte), nenne die korrigierten Fassungen meiner fehlerhaften Sätze und vier passende Redemittel. Die Kommentare zur Bewertung bitte auf Türkisch.\n\nWenn du bereit bist, ${start}`;

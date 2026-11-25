@@ -349,6 +349,9 @@ tr.today td{background:var(--hl-soft)}
 .partner-cta .btn{text-decoration:none;white-space:nowrap}
 
 /* home link to the speaking partner */
+.sp-home .sp-links{font-weight:700;color:var(--ink)}
+.sp-home .sp-links a{color:var(--blue)}
+.pc-btns{display:flex;flex-wrap:wrap;gap:8px}
 .sp-home{display:grid;gap:2px;text-decoration:none;color:var(--ink);background:var(--mint-soft);border:2px solid var(--ink);border-radius:12px;padding:10px 14px;box-shadow:var(--hard-sm);transform:rotate(.6deg)}
 .sp-home b{font:800 19px/1.1 var(--f-ui)}
 .sp-home span{font-size:14.5px;color:var(--ink2)}

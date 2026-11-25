@@ -277,6 +277,7 @@ ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
   <section id="setup" class="stage" hidden>
     <div><p class="hw" style="font-size:24px;color:var(--blue)">Bir kerelik kurulum</p><h1><span class="mark">Claude’la sesli konuş</span></h1>
       <p class="note">Sen mikrofona konuşursun, Claude cevabı düşünür, doğal bir Almanca ses okur. Bunun için iki anahtar gerekiyor. İkisi de ön ödemeli: yüklediğinden fazlası çekilmez.</p></div>
+    <div class="card soft"><b>Ödemek istemiyor musun?</b> Laptopta Chrome’da ya da Claude masaüstü uygulamasında aynı partner Pro üyeliğinle ücretsiz: <a href="https://claude.ai/artifact/Kxxn5QzTgQfJ53gdCzhF7z" target="_blank" rel="noopener">ücretsiz sürümü aç</a>. Bu sayfa, telefonda da çalışması için.</div>
     <div class="safe"><b>Ekstra para çekilmez:</b> iki sitede de yalnızca bir kez 5 $ yükle ve <b>otomatik yüklemeyi (auto-reload) açma</b>. Bakiye bitince sadece durur. Bu sayfa ayrıca günlük bir harcama sınırı tutar.</div>
     <div class="card">
       <h2>1 · Claude anahtarı (beyin)</h2>
@@ -384,6 +385,8 @@ function renderCost() { $('#costTop').textContent = 'bugün ≈ ' + money(todayC
 
 /* ---------- tasks ---------- */
 let TODAY = null;
+/* Shared task list for both speaking-partner pages (site page and the free claude.ai page).
+   Edit here, then run python3 tools/build.py. */
 const GENERAL = [
   { id: 'b-homeoffice', teil: 'Teil 1B', kind: 'summary', title: 'Homeoffice – Freiheit oder Falle?' },
   { id: 'b-autofrei', teil: 'Teil 1B', kind: 'summary', title: 'Autofreie Innenstädte' },
@@ -402,6 +405,7 @@ const GENERAL = [
   { id: 'r-chef', teil: 'Alltag', kind: 'role', title: 'Mit der Teamleitung: Urlaub und Schichttausch', who: 'Frau Krüger, Teamleiterin', me: 'ein Mitarbeiter, der im Dezember eine Woche Urlaub möchte und dafür eine Schicht tauschen will', goal: 'Sei zuerst skeptisch, weil im Dezember viel zu tun ist, und lass dich nur mit guten Argumenten und einem Kompromissvorschlag überzeugen.', tr: 'Yöneticinden Aralık’ta bir hafta izin istiyorsun. İlk önce olmaz der; iyi gerekçe ve uzlaşma önerisiyle ikna et.' },
   { id: 'r-nachbar', teil: 'Alltag', kind: 'role', title: 'Konflikt mit dem Nachbarn: Lärm', who: 'Herr Neumann, der Nachbar von oben', me: 'ein Nachbar, der seit Wochen nachts durch laute Musik gestört wird', goal: 'Reagier zuerst etwas genervt und rechtfertige dich, lass dich dann auf eine höfliche Vereinbarung ein.', tr: 'Üst kattaki komşun geceleri gürültü yapıyor. Kibar ama net konuş, birlikte bir anlaşma bulun.' }
 ];
+
 const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Claude kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, Claude karşı görüşte', chat: 'Serbest sohbet, ısınma', role: 'Gündelik hayat: rol oyunu' };
 const allTasks = () => (TODAY ? [TODAY] : []).concat(GENERAL);
 let sel = null;
