@@ -25,6 +25,7 @@ Günde en çok 90 dk, Pzt–Cum. Yalnızca telc C1 (sektör/lojistik yok, arada 
 ## Sprechpartner (canlı konuşma partneri)
 - claude.ai artifact'ı: https://claude.ai/artifact/Kxxn5QzTgQfJ53gdCzhF7z (slug `9994c6f2-4bf8-4019-ab6a-1b58f7e7cebd`). Kaynak: `artifact/sprechpartner.html` (GitHub Pages'te çalışmaz, yalnızca claude.ai'da). Öğrencinin aboneliği içinde, ek ücretsiz.
 - Yetenekler: `dictation` (konuşma→metin, Chrome/Edge ve Claude masaüstü), `sample` (partner cevabı ve değerlendirme), `tts` (Claude sesi; yoksa tarayıcı sesi), `db` (`sessions/<tarih>-<görev>-<id>`, okuma/yazma `admin`), `user`.
+- iPhone/Safari'de platform `dictation` ve `tts` vermiyor: sayfa önce tarayıcının konuşma tanımasını dener, olmazsa klavye mikrofonu (iOS dikte) yönergesi gösterir; ses cihazın Almanca sesiyle (`speechSynthesis`, ilk dokunuşta açılır; sessiz mod sesi keser). Tam sesli yol: „Komutu kopyala“ → Claude uygulamasında sesli mod (voice mode).
 - Görevler sayfadaki `TASKS` dizisinde. Yeni günün Sprechen görevini oraya `{id:'dN-1a', day:N, teil:'Teil 1A', kind:'present', title, target, points, follow}` olarak ekle, `publish_files` ile aynı slug'a yeniden yayınla (önce `list_files`/`get_artifact` ile sürümü al). Sitedeki Sprechen adımı `#dN-1a` ile açar (`sec.partner` ile değiştirilebilir).
 - „N. günü bitirdim“de `db_list`/`db_get` ile `sessions` koleksiyonunu oku; konuşma puanlarını ve düzeltmeleri rapora ve Projedeki günlüğe ekle.
 

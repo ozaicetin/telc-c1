@@ -68,6 +68,7 @@ input[type=range]{accent-color:#1d1f2c;width:140px}
 @keyframes pulse{50%{box-shadow:0 0 0 10px rgba(217,58,47,.25)}}
 textarea{width:100%;min-height:84px;font:400 16px/1.45 Literata,Georgia,serif;color:var(--ink);background:var(--bg);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;resize:vertical}
 .status{font:700 20px/1.1 Caveat,cursive;color:var(--blue);min-height:22px}
+.status:empty{display:none}
 .err{color:var(--red);font-weight:600}
 .score{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
 .ring{width:110px;height:110px;border:4px solid var(--red);border-radius:50%;display:grid;place-items:center;font:700 52px/1 Caveat,cursive;color:var(--red);transform:rotate(-6deg);flex:none}
@@ -77,9 +78,14 @@ textarea{width:100%;min-height:84px;font:400 16px/1.45 Literata,Georgia,serif;co
 .cr small{grid-column:1/-1;color:var(--ink2);font-size:14.5px;margin-top:-4px}
 .facts{display:flex;flex-wrap:wrap;gap:8px 22px}.facts div{display:grid}.facts b{font:800 22px/1.1 "Bricolage Grotesque",sans-serif}.facts span{font-size:13.5px;color:var(--ink2)}
 ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.card.app{background:var(--hl2)}
+.steps{margin:0;padding-left:1.3em;display:grid;gap:4px}
+#appText{min-height:150px;font-size:14px}
+.kb{border:2px dashed var(--ink);border-radius:12px;padding:8px 12px;background:var(--hl2)}
+.kb p{font-size:15px}.kb summary{cursor:pointer;font-size:14.5px;color:var(--blue);margin-top:4px}
 .hist{display:grid;gap:6px}.hist div{display:flex;justify-content:space-between;gap:10px;border-bottom:1.5px dashed var(--grid);padding:4px 0;font-size:15px}
 [hidden]{display:none !important}
-@media (max-width:600px){.b{max-width:96%}.cr{grid-template-columns:1fr auto}.cr .bar{grid-column:1/-1;order:3}.cr small{order:4;margin-top:0}.mic{width:64px;height:64px}}
+@media (max-width:600px){.dock{position:static}.mic{font-size:13px}.b{max-width:96%}.cr{grid-template-columns:1fr auto}.cr .bar{grid-column:1/-1;order:3}.cr small{order:4;margin-top:0}.mic{width:70px;height:70px}}
 @media (prefers-reduced-motion:reduce){.mic.on{animation:none}}
 </style>
 </head>
@@ -95,9 +101,16 @@ ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
       <div class="row"><div class="seg" role="group" aria-label="Mod"><button type="button" data-mode="train" aria-pressed="true">Training</button><button type="button" data-mode="exam" aria-pressed="false">Prüfung</button></div>
         <span class="note" id="modeNote">Her cümlenden sonra önce düzeltilmiş hâli, sonra partnerin cevabı.</span></div>
       <div class="row"><label for="rate">Konuşma hızı <b id="rateV">1.15</b></label><input type="range" id="rate" min="0.8" max="1.4" step="0.05" value="1.15"><label><input type="checkbox" id="auto" checked> Konuşmayı bitirince otomatik gönder</label></div>
+      <div class="row"><button class="btn" type="button" id="testVoice">Sesi dene</button><span class="note" id="voiceNote"></span></div>
       <p class="note" id="capNote"></p>
     </div>
     <div class="row"><button class="btn pri" type="button" id="go">Konuşmayı başlat</button><span class="hw" style="font-size:22px;color:var(--ink2)" id="pickNote"></span></div>
+    <div class="card app" id="appCard"><h2>iPhone’da tam sesli: Claude uygulaması</h2>
+      <p>Telefonun mikrofonu ve Claude’un sesiyle konuşmanın en sağlam yolu. Yukarıda seçtiğin görev ve mod için komutu hazırlarım.</p>
+      <ol class="steps"><li>„Komutu kopyala“ya bas.</li><li>Claude uygulamasını aç, „TELC C1“ Projesinde yeni sohbet başlat, komutu yapıştırıp gönder.</li><li>Yazı kutusundaki ses dalgası simgesine bas ve konuş. Bitirince „Bewertung, bitte“ de.</li></ol>
+      <p class="note">İlk seferde Claude uygulamasının ayarlarında Voice dilini Deutsch yap.</p>
+      <div class="row"><button class="btn pri" type="button" id="appCopy">Komutu kopyala</button><span class="note" id="appNote"></span></div>
+      <textarea id="appText" hidden aria-label="Claude uygulaması için komut"></textarea></div>
     <div class="card"><h2>Önceki konuşmaların</h2><div class="hist" id="hist"><p class="note">Yükleniyor…</p></div></div>
   </section>
 
@@ -108,7 +121,8 @@ ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
     <div class="log" id="log" aria-live="polite"></div>
     <div class="dock">
       <div class="status" id="status"></div>
-      <div class="row" style="flex-wrap:nowrap"><button class="mic" type="button" id="mic" aria-label="Konuş">Sprechen</button><textarea id="say" placeholder="Konuş ya da yaz… (telefonda klavyedeki mikrofon tuşu da olur)"></textarea></div>
+      <div class="kb" id="kbHint" hidden><p><b class="why">Telefonun mikrofonuyla konuş:</b> kutuya dokun, klavyede 🎤 tuşuna bas, Almanca konuş, sonra „Senden“.</p><details><summary>Almanca tanımıyor ya da 🎤 yok mu?</summary><p class="note">Klavyede 🌐 ile Deutsch klavyeye geç. Deutsch klavye yoksa: Ayarlar › Genel › Klavye › Klavyeler › Yeni Klavye Ekle › Deutsch. 🎤 yoksa: Ayarlar › Genel › Klavye › Dikteyi Etkinleştir.</p></details></div>
+      <div class="row" style="flex-wrap:nowrap"><button class="mic" type="button" id="mic" aria-label="Konuş">Sprechen</button><textarea id="say" placeholder="Konuş ya da yaz…"></textarea></div>
       <div class="row"><button class="btn pri" type="button" id="send">Senden</button><button class="btn" type="button" id="again">Tekrar dinle</button><span class="note" id="dockNote"></span></div>
     </div>
   </section>
@@ -133,7 +147,10 @@ const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Partner 
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
-let sample = null, dict = null, tts = null, db = null, sel = TASKS[0], mode = 'train', S = null, clockT = null, busy = false;
+let sample = null, dict = null, tts = null, db = null, sel = TASKS[0], mode = 'train', S = null, clockT = null, busy = false, micMode = 'kb';
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const TOUCH = IOS || /Android|Mobile/i.test(navigator.userAgent) || (window.matchMedia && matchMedia('(pointer:coarse)').matches);
+const SRC = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 const fromHash = TASKS.find(t => t.id === location.hash.slice(1)); if (fromHash) sel = fromHash;
 
 function renderTasks() {
@@ -166,11 +183,14 @@ function autoSend() {
 $('#go').disabled = true; $('#capNote').textContent = 'Partner hazırlanıyor…';
 (async () => {
   [sample, dict, tts, db] = await Promise.all(['sample', 'dictation', 'tts', 'db'].map(claudeUse));
+  micMode = dict ? 'dict' : SRC ? 'sr' : 'kb';
   const notes = [];
   if (!sample) notes.push('Partner şu an kullanılamıyor: bu sayfayı claude.ai’da giriş yapmış olarak aç.');
-  if (!dict) notes.push('Mikrofon burada çalışmıyor (yalnızca bilgisayarda Chrome/Edge ya da Claude masaüstü uygulaması). Telefonda klavyedeki mikrofon tuşuyla konuşabilir ya da yazabilirsin.');
-  if (!tts) notes.push('Claude sesi burada yok; tarayıcının Almanca sesi kullanılacak.');
+  else if (!dict && TOUCH) notes.push('Bu telefonda klavyenin mikrofonuyla konuşursun, partnerin telefonun Almanca sesiyle cevap verir. Claude’un kendi sesiyle tam sesli konuşmak için aşağıdaki Claude uygulaması yolunu kullan.');
+  else if (!dict) notes.push('Bu tarayıcıda sayfanın mikrofonu sınırlı: Chrome, Edge ya da Claude masaüstü uygulamasında tam çalışır. Burada yazarak da konuşabilirsin.');
   $('#capNote').textContent = notes.join(' ');
+  if (TOUCH) { $('#say').placeholder = 'Dokun, klavyedeki 🎤 ile konuş ya da yaz…'; }
+  voiceInfo();
   $('#go').disabled = !sample;
   if (dict) {
     dict.onPartial(({ text }) => { if (S) { $('#say').value = (S.buf + ' ' + text).trim(); } });
@@ -180,18 +200,97 @@ $('#go').disabled = true; $('#capNote').textContent = 'Partner hazırlanıyor…
       if (S && on) { S.micAt = Date.now(); status('Dinliyorum…'); }
       if (S && !on && S.micAt) { S.micSecs += (Date.now() - S.micAt) / 1000; S.micAt = 0; status(''); autoSend(); }
     });
-  } else { $('#mic').hidden = true; }
+  }
   loadHistory();
 })();
 
 function status(t) { $('#status').textContent = t; }
+/* ---------- voice out: Claude voice (tts) or the device's German voice ---------- */
+const SS = ('speechSynthesis' in window && window.SpeechSynthesisUtterance) ? window.speechSynthesis : null;
+let deVoice = null, ssUnlocked = false, curU = null, voiceBad = false; const keepU = [];
+function pickVoice() {
+  if (!SS) return; let vs = []; try { vs = SS.getVoices() || []; } catch (e) {}
+  const de = vs.filter(v => /^de([-_]|$)/i.test(v.lang));
+  deVoice = de.find(v => /de[-_]DE/i.test(v.lang) && /premium|enhanced|erweitert|anna|helena|markus|petra|google/i.test(v.name)) || de.find(v => /de[-_]DE/i.test(v.lang)) || de[0] || null;
+  voiceInfo();
+}
+if (SS) { pickVoice(); try { SS.addEventListener('voiceschanged', pickVoice); } catch (e) { SS.onvoiceschanged = pickVoice; } }
+function voiceInfo() {
+  const n = $('#voiceNote'); if (!n) return;
+  if (tts) n.textContent = 'Ses: Claude’un sesi.';
+  else if (!SS) n.textContent = 'Bu tarayıcıda ses çıkışı yok; Claude uygulaması yolunu kullan.';
+  else n.textContent = 'Ses: bu cihazın Almanca sesi' + (deVoice ? ' (' + deVoice.name + ')' : '') + '.' + (IOS ? ' Ses gelmezse iPhone’un sessiz modunu kapat ve sesi aç.' : '');
+}
+function voiceTrouble() {
+  if (voiceBad) return; voiceBad = true;
+  const m = 'Ses çıkmadı. iPhone’da sessiz mod kapalı ve ses açık olsun, sonra „Sesi dene“. Yine olmazsa Claude uygulaması yolunu kullan.';
+  $('#voiceNote').textContent = m; if (S) $('#dockNote').textContent = m;
+}
+function unlockSpeech() {
+  if (tts || !SS || ssUnlocked) return;
+  try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; u.lang = 'de-DE'; keepU.push(u); SS.speak(u); ssUnlocked = true; } catch (e) {}
+}
+function browserSpeak(text, rate) {
+  return new Promise(res => {
+    if (!SS || !text) return res(false);
+    const go = () => {
+      try {
+        const u = new SpeechSynthesisUtterance(text); u.lang = 'de-DE'; if (deVoice) u.voice = deVoice;
+        u.rate = Math.max(0.6, Math.min(1.4, rate)); u.volume = 1;
+        let started = false, done = false;
+        const fin = ok => { if (done) return; done = true; clearTimeout(t1); clearTimeout(t2); if (curU === u) curU = null; res(ok); };
+        const t1 = setTimeout(() => { if (!started) { voiceTrouble(); fin(false); } }, 6000);
+        const t2 = setTimeout(() => fin(true), 5000 + text.split(/\s+/).length * 650);
+        u.onstart = () => { started = true; if (voiceBad) { voiceBad = false; voiceInfo(); } };
+        u.onend = () => fin(true);
+        u.onerror = e => { if (!started && !(e && /interrupted|canceled/.test(e.error))) voiceTrouble(); fin(false); };
+        curU = u; keepU.push(u); if (keepU.length > 30) keepU.splice(0, 15);
+        SS.speak(u); try { if (SS.paused) SS.resume(); } catch (e) {}
+      } catch (e) { res(false); }
+    };
+    if (curU) { try { SS.cancel(); } catch (e) {} curU = null; setTimeout(go, 200); } else go();
+  });
+}
 function speak(text) {
   const rate = +$('#rate').value;
   if (tts) return tts.speak(String(text).slice(0, 2000), { rate, language: 'de' }).catch(() => {});
-  try { const u = new SpeechSynthesisUtterance(text); u.lang = 'de-DE'; u.rate = rate; const v = speechSynthesis.getVoices().find(v => /^de/i.test(v.lang)); if (v) u.voice = v; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
-  return Promise.resolve();
+  return browserSpeak(String(text || ''), rate);
 }
-function stopSpeak() { try { if (tts) tts.stop(); else speechSynthesis.cancel(); } catch (e) {} }
+function stopSpeak() { try { if (tts) tts.stop(); else if (SS && curU) { SS.cancel(); curU = null; } } catch (e) {} }
+$('#testVoice').addEventListener('click', () => { unlockSpeech(); voiceBad = false; voiceInfo(); speak('Hallo! Ich bin dein Sprechpartner. Kannst du mich gut hören?'); });
+
+/* ---------- voice in: platform dictation, browser speech recognition, or the phone keyboard's microphone ---------- */
+let rec = null, recOn = false, srBroken = false, srT = 0;
+function setMic(on) { const b = $('#mic'); b.classList.toggle('on', on); b.textContent = on ? 'Dur' : 'Sprechen'; }
+function kbMode(why) {
+  micMode = 'kb'; const k = $('#kbHint'); k.hidden = false;
+  if (why) k.querySelector('.why').textContent = why;
+  else k.querySelector('.why').textContent = 'Telefonun mikrofonuyla konuş:';
+  const t = $('#say'); try { t.focus(); t.setSelectionRange(t.value.length, t.value.length); } catch (e) {}
+  k.scrollIntoView({ block: 'nearest' });
+}
+function srFail() { srBroken = true; recOn = false; clearTimeout(srT); setMic(false); status(''); kbMode('Klavyenin mikrofonuyla konuş:'); }
+function recStart() {
+  let base = S.buf;
+  try {
+    rec = new SRC(); rec.lang = 'de-DE'; rec.interimResults = true; rec.continuous = !IOS; rec.maxAlternatives = 1;
+    rec.onstart = () => { clearTimeout(srT); recOn = true; S.micAt = Date.now(); setMic(true); status('Dinliyorum…'); };
+    rec.onresult = e => {
+      let fin = '', inter = '';
+      for (let i = 0; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript + ' '; else inter += r[0].transcript + ' '; }
+      S.buf = (base + ' ' + fin).replace(/\s+/g, ' ').trim();
+      $('#say').value = (base + ' ' + fin + inter).replace(/\s+/g, ' ').trim();
+    };
+    rec.onerror = e => { const er = e && e.error; if (er === 'not-allowed' || er === 'service-not-allowed' || er === 'audio-capture') srFail(); else if (er === 'no-speech') status('Ses duyulmadı, tekrar bas.'); };
+    rec.onend = () => {
+      const was = recOn; recOn = false; clearTimeout(srT); setMic(false);
+      if (S && S.micAt) { S.micSecs += (Date.now() - S.micAt) / 1000; S.micAt = 0; }
+      if (was && !srBroken) { status(''); autoSend(); }
+    };
+    srT = setTimeout(() => { if (!recOn) { try { rec.abort(); } catch (e) {} srFail(); } }, 3000);
+    rec.start();
+  } catch (e) { srFail(); }
+}
 
 /* ---------- prompts ---------- */
 function brief() {
@@ -232,16 +331,17 @@ function bubble(t, i) {
 }
 function renderLog() { $('#log').innerHTML = S.turns.map(bubble).join(''); const last = $('#log').lastElementChild; if (last) last.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 $('#log').addEventListener('click', e => {
-  const p = e.target.closest('[data-play]'); if (p) { speak(S.turns[+p.dataset.play].text); return; }
+  const p = e.target.closest('[data-play]'); if (p) { unlockSpeech(); speak(S.turns[+p.dataset.play].text); return; }
   const s = e.target.closest('[data-show]'); if (s) { S.turns[+s.dataset.show].hidden = false; renderLog(); }
 });
 function partnerSays(text, hidden) { S.turns.push({ role: 'p', text, hidden: !!hidden }); renderLog(); status(''); return speak(text); }
 function setBusy(b, msg) { busy = b; $('#send').disabled = b; $('#end').disabled = b; status(msg || ''); }
 
 $('#go').addEventListener('click', async () => {
-  stopSpeak();
+  unlockSpeech(); stopSpeak();
   S = { task: sel, mode, turns: [], buf: '', micSecs: 0, micAt: 0, t0: Date.now(), side: null, vortrag: '', asked: 0 };
   $('#setup').hidden = true; $('#result').hidden = true; $('#talk').hidden = false; $('#say').value = '';
+  $('#kbHint').hidden = micMode !== 'kb' || !TOUCH;
   $('#tTeil').textContent = sel.teil; $('#tTitle').textContent = sel.title; $('#sidePick').hidden = sel.kind !== 'discuss';
   $('#tCard').innerHTML = sel.kind === 'present' ? `<b>Präsentation, ca. 3–4 Minuten.</b> Gehe auf diese Punkte ein:<ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol>`
     : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Dein Partner hält einen kurzen Vortrag. Fasse ihn danach in eigenen Worten zusammen (ca. 1–1,5 Minuten) und beantworte seine Frage.'
@@ -262,23 +362,33 @@ $('#go').addEventListener('click', async () => {
   } catch (e) { setBusy(false); status(''); $('#dockNote').innerHTML = `<span class="err">${esc(e.message || 'Bir hata oldu, tekrar dene.')}</span>`; }
 });
 document.querySelectorAll('[data-side]').forEach(b => b.addEventListener('click', async () => {
-  if (!S || S.side) return; S.side = b.dataset.side; $('#sidePick').hidden = true;
+  if (!S || S.side) return; unlockSpeech(); S.side = b.dataset.side; $('#sidePick').hidden = true;
   try { setBusy(true, 'Partner düşünüyor…'); const v = await ask(messages('Eröffne die Diskussion: nenne deine Gegenposition mit einem ersten Argument und frage nach meiner Meinung.')); setBusy(false); await partnerSays(String(v.antwort || '')); }
   catch (e) { setBusy(false); $('#dockNote').innerHTML = `<span class="err">${esc(e.message || 'Bir hata oldu.')}</span>`; }
 }));
 $('#mic').addEventListener('click', () => {
-  if (!dict || !S) return;
-  if ($('#mic').classList.contains('on')) { dict.stop().catch(() => {}); return; }
-  stopSpeak(); S.buf = $('#say').value.trim();
-  dict.start().catch(e => { if (e && e.code === 'not_granted') { $('#mic').hidden = true; $('#dockNote').textContent = 'Mikrofon izni verilmedi; yazarak devam edebilirsin.'; } });
+  if (!S) return;
+  unlockSpeech();
+  if (micMode === 'dict') {
+    if ($('#mic').classList.contains('on')) { dict.stop().catch(() => {}); return; }
+    stopSpeak(); S.buf = $('#say').value.trim();
+    dict.start().catch(e => { if (e && e.code === 'not_granted') { micMode = SRC && !srBroken ? 'sr' : 'kb'; $('#dockNote').textContent = 'Mikrofon izni verilmedi.'; if (micMode === 'kb') kbMode(); } });
+    return;
+  }
+  if (micMode === 'sr') {
+    if (recOn) { try { rec.stop(); } catch (e) {} return; }
+    stopSpeak(); S.buf = $('#say').value.trim(); recStart(); return;
+  }
+  stopSpeak(); kbMode();
 });
-$('#send').addEventListener('click', () => send());
-$('#again').addEventListener('click', () => { if (!S) return; const p = [...S.turns].reverse().find(t => t.role === 'p'); if (p) speak(p.text); });
+$('#send').addEventListener('click', () => { unlockSpeech(); send(); });
+$('#again').addEventListener('click', () => { if (!S) return; unlockSpeech(); const p = [...S.turns].reverse().find(t => t.role === 'p'); if (p) speak(p.text); });
 $('#say').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send(); });
 
 async function send() {
   clearTimeout(autoT);
-  if (dict && $('#mic').classList.contains('on')) { try { await dict.stop(); } catch (e) {} clearTimeout(autoT); }
+  if (dict && micMode === 'dict' && $('#mic').classList.contains('on')) { try { await dict.stop(); } catch (e) {} clearTimeout(autoT); }
+  if (recOn) { try { rec.stop(); } catch (e) {} recOn = false; setMic(false); clearTimeout(autoT); }
   const text = $('#say').value.trim(); if (!text || busy || !S) return;
   if (S.task.kind === 'discuss' && !S.side) { status('Önce görüşünü seç.'); return; }
   stopSpeak(); $('#say').value = ''; S.buf = ''; $('#dockNote').textContent = '';
@@ -301,6 +411,25 @@ async function send() {
 }
 $('#end').addEventListener('click', () => finish());
 
+/* ---------- Claude app voice mode (phone) ---------- */
+function appPrompt() {
+  const t = sel, train = mode === 'train';
+  let role = '', start = '';
+  if (t.kind === 'present') { role = `Ich halte eine Präsentation (3 bis 4 Minuten) zum Thema „${t.title}“ mit diesen Punkten: ${t.points.join('; ')}. Unterbrich mich nicht, bis ich „fertig“ sage. Danach stellst du mir als Prüfungspartner eine Anschlussfrage, zum Beispiel „${t.follow}“, und nach meiner Antwort noch eine zweite.`; start = 'sag mir, dass ich beginnen kann.'; }
+  if (t.kind === 'summary') { role = `Halte zuerst einen kurzen Vortrag (etwa anderthalb Minuten) zum Thema „${t.title}“ mit klarer Gliederung und eigener Meinung. Ich fasse ihn danach zusammen, dann stellst du mir eine Anschlussfrage.`; start = 'beginne mit deinem Vortrag.'; }
+  if (t.kind === 'discuss') { role = `Wir diskutieren die These „${t.title}“ (Teil 2). Frag mich zuerst nach meiner Position und vertritt dann sachlich die Gegenposition: reagiere auf meine Argumente, bring Gegenargumente mit Beispielen, frag nach, und versuch am Ende, mit mir einen Kompromiss zu finden.`; start = 'frag mich nach meiner Position.'; }
+  if (t.kind === 'chat') { role = 'Wir führen ein lockeres Gespräch über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell mir interessierte Fragen.'; start = 'begrüß mich und stell mir die erste Frage.'; }
+  const corr = train ? 'Wenn ich Fehler mache, sag zuerst nur die korrigierte Fassung meines Satzes, ohne Erklärung, und antworte dann.' : 'Korrigiere mich während des Gesprächs nicht, wie in der echten Prüfung.';
+  return `Du bist mein Gesprächspartner für die mündliche Prüfung telc Deutsch C1 (${t.teil}). Wir sprechen nur Deutsch. ${role}\n\nRegeln: Sprich natürliches, eher schnelles Deutsch auf C1-Niveau. Antworte kurz, in 2 bis 4 Sätzen, und beende deine Beiträge meist mit einer Frage oder einem Gegenargument. ${corr}\n\nWenn ich „Bewertung, bitte“ sage, bewerte mich nach den telc-C1-Kriterien Aufgabenbewältigung, Interaktion und Flüssigkeit, Korrektheit sowie Wortschatz und Ausdruck (je 0 bis 5 Punkte), nenne die korrigierten Fassungen meiner fehlerhaften Sätze und vier passende Redemittel. Die Kommentare zur Bewertung bitte auf Türkisch.\n\nWenn du bereit bist, ${start}`;
+}
+$('#appCopy').addEventListener('click', async () => {
+  const txt = appPrompt(), ta = $('#appText'); ta.value = txt; ta.hidden = false;
+  let ok = false;
+  try { await navigator.clipboard.writeText(txt); ok = true; } catch (e) {}
+  if (!ok) { try { ta.focus(); ta.select(); ta.setSelectionRange(0, txt.length); ok = document.execCommand('copy'); } catch (e) {} }
+  $('#appNote').textContent = ok ? 'Kopyalandı. Şimdi Claude uygulamasında yapıştır.' : 'Otomatik kopyalanamadı: aşağıdaki metni basılı tut › Tümünü Seç › Kopyala.';
+});
+
 /* ---------- analysis ---------- */
 const CONN = ['weil', 'obwohl', 'deshalb', 'deswegen', 'außerdem', 'trotzdem', 'dennoch', 'einerseits', 'andererseits', 'zwar', 'jedoch', 'allerdings', 'dass', 'sodass', 'während', 'falls', 'zum Beispiel', 'meiner Meinung nach', 'im Gegensatz', 'darüber hinaus', 'zusammenfassend'];
 function metrics() {
@@ -313,7 +442,8 @@ function metrics() {
 }
 async function finish() {
   if (!S || busy) return;
-  try { if (dict && $('#mic').classList.contains('on')) await dict.stop(); } catch (e) {}
+  try { if (dict && micMode === 'dict' && $('#mic').classList.contains('on')) await dict.stop(); } catch (e) {}
+  if (recOn) { try { rec.stop(); } catch (e) {} recOn = false; setMic(false); }
   const m = metrics();
   if (!m.turns) { $('#dockNote').textContent = 'Değerlendirme için önce en az bir kez konuş.'; return; }
   stopSpeak(); clearInterval(clockT); clearTimeout(autoT);
