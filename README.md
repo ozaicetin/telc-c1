@@ -1,5 +1,5 @@
 # C1-Heft
 
-Kişisel telc Deutsch C1 çalışma sitesi: 40 günlük plan, deneme sınavları, 1-3-7-14 kelime tekrarı (DE · EN · TR).
+telc Deutsch C1 için 40 günlük kişisel çalışma sitesi: deneme sınavları (gerçek format ve puanlar), 1-3-7-14 kelime tekrarı, Almanca · İngilizce · Türkçe.
 
-Statik site (GitHub Pages). Kayıtlar tarayıcıda (localStorage) tutulur; cihazlar arası aktarma için Plan → Kayıtlarım.
+Site: https://ozaicetin.github.io/telc-c1/ · statik (GitHub Pages) · kayıtlar tarayıcıda; cihazlar arası aktarma için Harita → Kayıtlarım · çevrimdışı da çalışır.
