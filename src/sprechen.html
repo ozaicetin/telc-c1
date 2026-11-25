@@ -45,6 +45,7 @@ a{color:var(--blue)}
 .task{text-align:left;font:inherit;color:inherit;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;display:grid;gap:4px;box-shadow:2px 2px 0 var(--ink)}
 .task[aria-pressed=true]{background:var(--hl)}
 .task.today{border-width:3px}
+.tasks .lbl{font-weight:800;font-size:15px}
 .task .t{font-weight:700;line-height:1.25}.task .k{font-size:14px;opacity:.75}
 .seg{display:inline-flex;border:2px solid var(--ink);border-radius:12px;overflow:hidden;flex-wrap:wrap}
 .seg button{font:700 15px var(--f-ui);border:0;background:var(--card);color:var(--ink);padding:9px 13px;min-height:42px;cursor:pointer}
@@ -232,9 +233,16 @@ const GENERAL = [
   { id: 'd-reparatur', teil: 'Teil 2', kind: 'discuss', title: 'Hersteller sollten gesetzlich verpflichtet werden, Geräte reparierbar zu bauen.' },
   { id: 'd-viertage', teil: 'Teil 2', kind: 'discuss', title: 'Die Vier-Tage-Woche sollte gesetzlich eingeführt werden.' },
   { id: 'd-demokratie', teil: 'Teil 2', kind: 'discuss', title: 'Soziale Medien schaden der Demokratie mehr, als sie ihr nützen.' },
-  { id: 'frei', teil: 'Gespräch', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?' }
+  { id: 'frei', teil: 'Alltag', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?', tr: 'Rahat sohbet: günün, işin, boş zamanın, planların.' },
+  { id: 'r-arzt', teil: 'Alltag', kind: 'role', title: 'Beim Hausarzt: Beschwerden schildern', who: 'Frau Dr. Brandt, Hausärztin in Berlin', me: 'ein Patient, der seit einer Woche starke Rückenschmerzen hat und arbeiten muss', goal: 'Lass mich meine Beschwerden genau beschreiben, frag nach Details (seit wann, wo, wie stark, Auslöser), schlag eine Behandlung vor und kläre, ob ich eine Krankschreibung brauche.', tr: 'Sen hastasın: bir haftadır sırtın ağrıyor. Şikâyetini ayrıntılı anlat, soru sor, gerekirse rapor (Krankschreibung) iste.' },
+  { id: 'r-wohnung', teil: 'Alltag', kind: 'role', title: 'Wohnungsbesichtigung', who: 'Herr Lehmann, Vermieter einer Zweizimmerwohnung in Berlin-Lichtenberg', me: 'ein Interessent, der die Wohnung besichtigt', goal: 'Beantworte meine Fragen zu Miete, Nebenkosten, Kaution, Heizung und Einzugstermin, frag mich nach Beruf und Einkommensnachweis und bring eine kleine Komplikation ein (zum Beispiel viele andere Interessenten).', tr: 'Ev bakmaya geldin: kira, yan giderler, depozito, taşınma tarihi hakkında soru sor; kendini iyi tanıt.' },
+  { id: 'r-amt', teil: 'Alltag', kind: 'role', title: 'Im Bürgeramt: Wohnsitz ummelden', who: 'Frau Weber, Sachbearbeiterin im Bürgeramt', me: 'ein Bürger, der nach einem Umzug seinen Wohnsitz ummelden möchte', goal: 'Frag nach den Unterlagen. Es fehlt die Wohnungsgeberbestätigung; wir müssen gemeinsam eine Lösung finden. Bleib freundlich, aber bürokratisch genau.', tr: 'Taşındın, adresini değiştirmek istiyorsun. Bir belge eksik çıkıyor: nazikçe çözüm bul.' },
+  { id: 'r-reklamation', teil: 'Alltag', kind: 'role', title: 'Am Telefon: Reklamation beim Online-Shop', who: 'Herr Schulz vom Kundenservice eines Elektronik-Onlineshops', me: 'ein Kunde, dessen neue Kopfhörer nach zwei Wochen kaputt sind', goal: 'Nimm den Anruf an, frag nach Bestellnummer und Problem und biete zuerst nur eine Reparatur an. Ich soll höflich, aber bestimmt Ersatz oder Geld zurück verlangen.', tr: 'Telefonla şikâyet: iki haftalık kulaklığın bozuldu. Kibar ama kararlı ol, yenisini ya da paranı iste.' },
+  { id: 'r-pause', teil: 'Alltag', kind: 'role', title: 'Smalltalk mit einer Kollegin in der Pause', who: 'Sandra, eine freundliche Kollegin aus einem anderen Team', me: 'ihr Kollege in der Mittagspause', goal: 'Führ ein lockeres Gespräch über das Wochenende, Essen, Hobbys und Pläne, erzähl auch von dir und stell Rückfragen.', tr: 'Öğle arasında bir iş arkadaşınla rahat sohbet: hafta sonu, yemek, hobiler, planlar.' },
+  { id: 'r-chef', teil: 'Alltag', kind: 'role', title: 'Mit der Teamleitung: Urlaub und Schichttausch', who: 'Frau Krüger, Teamleiterin', me: 'ein Mitarbeiter, der im Dezember eine Woche Urlaub möchte und dafür eine Schicht tauschen will', goal: 'Sei zuerst skeptisch, weil im Dezember viel zu tun ist, und lass dich nur mit guten Argumenten und einem Kompromissvorschlag überzeugen.', tr: 'Yöneticinden Aralık’ta bir hafta izin istiyorsun. İlk önce olmaz der; iyi gerekçe ve uzlaşma önerisiyle ikna et.' },
+  { id: 'r-nachbar', teil: 'Alltag', kind: 'role', title: 'Konflikt mit dem Nachbarn: Lärm', who: 'Herr Neumann, der Nachbar von oben', me: 'ein Nachbar, der seit Wochen nachts durch laute Musik gestört wird', goal: 'Reagier zuerst etwas genervt und rechtfertige dich, lass dich dann auf eine höfliche Vereinbarung ein.', tr: 'Üst kattaki komşun geceleri gürültü yapıyor. Kibar ama net konuş, birlikte bir anlaşma bulun.' }
 ];
-const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Claude kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, Claude karşı görüşte', chat: 'Serbest sohbet, ısınma' };
+const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Claude kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, Claude karşı görüşte', chat: 'Serbest sohbet, ısınma', role: 'Gündelik hayat: rol oyunu' };
 const allTasks = () => (TODAY ? [TODAY] : []).concat(GENERAL);
 let sel = null;
 
@@ -256,8 +264,10 @@ async function loadToday() {
   sel = allTasks().find(t => t.id === wanted) || (wanted === 'today' && TODAY) || TODAY || GENERAL[0];
   renderTasks();
 }
+function taskBtn(t) { return `<button class="task${t === TODAY ? ' today' : ''}" type="button" data-id="${esc(t.id)}" aria-pressed="${t === sel}"><span><span class="chip">${esc(t.teil)}</span>${t.day ? ` <span class="hw" style="font-size:19px">Tag ${t.day} · bugün</span>` : ''}</span><span class="t" lang="de">${esc(t.title)}</span><span class="k">${esc(t.kind === 'role' && t.tr ? t.tr : KIND[t.kind])}</span></button>`; }
 function renderTasks() {
-  $('#tasks').innerHTML = allTasks().map(t => `<button class="task${t === TODAY ? ' today' : ''}" type="button" data-id="${esc(t.id)}" aria-pressed="${t === sel}"><span><span class="chip">${esc(t.teil)}</span>${t.day ? ` <span class="hw" style="font-size:19px">Tag ${t.day} · bugün</span>` : ''}</span><span class="t" lang="de">${esc(t.title)}</span><span class="k">${esc(KIND[t.kind])}</span></button>`).join('');
+  const all = allTasks(), exam = all.filter(t => t.teil !== 'Alltag'), life = all.filter(t => t.teil === 'Alltag');
+  $('#tasks').innerHTML = `<p class="lbl" style="grid-column:1/-1;margin:0">Sınav görevleri</p>${exam.map(taskBtn).join('')}<p class="lbl" style="grid-column:1/-1;margin:6px 0 0">Gündelik hayat</p>${life.map(taskBtn).join('')}`;
   $('#pickNote').textContent = sel ? sel.title : '';
 }
 $('#tasks').addEventListener('click', e => { const b = e.target.closest('.task'); if (!b) return; sel = allTasks().find(t => t.id === b.dataset.id); renderTasks(); });
@@ -533,6 +543,7 @@ function system() {
   if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1. Ich halte eine Präsentation zum Thema „${t.title}“ (Punkte: ${t.points.join('; ')}). Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage${t.follow ? ` (zum Beispiel: „${t.follow}“)` : ''}, nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und beendest das Gespräch.`;
   if (t.kind === 'summary') role = `Situation: telc Deutsch C1, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage; nach meiner Antwort reagierst du kurz, bedankst dich und beendest das Gespräch.`;
   if (t.kind === 'discuss') role = `Situation: telc Deutsch C1, Teil 2 (Diskussion). These: „${t.title}“ Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: Geh auf meine Argumente ein, bring neue Gegenargumente mit Beispielen und frag nach. Nach etwa acht Wortwechseln sucht ihr gemeinsam einen Kompromiss, dann beendest du das Gespräch.`;
+  if (t.kind === 'role') role = `Situation: Rollenspiel aus dem Alltag in Deutschland. Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle, sprich so natürlich wie im echten Leben (gern auch umgangssprachlich, wenn es passt), reagiere realistisch und stell Rückfragen. Nach etwa zehn Wortwechseln oder wenn das Anliegen geklärt ist, verabschiedest du dich passend und beendest das Gespräch.`;
   if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell interessierte Fragen und erzähl auch kurz etwas von dir.';
   const corr = S.mode === 'train'
     ? 'Training: Prüfe zuerst meine letzte Äußerung. Für jeden Satz mit einem echten Grammatik-, Wortstellungs- oder Wortfehler schreibst du eine Zeile „K: <korrigierte Fassung des ganzen Satzes>“, höchstens zwei Zeilen, ohne Erklärung. Meine Äußerungen kommen aus einer Spracherkennung: Ignoriere Zeichensetzung, Groß- und Kleinschreibung und offensichtliche Erkennungsfehler. Achte besonders auf: Verb am Ende in dass- und weil-Sätzen, Verb an Position 2, Verben mit Präpositionen (nachdenken über, sich verlassen auf, es kommt zu), Adjektivendungen.'
@@ -606,6 +617,7 @@ $('#go').addEventListener('click', async () => {
   $('#tCard').innerHTML = sel.kind === 'present' ? `<details open><summary>Präsentation, ca. 3–4 Minuten: Punkte</summary><ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol></details>`
     : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Claude hält einen kurzen Vortrag. Fass ihn danach in eigenen Worten zusammen (etwa 1–1,5 Minuten) und beantworte die Frage.'
     : sel.kind === 'discuss' ? `<b>These:</b> <span lang="de">„${esc(sel.title)}“</span><br>Wähl deine Position. Claude vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende einen Kompromiss.`
+    : sel.kind === 'role' ? `<b>Rollenspiel.</b> ${esc(sel.tr)}`
     : 'Unterhaltet euch locker. Antworte ausführlich und stell auch selbst Fragen.';
   clearInterval(clockT); clockT = setInterval(() => { if (S) $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000);
   try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
@@ -624,6 +636,7 @@ $('#go').addEventListener('click', async () => {
       await speakText(S.vortrag); if (ph === 'speak') phase('idle');
       note('Şimdi sunumu özetle.'); if (ph === 'idle' && set.hands && S) startListening();
     } else if (sel.kind === 'chat') partnerTurn('Begrüß mich kurz und stell mir eine erste Frage.');
+    else if (sel.kind === 'role') partnerTurn('Beginne das Gespräch in deiner Rolle mit einem passenden, natürlichen ersten Satz.');
     else note('Önce görüşünü seç.');
   } catch (e) { phase('idle'); note(e.message || 'Bir hata oldu.', true); }
 });
