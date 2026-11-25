@@ -8,7 +8,7 @@ Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github
 
 ## Yapı
 - `src/` → `index.html` kaynağı: `head.html`, `fonts.css`, `base.css`, `theme.css` (C1-Heft tasarımı), `app.js`. `python3 tools/build.py` ile `index.html` üretilir. `index.html`'i elle düzenleme.
-- `data/manifest.js` (günler, kelimeler, `current`), `data/plan.js` (8 haftalık plan), `data/dayN.js` (gün içeriği), `data/seed.js` (Tag 1–3 kelime tekrar verisi).
+- `data/manifest.js` (günler, kelimeler, `current`), `data/plan.js` (Haziran 2027 planı: 18 etap × 5 gün, `phases`, `milestones`, `examDate`; `weeks[w]` = etap, gün satırında `boss`/`big`/`bil`; değiştirirsen manifestte `planV`'yi artır), `data/dayN.js` (gün içeriği), `data/seed.js` (Tag 1–3 kelime tekrar verisi).
 - `sw.js` çevrimdışı çalışma (önce ağ, yoksa kayıtlı kopya). `fonts/`, `icons/`, `manifest.webmanifest`.
 - `tools/daykit.py`: gün yazma yardımcıları (`W`, `mc`, `gap`, `rfx`, `note`) ve `save_day()` (doğrular, `data/dayN.js` yazar, manifesti günceller, `current` yapar, sürümü artırır).
 
@@ -20,7 +20,7 @@ Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github
 5. Projedeki günlüğü güncelle (gün satırı, hatalar, öğretilen kelimeler, değişiklik geçmişi).
 
 ## Kurallar (öğrencinin)
-Günde en çok 90 dk, Pzt–Cum. Yalnızca telc C1 (sektör/lojistik yok, arada konu olarak geçebilir). Günde 20 genel sınav kelimesi, bilinmeyenler 1-3-7-14. Her şey DE, yanında EN, altında açılır TR. Sınav bölümleri gerçek formatta ve sınav modunda (`mock: {label, pts}`: geri sayan süre, „Abgeben“, gerçek puanlar). Önceki günlerin kritik hataları yeni metinlerin içinde tekrar sorulur. Sohbette cevaplar Türkçe ve kısa; Almanca cümle düzeltirken yalnızca doğru cümle.
+Günde en çok 90 dk, haftada 3–4 gün (günler esnek). Hedef sınav Haziran 2027 (19.06.2027). Etap ritmi: 1. gün Lesen + Sprachbausteine, 2. Hören, 3. Schreiben, 4. Sprechen, 5. Boss; Etap 6/10/14/17 büyük deneme (dört gün tam sınav + Bilanz). Gün dosyasında `week` = etap numarası. Yalnızca telc C1 (sektör/lojistik yok, arada konu olarak geçebilir). Günde 20 genel sınav kelimesi, bilinmeyenler 1-3-7-14. Her şey DE, yanında EN, altında açılır TR. Sınav bölümleri gerçek formatta ve sınav modunda (`mock: {label, pts}`: geri sayan süre, „Abgeben“, gerçek puanlar). Önceki günlerin kritik hataları yeni metinlerin içinde tekrar sorulur. Sohbette cevaplar Türkçe ve kısa; Almanca cümle düzeltirken yalnızca doğru cümle.
 
 ## Sprechpartner (canlı konuşma partneri)
 - **Asıl yol (25.11.2026'dan): sitedeki sayfa** https://ozaicetin.github.io/telc-c1/sprechen/ — kaynak `src/sprechen.html`, `python3 tools/build.py` onu `sprechen/index.html` olarak yazar (fontlar `../fonts/`). iPhone Safari'de gerçek mikrofon ve doğal ses.
