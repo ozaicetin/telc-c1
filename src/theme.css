@@ -340,3 +340,10 @@ tr.today td{background:var(--hl-soft)}
 .waitnext{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:var(--pink-soft);border:2px solid var(--ink);border-radius:14px;padding:12px 16px;box-shadow:var(--hard-sm)}
 .waitnext b{font:800 18px var(--f-ui)} .waitnext span{flex:1 1 320px;font-size:15.5px}
 .waitnext.ok{background:var(--mint-soft)}
+
+/* Sprechpartner link in the speaking step */
+.partner-cta{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--mint-soft);border:2px solid var(--ink);border-radius:12px;padding:12px 14px;box-shadow:var(--hard-sm);margin:4px 0 14px;transform:rotate(-.4deg)}
+.partner-cta>div{flex:1 1 260px}
+.partner-cta b{font:800 19px/1.1 var(--f-ui)}
+.partner-cta p{margin:4px 0 0;font-size:15px}
+.partner-cta .btn{text-decoration:none;white-space:nowrap}

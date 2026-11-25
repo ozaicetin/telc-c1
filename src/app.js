@@ -582,11 +582,14 @@ function writeBody(sec) {
     <div class="wc"><span id="wc" class="${n >= sec.minWords && n <= sec.maxWords ? 'okc' : ''}">${n} Wörter</span><span>Ziel: ${sec.minWords}–${sec.maxWords}</span></div>
     <fieldset class="checks"><legend>Selbstkontrolle</legend>${checks}</fieldset>${model}</div>`;
 }
+const PARTNER_URL = 'https://claude.ai/artifact/Kxxn5QzTgQfJ53gdCzhF7z';
 function speakBody(sec) {
   const s = D().speak, ck = s.checks || {};
   const checks = sec.checks.map((c, i) => `<label class="chk"><input type="checkbox" class="schk" data-i="${i}" ${ck[i] ? 'checked' : ''}><span><span lang="de">${esc(c)}</span>${ui.en && sec.checksEn ? `<span class="enl" lang="en">${esc(sec.checksEn[i])}</span>` : ''}</span></label>`).join('');
   const struct = sec.structure.map(x => `<li lang="de">${esc(x.de)}<span>${esc(x.tr)}</span>${ui.en && x.en ? `<span class="enl" lang="en">${esc(x.en)}</span>` : ''}</li>`).join('');
-  return `<div class="surface"><h3>Thema: <span lang="de">${esc(sec.topic)}</span></h3>${ui.en && sec.topicEn ? `<span class="enl" lang="en" style="margin-top:-8px">${esc(sec.topicEn)}</span>` : ''}<ol class="struct">${struct}</ol>
+  const pHash = sec.partner || ('d' + curDay().no + '-1a');
+  const partner = `<div class="partner-cta"><div><b>Sprechpartner</b><p>Sunumunu Claude’a sesli anlat: her cümlende doğru hâlini görürsün, sonra ek soru sorar ve sonunda telc ölçütleriyle not verir. Bilgisayarda Chrome ya da Claude uygulamasında tam çalışır.</p></div><a class="btn primary" href="${PARTNER_URL}#${encodeURIComponent(pHash)}" target="_blank" rel="noopener">Partnerle konuş</a></div>`;
+  return `<div class="surface"><h3>Thema: <span lang="de">${esc(sec.topic)}</span></h3>${ui.en && sec.topicEn ? `<span class="enl" lang="en" style="margin-top:-8px">${esc(sec.topicEn)}</span>` : ''}${partner}<ol class="struct">${struct}</ol>
     <div class="${ui.en ? 'en-vis' : ''}">${helpersHTML(sec.helpers, 'Redemittel für den Vortrag')}</div>
     <div class="timer"><span class="tm" id="tm">${fmt(tSec)}</span><button class="btn primary" type="button" data-act="tstart">Başlat</button><button class="btn" type="button" data-act="tstop">Durdur</button><button class="btn ghost" type="button" data-act="treset">Sıfırla</button><span class="hint">Hedef: ${fmt(sec.target)}</span></div>
     <fieldset class="checks"><legend>Selbstkontrolle</legend>${checks}</fieldset>
