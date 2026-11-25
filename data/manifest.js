@@ -1,6 +1,6 @@
 window.MANIFEST = {
  "current": "day5",
- "planV": "s3",
+ "planV": "s4",
  "updated": "2026-11-25",
  "days": [
   {
@@ -1007,11 +1007,11 @@ window.MANIFEST = {
    "no": 5,
    "week": 1,
    "date": "26.11.2026",
-   "title": "Lesen 2 + 3 und Hören 1: Wohnen und Stadtleben",
-   "short": "Lesen 2 + 3 · Hören 1",
-   "focus": "Leseverstehen 2 · Leseverstehen 3 · Hörverstehen 1 · Sprechen 1A",
+   "title": "Leseverstehen 2 + 3 im Originalformat: Wohnen und Stadtleben",
+   "short": "Lesen 2 + 3 · Originalformat",
+   "focus": "Leseverstehen 2 · Leseverstehen 3 · Fehler-Comeback · Lesen 1 Training",
    "file": "data/day5.js",
-   "v": "1",
+   "v": "2",
    "words": [
     {
      "dom": "G",

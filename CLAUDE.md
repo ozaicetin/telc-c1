@@ -22,6 +22,19 @@ Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github
 ## Kurallar (öğrencinin)
 Günde en çok 90 dk, haftada 3–4 gün (günler esnek). Hedef sınav Haziran 2027 (19.06.2027). Etap ritmi: 1. gün Lesen + Sprachbausteine, 2. Hören, 3. Schreiben, 4. Sprechen, 5. Boss; Etap 6/10/14/17 büyük deneme (dört gün tam sınav + Bilanz). Gün dosyasında `week` = etap numarası. Yalnızca telc C1 (sektör/lojistik yok, arada konu olarak geçebilir). Günde 20 genel sınav kelimesi, bilinmeyenler 1-3-7-14. Her şey DE, yanında EN, altında açılır TR. Sınav bölümleri gerçek formatta ve sınav modunda (`mock: {label, pts}`: geri sayan süre, „Abgeben“, gerçek puanlar). Önceki günlerin kritik hataları yeni metinlerin içinde tekrar sorulur. Sohbette cevaplar Türkçe ve kısa; Almanca cümle düzeltirken yalnızca doğru cümle.
 
+## Gerçek sınav ölçüleri (26.11.2026'dan zorunlu)
+Kaynak: resmî telc Deutsch C1 Übungstest 1 (telc.net, ücretsiz: https://www.telc.net/fileadmin/user_upload/mock_exams/Deutsch/telc_deutsch_c1.zip). Öğrenci: „hepsini telc C1 formatına ve sınav sorularına paralel yaz“. Her sınav bölümü bu ölçülerde yazılır; kısaltma yok. Resmî metinleri siteye kopyalama (telif); ölçüleri ve soru tarzını taklit et, metinleri kendin yaz.
+- **Lesen 1** (12 P): dergi makalesi ~480–500 kelime, 6 boşluk + örnek, 8 cümle a–h (2 çeldirici); cümleler gösterme sözcükleri, bağlaçlar ve içerik tekrarıyla bağlanır.
+- **Lesen 2** (12 P): tek metin (çoğu zaman kişisel deneyim yazısı), 5 bölüm a–e, ~800–850 kelime (bölüm başına 70–230). 6 soru „In welchem Abschnitt …“; çoğu yazarın tutumunu/niyetini sorar (polemisch, belehrend, selbstironisch, beschönigen …). Her bölüm en az bir kez cevap, biri iki kez.
+- **Lesen 3** (24 P): bilgi/dergi metni ~1.100–1.200 kelime, ~13 paragraf; 11 ifade metin sırasıyla, dağılım 4 richtig / 4 falsch / 3 nicht im Text; tuzaklar: kişi, kaynak, neden-sonuç, „nur dann, wenn“, mantıklı ama yazılmamış. 24. görev: 3 seçenekli başlık.
+- **Sprachbausteine** (22 P): popüler bilim metni ~450–500 kelime, 22 boşluk, 4 şık; kelime, bağlaç, sıfat eki, edat, fiil biçimi, Konjunktiv.
+- Lesen + SB toplam 90 dk; önerilen pay: L1 15, L2 18–20, L3 28–30, SB 22–25.
+- **Hören** (~40 dk, her ses bir kez): T1 8 kişi × 100–170 kelime, 10 ifade a–j (2 fazla), 1 dk okuma · T2 radyo röportajı (2 kişi, konuşma dili), 10 yarım cümle + 3 bitiş, 3 dk okuma · T3 sunum ~1.000 kelime, slayt notlarında 10 boşluk (kısa kelime grupları), 1 dk okuma + 5 dk aktarma.
+- **Schreiben** (48 P, 70 dk): iki konudan biri (Leserbrief, Stellungnahme …), durum + iki alıntı; görüş, argümanlar, artı/eksi, gerekçeli sonuç; ~350 kelime. Ölçütler: Aufgabengerechtheit, Korrektheit, Repertoire, Kommunikative Gestaltung (her biri A/B/C/D = 12/8/4/0).
+- **Mündlich** (48 P): 20 dk hazırlık; 1A iki konudan biri (3–4 dk); 1B partnerin sunumunu özetle + en az bir Anschlussfrage (2–3 dk); 2 üç alıntıdan biri üzerine tartışma (~6 dk). İçerik 16 (1A 6, 1B 4, 2 6) + dil 32 (Flüssigkeit, Repertoire, Grammatik, Aussprache × 8).
+- 90 dk'lık bir günde gerçek boyutta ancak ~45–60 dk sınav bölümü sığar: ısınma (kartlar, tekrar, Comeback) ~30 dk. Bir bölümü kısaltmak yerine bölümü başka güne taşı.
+- Açık iş: sınav modunda `listen` bloğunu bir kez çalınır yap (Hören günü Tag 7'den önce).
+
 ## Sprechpartner (canlı konuşma partneri)
 - **Asıl yol (25.11.2026'dan): sitedeki sayfa** https://ozaicetin.github.io/telc-c1/sprechen/ — kaynak `src/sprechen.html`, `python3 tools/build.py` onu `sprechen/index.html` olarak yazar (fontlar `../fonts/`). iPhone Safari'de gerçek mikrofon ve doğal ses.
   - Beyin: Claude API (`claude-haiku-5-5` konuşma, `claude-sonnet-5-5` değerlendirme; tarayıcıdan `anthropic-dangerous-direct-browser-access`). Ses: OpenAI `gpt-4o-mini-tts` (sesler marin/cedar/coral/ash), tanıma: `gpt-4o-mini-transcribe` (MediaRecorder + sessizlikte otomatik durma) ya da cihazın Web Speech tanıması (ücretsiz seçenek).
