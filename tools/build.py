@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build index.html from src/.
 
-  python3 tools/build.py              writes ./index.html (the live site file)
+  python3 tools/build.py              writes ./index.html and ./sprechen/index.html (live site files)
   python3 tools/build.py --test DIR   copies the whole site to DIR with a test hook
                                       (window.__t = {srsBuild, srsQueue, state, ui, render})
 """
@@ -20,14 +20,27 @@ def build(test=False):
     return (rd('head.html') + '<style>' + css + '</style>\n</head>\n<body>\n<noscript>Bu site JavaScript gerektirir.</noscript>\n<div id="app"></div>\n'
             '<script>window.DAYS = window.DAYS || {};</script>\n<script src="data/seed.js?v=1"></script>\n<script>\n' + app + '\n</script>\n</body>\n</html>\n')
 
+def build_sprechen():
+    rd = lambda n: open(os.path.join(SRC, n), encoding='utf-8').read()
+    fonts = rd('fonts.css').replace('url(fonts/', 'url(../fonts/')
+    page = rd('sprechen.html')
+    assert page.count('/*FONTS*/') == 1
+    return page.replace('/*FONTS*/', fonts)
+
+def write_sprechen(root):
+    os.makedirs(os.path.join(root, 'sprechen'), exist_ok=True)
+    open(os.path.join(root, 'sprechen', 'index.html'), 'w', encoding='utf-8').write(build_sprechen())
+
 if __name__ == '__main__':
     if len(sys.argv) > 2 and sys.argv[1] == '--test':
         out = sys.argv[2]
         if os.path.isdir(out): shutil.rmtree(out)
         shutil.copytree(ROOT, out, ignore=shutil.ignore_patterns('.git', 'src', 'tools', '*.md'))
         open(os.path.join(out, 'index.html'), 'w', encoding='utf-8').write(build(True))
+        write_sprechen(out)
         print('test site in', out)
     else:
         html = build()
         open(os.path.join(ROOT, 'index.html'), 'w', encoding='utf-8').write(html)
-        print('index.html', len(html), 'bytes')
+        write_sprechen(ROOT)
+        print('index.html', len(html), 'bytes; sprechen/index.html written')

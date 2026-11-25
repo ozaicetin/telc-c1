@@ -582,13 +582,12 @@ function writeBody(sec) {
     <div class="wc"><span id="wc" class="${n >= sec.minWords && n <= sec.maxWords ? 'okc' : ''}">${n} Wörter</span><span>Ziel: ${sec.minWords}–${sec.maxWords}</span></div>
     <fieldset class="checks"><legend>Selbstkontrolle</legend>${checks}</fieldset>${model}</div>`;
 }
-const PARTNER_URL = 'https://claude.ai/artifact/Kxxn5QzTgQfJ53gdCzhF7z';
 function speakBody(sec) {
   const s = D().speak, ck = s.checks || {};
   const checks = sec.checks.map((c, i) => `<label class="chk"><input type="checkbox" class="schk" data-i="${i}" ${ck[i] ? 'checked' : ''}><span><span lang="de">${esc(c)}</span>${ui.en && sec.checksEn ? `<span class="enl" lang="en">${esc(sec.checksEn[i])}</span>` : ''}</span></label>`).join('');
   const struct = sec.structure.map(x => `<li lang="de">${esc(x.de)}<span>${esc(x.tr)}</span>${ui.en && x.en ? `<span class="enl" lang="en">${esc(x.en)}</span>` : ''}</li>`).join('');
-  const pHash = sec.partner || ('d' + curDay().no + '-1a');
-  const partner = `<div class="partner-cta"><div><b>Sprechpartner</b><p>Sunumunu Claude’a sesli anlat: önce doğru cümleyi duyarsın, sonra ek soru sorar, sonunda telc ölçütleriyle not verir. Bilgisayarda bu düğmeyle. <b>iPhone’da:</b> Claude uygulamasında Projeyi aç, sesli modu başlat ve „Sprechpartner, Präsentation“ de.</p></div><a class="btn primary" href="${PARTNER_URL}#${encodeURIComponent(pHash)}" target="_blank" rel="noopener">Partnerle konuş</a></div>`;
+  const done = (D().partner || []).filter(x => x.id === curDay().id + '-1a');
+  const partner = `<div class="partner-cta"><div><b>Sprechpartner</b><p>Sunumunu Claude’a mikrofonla anlat: Claude doğal sesle cevap verir, önce cümlenin doğru hâlini söyler, ek soru sorar ve sonunda telc ölçütleriyle not verir. Telefonda ve bilgisayarda çalışır.${done.length ? ` <b>Son sonucun: ${done[done.length - 1].pct}% · Not ${done[done.length - 1].grade}</b>` : ''}</p></div><a class="btn primary" href="sprechen/#today">Claude’la konuş</a></div>`;
   return `<div class="surface"><h3>Thema: <span lang="de">${esc(sec.topic)}</span></h3>${ui.en && sec.topicEn ? `<span class="enl" lang="en" style="margin-top:-8px">${esc(sec.topicEn)}</span>` : ''}${partner}<ol class="struct">${struct}</ol>
     <div class="${ui.en ? 'en-vis' : ''}">${helpersHTML(sec.helpers, 'Redemittel für den Vortrag')}</div>
     <div class="timer"><span class="tm" id="tm">${fmt(tSec)}</span><button class="btn primary" type="button" data-act="tstart">Başlat</button><button class="btn" type="button" data-act="tstop">Durdur</button><button class="btn ghost" type="button" data-act="treset">Sıfırla</button><span class="hint">Hedef: ${fmt(sec.target)}</span></div>
@@ -709,6 +708,7 @@ function startHTML(day) {
         ${note ? `<div class="rednote"><span class="rn-h">Hocanın notu</span><p class="hw">${esc(note)}</p></div>` : ''}
         <div class="lvl"><div class="lvl-top"><span class="lv">Level ${xi.lvl}</span><span class="rk" lang="de">${esc(xi.rank)}</span></div><div class="pencil" role="img" aria-label="Level ilerlemesi yüzde ${xi.pct}"><i style="width:${xi.pct}%"></i></div><p class="lvl-sub"><b>${xi.xp} XP</b> · Level ${xi.lvl + 1} için ${xi.need} XP daha</p></div>
         <div class="chain"><div class="ch-top"><span>Zincir</span><b class="hw">${ch.streak ? ch.streak + ' gün üst üste' : 'Bugün başlat'}</b></div><div class="ch-row">${chain}</div><p class="hint">Hafta içi her çalıştığın güne bir çarpı. Zinciri koparma.</p></div>
+        <a class="sp-home" href="sprechen/"><b>Sprechpartner</b><span>Claude’la sesli Almanca konuş: günün sunumu, tartışma, serbest sohbet</span></a>
         <div class="minis"><div class="mini m1"><b>${daysLeft}</b><span>gün kaldı<br>sınav durağına</span></div><div class="mini m2"><b>${srs.active}</b><span>kelime<br>tekrarda</span></div><div class="mini m3"><b>${allWords}</b><span>kelime<br>albümde</span></div></div>
       </aside>
     </div>
@@ -768,6 +768,7 @@ function reportText(day) {
   if (sm.wrong.length) { lines.push('Yanlışlar:'); sm.wrong.forEach(w => lines.push('- [' + w.exam + ' · ' + w.id + '] ' + String(w.q).replace(/\s+/g, ' ').slice(0, 140) + ' → seçtiğin: ' + (w.chosen == null ? 'boş' : w.chosen) + ' · doğru: ' + w.correct)); }
   if ((d.write.text || '').trim()) lines.push('Schreiben (' + wordCount(d.write.text) + ' kelime):\n' + d.write.text.trim());
   if (d.speak && (d.speak.notes || d.speak.rating || d.speak.secs)) lines.push('Sprechen: ' + (d.speak.secs ? fmt(d.speak.secs) + ' · ' : '') + (d.speak.rating ? 'akıcılık ' + d.speak.rating + '/5 · ' : '') + (d.speak.notes || ''));
+  (d.partner || []).forEach(x => lines.push('Sprechpartner: ' + x.teil + ' · ' + x.task + ' · ' + (x.mode === 'exam' ? 'Prüfung' : 'Training') + ' · ' + x.pct + '% (Not ' + x.grade + ') · ' + x.words + ' kelime' + (x.wpm ? ', ' + x.wpm + ' kelime/dk' : '') + (x.korrekturen && x.korrekturen.length ? '\n  Doğru hâlleri: ' + x.korrekturen.join(' | ') : '')));
   if (d.notes) lines.push('Öğretmene not: ' + d.notes);
   return lines.join('\n');
 }
@@ -790,6 +791,7 @@ function reportHTML(day) {
   const wsec = day.sections.find(s => s.kind === 'write'), w = d.write;
   const writeInfo = wsec ? `<p>Schreiben: ${w.submitted ? 'tamamlandı' : 'henüz bitirilmedi'}${(w.text || '').trim() ? ' · ' + wordCount(w.text) + ' Wörter (hedef ' + wsec.minWords + '–' + wsec.maxWords + ')' : ''} · Selbstkontrolle ${Object.values(w.checks || {}).filter(Boolean).length}/${wsec.checks.length}</p>` : '';
   const sp = d.speak, ssec = day.sections.find(s => s.kind === 'speak'); const spInfo = ssec ? `<p>Sprechen: ${sp.done ? 'tamamlandı' : 'henüz bitirilmedi'}${sp.rating ? ' · akıcılık puanın ' + sp.rating + '/5' : ''}${sp.secs ? ' · süre ' + fmt(sp.secs) : ''}</p>` : '';
+  const pInfo = (d.partner || []).length ? `<p>Sprechpartner: ${d.partner.map(x => esc(x.teil + ' ' + x.pct + '% (Not ' + x.grade + ')')).join(' · ')}</p>` : '';
   const timeRows = day.sections.map(s => `<div class="sk"><span class="nm">${esc(s.title)}</span><div class="bar${(d.time[s.id] || 0) / 60 > s.min * 1.4 ? ' low' : ''}"><i style="width:${Math.min(100, Math.round(100 * (d.time[s.id] || 0) / 60 / s.min))}%"></i></div><span class="nr">${fmtMin(d.time[s.id] || 0)} / ${s.min} dk</span></div>`).join('');
   const grade = !n ? null : p >= 92 ? 1 : p >= 81 ? 2 : p >= 67 ? 3 : p >= 50 ? 4 : p >= 30 ? 5 : 6;
   const mk = Object.values(sm.mock || {}).filter(m => m.pts !== null && m.pts !== undefined), mkMax = mk.reduce((a, m) => a + m.max, 0), mkPts = mk.reduce((a, m) => a + m.pts, 0), mkP = mkMax ? Math.round(100 * mkPts / mkMax) : null;
@@ -799,7 +801,7 @@ function reportHTML(day) {
       ${mkP !== null ? `<div class="stamp ${mkP >= 60 ? 'ok' : 'no'}" aria-label="Deneme sonucu">${mkP >= 60 ? 'Bestanden' : 'Noch nicht'}</div>` : ''}</div>
       <p class="hw verdict">${esc(verdict)}</p>${open.length ? `<p class="hint">Henüz tamamlanmayan adımlar: ${open.join(', ')}.</p>` : ''}</div>
     ${mockCard(sm)}${sm.byDom.S[1] ? `<div class="card"><h2>Sektör ve genel C1</h2>${domRows}</div>` : ''}
-    <div class="card"><h2>Sınav bölümlerine göre</h2>${examRows || '<div class="empty">Henüz puanlı bölüm yok.</div>'}${writeInfo}${spInfo}</div>
+    <div class="card"><h2>Sınav bölümlerine göre</h2>${examRows || '<div class="empty">Henüz puanlı bölüm yok.</div>'}${writeInfo}${spInfo}${pInfo}</div>
     <div class="card"><h2>Neleri çalışmalısın</h2>${weak}</div>
     ${sm.wrong.length ? `<div class="card"><h2>Yanlışların (${sm.wrong.length})</h2>${wrongList}</div>` : ''}
     ${sm.rev && sm.rev.due ? `<div class="card"><h2>Kelime tekrarı (1-3-7-14)</h2><div class="sk"><span class="nm">Bildiklerin</span><div class="bar${barClass(Math.round(100 * sm.rev.know / sm.rev.due))}"><i style="width:${Math.round(100 * sm.rev.know / sm.rev.due)}%"></i></div><span class="nr">${sm.rev.know}/${sm.rev.due}</span></div>${sm.rev.again.length ? `<p>Yarın yeniden gelecek: <span lang="de">${esc(sm.rev.again.join(', '))}</span></p>` : ''}</div>` : ''}
@@ -1193,6 +1195,21 @@ document.addEventListener('keydown', e => {
   }
 });
 
+function mergePartner(raw) {
+  try {
+    const p = JSON.parse(raw || 'null'); if (!p || !p.days) return false; let ch = false;
+    Object.entries(p.days).forEach(([id, v]) => {
+      if (!v || !v.partner) return; const d = state.days[id] || (state.days[id] = {});
+      if (JSON.stringify(d.partner || []) !== JSON.stringify(v.partner)) { d.partner = v.partner; ch = true; }
+      if (v.speak && v.speak.done && !(d.speak && d.speak.done)) { d.speak = Object.assign({}, d.speak || {}, v.speak); ch = true; }
+    });
+    state.log = state.log || {};
+    Object.entries(p.log || {}).forEach(([k, v]) => { if ((+v || 0) > (state.log[k] || 0)) { state.log[k] = +v; ch = true; } });
+    return ch;
+  } catch (e) { return false; }
+}
+window.addEventListener('storage', e => { if (e.key === KEY && mergePartner(e.newValue)) { try { render({ still: true }); } catch (x) {} } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { let raw = null; try { raw = localStorage.getItem(KEY); } catch (e) {} if (mergePartner(raw)) { saveLocal(); try { render({ still: true }); } catch (x) {} } } });
 /* ---------- start ---------- */
 loadLocal();
 if (window.SEED && !state.seeded) { Object.entries(window.SEED.days || {}).forEach(([id, v]) => { if (!state.days[id]) state.days[id] = JSON.parse(JSON.stringify(v)); }); state.seeded = true; saveLocal(); }

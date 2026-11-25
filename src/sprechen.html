@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbfbf6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="C1 Sprechen">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<link rel="icon" href="../icons/icon-192.png">
+<title>C1-Heft · Sprechpartner</title>
+<style>
+/*FONTS*/
+/* Speaking partner for the C1-Heft site. Same exercise-book language as the main site:
+   squared paper, ink outlines, highlighter yellow, red-pen corrections, sticker buttons.
+   The one loud element is the round microphone sticker; everything else stays quiet. */
+:root{--bg:#fbfbf6;--ink:#1d1f2c;--ink2:#575a6b;--grid:#dde5ee;--hl:#ffe14d;--hl2:#fff4b0;--pink:#ff8fc2;--mint:#8bea9e;--mint2:#dcf8e2;--red:#d93a2f;--blue:#2148c0;--card:#fff;
+  --f-ui:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;--f-hand:Caveat,"Bradley Hand",cursive;--f-text:Literata,Georgia,serif;color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;color:var(--ink);font:400 17px/1.55 var(--f-ui);background:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:26px 26px;overflow-x:clip}
+.wrap{max-width:780px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px 40px}
+p{margin:0}
+h1{font:800 clamp(30px,6.5vw,46px)/1.05 var(--f-ui);letter-spacing:-.02em;margin:6px 0 6px;text-wrap:balance}
+h2{font:800 22px/1.15 var(--f-ui);margin:0}
+a{color:var(--blue)}
+.hw{font-family:var(--f-hand);font-weight:700}
+.mark{background:linear-gradient(transparent 55%,var(--hl) 55%,var(--hl) 90%,transparent 90%);box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:baseline;gap:5px;background:var(--card);border:2px solid var(--ink);border-radius:8px;padding:3px 12px 5px;box-shadow:3px 3px 0 var(--ink);transform:rotate(-2deg);text-decoration:none;color:var(--ink)}
+.logo b{font-size:22px;font-weight:800}.logo span{font:700 25px var(--f-hand);color:var(--red)}
+.stage{display:grid;gap:14px;margin-top:14px}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:14px;box-shadow:4px 4px 0 var(--ink);padding:16px 18px;display:grid;gap:12px}
+.card.soft{background:var(--hl2)}
+.note{font-size:14.5px;color:var(--ink2)}
+.btn{font:700 16px var(--f-ui);color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:10px 16px;min-height:44px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
+.btn.pri{background:var(--hl);font-weight:800}
+.btn.small{font-size:14px;min-height:36px;padding:6px 12px;box-shadow:2px 2px 0 var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.chip{display:inline-block;font:800 12.5px/1 var(--f-ui);background:var(--ink);color:var(--hl);border-radius:6px;padding:4px 7px}
+.tasks{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.task{text-align:left;font:inherit;color:inherit;background:var(--card);border:2px solid var(--ink);border-radius:12px;padding:10px 12px;cursor:pointer;display:grid;gap:4px;box-shadow:2px 2px 0 var(--ink)}
+.task[aria-pressed=true]{background:var(--hl)}
+.task.today{border-width:3px}
+.task .t{font-weight:700;line-height:1.25}.task .k{font-size:14px;opacity:.75}
+.seg{display:inline-flex;border:2px solid var(--ink);border-radius:12px;overflow:hidden;flex-wrap:wrap}
+.seg button{font:700 15px var(--f-ui);border:0;background:var(--card);color:var(--ink);padding:9px 13px;min-height:42px;cursor:pointer}
+.seg button+button{border-left:2px solid var(--ink)}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--hl)}
+.set{display:grid;gap:12px}
+.set .lbl{font-weight:700;font-size:15px;margin-bottom:4px}
+input[type=range]{accent-color:#1d1f2c;width:min(240px,100%)}
+input[type=password],input[type=text],select,textarea{font:400 16px var(--f-ui);color:var(--ink);background:var(--bg);border:2px solid var(--ink);border-radius:10px;padding:9px 11px;width:100%}
+select{width:auto}
+label.check{display:flex;gap:8px;align-items:flex-start;font-size:15px}
+label.check input{width:20px;height:20px;margin-top:2px;accent-color:#1d1f2c}
+ol.steps{margin:0;padding-left:1.3em;display:grid;gap:6px}
+ol.steps li{padding-left:2px}
+details summary{cursor:pointer;font-weight:700}
+.keyok{color:#137a43;font-weight:700}.err{color:var(--red);font-weight:700}
+.safe{border-left:5px solid var(--mint);padding:6px 12px;background:var(--mint2);border-radius:0 10px 10px 0;font-size:15px}
+/* talk */
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 0;border-bottom:2px dashed var(--grid);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.clock{font:800 22px/1 var(--f-ui);font-variant-numeric:tabular-nums}
+.cost{font:700 20px/1 var(--f-hand);color:var(--ink2)}
+.taskcard{background:var(--hl2);border-left:6px solid var(--ink);padding:10px 14px;border-radius:0 10px 10px 0}
+.taskcard ol{margin:6px 0 0;padding-left:1.2em}
+.taskcard summary{font-weight:700;list-style-position:outside}
+.log{display:grid;gap:12px;padding-bottom:6px}
+.b{scroll-margin-bottom:230px;max-width:88%;border:2px solid var(--ink);border-radius:16px;padding:10px 14px;background:var(--card)}
+.b.p{justify-self:start;border-top-left-radius:4px}
+.b.me{justify-self:end;background:var(--mint2);border-top-right-radius:4px}
+.b .who{font:700 20px/1 var(--f-hand);color:var(--blue);display:flex;gap:8px;align-items:center;justify-content:space-between;margin-bottom:2px}
+.b.me .who{color:var(--ink2)}
+.b .txt{font:400 16.5px/1.5 var(--f-text);white-space:pre-wrap}
+.b .hid{filter:blur(5px);user-select:none}
+.mini{font:600 13px var(--f-ui);border:1.5px solid var(--ink);border-radius:999px;background:var(--card);color:var(--ink);padding:2px 10px;cursor:pointer;min-height:30px}
+.corr{margin-top:8px;border-top:1.5px dashed var(--red);padding-top:6px;display:grid;gap:2px}
+.corr p{font:700 22px/1.15 var(--f-hand);color:var(--red)}
+.corr .okc{color:#137a43}
+.dock{position:sticky;bottom:0;padding:12px 0 max(12px,env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 22%);display:grid;justify-items:center;gap:8px}
+.mic{--lv:0;position:relative;width:112px;height:112px;border-radius:50%;border:3px solid var(--ink);background:var(--hl);color:var(--ink);font:800 15px/1.15 var(--f-ui);cursor:pointer;box-shadow:4px 4px 0 var(--ink);display:grid;place-items:center;text-align:center;padding:8px;-webkit-tap-highlight-color:transparent}
+.mic::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--red);opacity:0;transform:scale(calc(1 + var(--lv) * .22));transition:transform .08s linear}
+.mic.listen{background:var(--red);color:#fff}
+.mic.listen::after{opacity:.6}
+.mic.think{background:var(--card)}
+.mic.speak{background:var(--mint)}
+.mic svg{width:34px;height:34px;display:block;margin:0 auto 2px}
+.status{font:700 22px/1.15 var(--f-hand);color:var(--blue);min-height:26px;text-align:center}
+.typebox{width:100%;display:grid;gap:8px}
+.typebox textarea{min-height:70px;font-family:var(--f-text)}
+.tapplay{font-size:18px}
+/* result */
+.score{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{width:108px;height:108px;border:4px solid var(--red);border-radius:50%;display:grid;place-items:center;font:700 54px/1 var(--f-hand);color:var(--red);transform:rotate(-6deg);flex:none}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px}.facts div{display:grid}.facts b{font:800 22px/1.1 var(--f-ui)}.facts span{font-size:13.5px;color:var(--ink2)}
+.crit{display:grid;gap:8px}
+.cr{display:grid;grid-template-columns:minmax(0,12em) 1fr auto;gap:4px 10px;align-items:center}
+.pbar{height:12px;border:2px solid var(--ink);border-radius:999px;overflow:hidden;background:var(--card)}.pbar i{display:block;height:100%;background:var(--mint)}
+.cr small{grid-column:1/-1;color:var(--ink2);font-size:14.5px}
+ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.hist{display:grid;gap:6px}.hist div{display:flex;justify-content:space-between;gap:10px;border-bottom:1.5px dashed var(--grid);padding:4px 0;font-size:15px}
+[hidden]{display:none !important}
+@media (max-width:600px){.b{max-width:96%}.cr{grid-template-columns:1fr auto}.cr .pbar{grid-column:1/-1;order:3}.cr small{order:4}.mic{width:104px;height:104px}}
+@media (prefers-reduced-motion:reduce){.mic::after{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="logo" href="../"><b>C1</b><span>Sprechpartner</span></a><span class="cost" id="costTop"></span></div>
+
+  <!-- one-time setup -->
+  <section id="setup" class="stage" hidden>
+    <div><p class="hw" style="font-size:24px;color:var(--blue)">Bir kerelik kurulum</p><h1><span class="mark">Claude’la sesli konuş</span></h1>
+      <p class="note">Sen mikrofona konuşursun, Claude cevabı düşünür, doğal bir Almanca ses okur. Bunun için iki anahtar gerekiyor. İkisi de ön ödemeli: yüklediğinden fazlası çekilmez.</p></div>
+    <div class="safe"><b>Ekstra para çekilmez:</b> iki sitede de yalnızca bir kez 5 $ yükle ve <b>otomatik yüklemeyi (auto-reload) açma</b>. Bakiye bitince sadece durur. Bu sayfa ayrıca günlük bir harcama sınırı tutar.</div>
+    <div class="card">
+      <h2>1 · Claude anahtarı (beyin)</h2>
+      <ol class="steps">
+        <li><a href="https://platform.claude.com/" target="_blank" rel="noopener">platform.claude.com</a>’u aç, aynı e-postayla giriş yap. Bu, Pro’dan ayrı bir geliştirici hesabıdır.</li>
+        <li><b>Billing</b> bölümünde kartını ekle, en düşük tutarda kredi al. „Auto-reload“u kurma.</li>
+        <li><b>API Keys</b> › <b>Create Key</b>, adına „C1-Heft“ yaz. Anahtarı kopyala, buraya yapıştır.</li>
+      </ol>
+      <input type="password" id="kA" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…" aria-label="Claude API anahtarı">
+    </div>
+    <div class="card">
+      <h2>2 · OpenAI anahtarı (ses ve mikrofon)</h2>
+      <ol class="steps">
+        <li><a href="https://platform.openai.com/" target="_blank" rel="noopener">platform.openai.com</a>’da hesap aç.</li>
+        <li><b>Settings › Billing › Add payment details</b>: 5 $ seç ve <b>„Use auto-reload“ kutusunu kapat</b> (varsayılan açık gelir).</li>
+        <li><b>API keys › Create new secret key</b>. Anahtarı kopyala, buraya yapıştır.</li>
+      </ol>
+      <input type="password" id="kO" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-…" aria-label="OpenAI API anahtarı">
+    </div>
+    <div class="row"><button class="btn pri" type="button" id="saveKeys">Kaydet ve dene</button><span id="keyNote" class="note"></span></div>
+    <p class="note">Anahtarlar yalnızca bu cihazda, bu tarayıcıda saklanır ve yalnızca api.anthropic.com ile api.openai.com’a gider; siteye, GitHub’a ya da başka bir yere gönderilmez. Anahtarı kimseyle paylaşma; gerekirse o sitelerde tek tıkla silebilirsin.</p>
+    <p class="note">Maliyet, günde 15–20 dakika için yaklaşık: Claude 1–2 cent, ses 10–15 cent. 5 $ ses için yaklaşık 6–8 hafta, Claude için aylarca yeter.</p>
+  </section>
+
+  <!-- task picker -->
+  <section id="pick" class="stage" hidden>
+    <div><p class="hw" style="font-size:24px;color:var(--blue)">Mündlicher Ausdruck</p><h1><span class="mark">Sprich mit Claude</span></h1>
+      <p class="note">Görevi seç, mikrofona dokun, konuş. Durduğunda Claude cevap verir; ardından tekrar dinlemeye geçer. Sonunda telc ölçütleriyle not alırsın.</p></div>
+    <div class="card"><h2>Görev</h2><div class="tasks" id="tasks"></div></div>
+    <div class="card set">
+      <h2>Ayarlar</h2>
+      <div><div class="lbl">Mod</div><div class="seg" role="group" aria-label="Mod"><button type="button" data-mode="train">Training</button><button type="button" data-mode="exam">Prüfung</button></div>
+        <p class="note" id="modeNote" style="margin-top:6px"></p></div>
+      <div><div class="lbl">Partnerin sesi</div><div class="seg" role="group" aria-label="Ses" id="voices"></div>
+        <div class="row" style="margin-top:8px"><button class="btn small" type="button" id="hear">Sesi dinle</button><span class="note" id="hearNote"></span></div></div>
+      <div><div class="lbl"><label for="rate">Konuşma hızı <span id="rateV"></span></label></div><input type="range" id="rate" min="0.85" max="1.3" step="0.05"></div>
+      <label class="check"><input type="checkbox" id="hands"> <span>Eller serbest: konuşmayı bitirince otomatik gönder, partner bitirince otomatik dinle</span></label>
+      <details><summary>Daha fazla</summary>
+        <div class="set" style="margin-top:10px">
+          <div><div class="lbl">Konuşma tanıma</div><div class="seg" role="group" aria-label="Konuşma tanıma"><button type="button" data-stt="openai">OpenAI (en iyi)</button><button type="button" data-stt="free">Cihazın (ücretsiz)</button></div>
+            <p class="note" style="margin-top:6px">OpenAI dakikası yaklaşık 0,3 cent ve Almanca hatalarını olduğu gibi yazar. Cihazınki ücretsiz ama iPhone’da daha sık takılır.</p></div>
+          <div><div class="lbl"><label for="cap">Günlük harcama sınırı</label></div><select id="cap"><option value="0.2">0,20 $</option><option value="0.4">0,40 $</option><option value="0.8">0,80 $</option><option value="1.5">1,50 $</option></select>
+            <p class="note" style="margin-top:6px">Sınıra gelince sayfa yeni istek göndermez. Bu cihazda toplam: <b id="costTotal"></b></p></div>
+          <div class="row"><button class="btn small" type="button" id="editKeys">Anahtarları değiştir</button><button class="btn small" type="button" id="delKeys">Anahtarları bu cihazdan sil</button></div>
+        </div>
+      </details>
+    </div>
+    <div class="row"><button class="btn pri" type="button" id="go" style="font-size:18px;padding:12px 22px">Konuşmayı başlat</button><span class="hw" style="font-size:22px;color:var(--ink2)" id="pickNote"></span></div>
+    <div class="card"><h2>Önceki konuşmaların</h2><div class="hist" id="hist"></div></div>
+  </section>
+
+  <!-- conversation -->
+  <section id="talk" class="stage" hidden>
+    <div class="bar"><div><span class="chip" id="tTeil"></span> <b id="tTitle"></b></div><div class="row"><span class="clock" id="clock">0:00</span><button class="btn small" type="button" id="end">Bitir ve değerlendir</button></div></div>
+    <div class="taskcard" id="tCard"></div>
+    <div class="row" id="sidePick" hidden><span>Tezle ilgili görüşün:</span><button class="btn" type="button" data-side="pro">Ich bin dafür</button><button class="btn" type="button" data-side="contra">Ich bin dagegen</button></div>
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="dock">
+      <div class="status" id="status"></div>
+      <button class="mic" type="button" id="mic" aria-label="Konuş"><span id="micInner"></span></button>
+      <p class="note" id="dockNote" style="text-align:center"></p>
+      <button class="mini" type="button" id="typeToggle">Yazarak cevap ver</button>
+      <div class="typebox" id="typeBox" hidden><textarea id="say" lang="de" placeholder="Almanca yaz…"></textarea><div class="row"><button class="btn pri small" type="button" id="send">Gönder</button></div></div>
+    </div>
+  </section>
+
+  <section id="result" class="stage" hidden></section>
+</div>
+<script>
+(() => {
+'use strict';
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const money = v => (v < 0.095 ? v.toFixed(3) : v.toFixed(2)).replace('.', ',') + ' $';
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const ld = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v == null ? d : v; } catch (e) { return d; } };
+const sv = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const LS = { keys: 'c1-sp-keys', set: 'c1-sp-set', hist: 'c1-sp-hist', cost: 'c1-sp-cost' }, MAIN = 'linie-c1-v1';
+const IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const SRC = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+const MIC_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+
+let keys = Object.assign({ anthropic: '', openai: '' }, ld(LS.keys, {}));
+const set = Object.assign({ mode: 'train', voice: 'marin', rate: 1.1, hands: true, stt: 'openai', cap: 0.4 }, ld(LS.set, {}));
+const saveSet = () => sv(LS.set, set);
+let cost = ld(LS.cost, {});
+
+/* ---------- prices (USD), checked 25.11.2026 ---------- */
+const MODELS_TURN = ['claude-haiku-5-5', 'claude-sonnet-5-5'];
+const MODELS_EVAL = ['claude-sonnet-5-5', 'claude-haiku-5-5'];
+const PRICE = { 'claude-haiku-5-5': [0.10, 0.50], 'claude-sonnet-5-5': [2, 10] };
+const TTS_PER_MIN = 0.015, STT_PER_MIN = 0.003;
+const VOICES = [['marin', 'Marin (kadın)'], ['cedar', 'Cedar (erkek)'], ['coral', 'Coral (kadın)'], ['ash', 'Ash (erkek)']];
+const TTS_INSTR = 'Sprich natürliches, deutliches Hochdeutsch mit muttersprachlicher Aussprache, in lebendigem, zügigem Gesprächstempo, freundlich und zugewandt, wie ein Gesprächspartner in einer mündlichen Prüfung.';
+
+function addCost(usd) {
+  if (!(usd > 0)) return;
+  const t = today(); cost[t] = (cost[t] || 0) + usd; cost.total = (cost.total || 0) + usd; sv(LS.cost, cost);
+  if (S) S.cost += usd; renderCost();
+}
+const todayCost = () => cost[today()] || 0;
+function renderCost() { $('#costTop').textContent = 'bugün ≈ ' + money(todayCost()); $('#costTotal').textContent = money(cost.total || 0); }
+
+/* ---------- tasks ---------- */
+let TODAY = null;
+const GENERAL = [
+  { id: 'b-homeoffice', teil: 'Teil 1B', kind: 'summary', title: 'Homeoffice – Freiheit oder Falle?' },
+  { id: 'b-autofrei', teil: 'Teil 1B', kind: 'summary', title: 'Autofreie Innenstädte' },
+  { id: 'b-social', teil: 'Teil 1B', kind: 'summary', title: 'Smartphones im Unterricht' },
+  { id: 'd-noten', teil: 'Teil 2', kind: 'discuss', title: 'Schulnoten sollten abgeschafft werden.' },
+  { id: 'd-ki', teil: 'Teil 2', kind: 'discuss', title: 'Künstliche Intelligenz wird mehr Arbeitsplätze schaffen als vernichten.' },
+  { id: 'd-reparatur', teil: 'Teil 2', kind: 'discuss', title: 'Hersteller sollten gesetzlich verpflichtet werden, Geräte reparierbar zu bauen.' },
+  { id: 'd-viertage', teil: 'Teil 2', kind: 'discuss', title: 'Die Vier-Tage-Woche sollte gesetzlich eingeführt werden.' },
+  { id: 'd-demokratie', teil: 'Teil 2', kind: 'discuss', title: 'Soziale Medien schaden der Demokratie mehr, als sie ihr nützen.' },
+  { id: 'frei', teil: 'Gespräch', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?' }
+];
+const KIND = { present: 'Sunum (3–4 dk), sonra ek sorular', summary: 'Claude kısa sunum yapar, sen özetlersin', discuss: 'Tez üzerine tartışma, Claude karşı görüşte', chat: 'Serbest sohbet, ısınma' };
+const allTasks = () => (TODAY ? [TODAY] : []).concat(GENERAL);
+let sel = null;
+
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+async function loadToday() {
+  try {
+    await loadScript('../data/manifest.js?t=' + Date.now());
+    const man = window.MANIFEST, cur = man.current, m = man.days.find(d => d.id === cur);
+    window.DAYS = window.DAYS || {};
+    await loadScript('../' + m.file + '?v=' + m.v);
+    const day = window.DAYS[cur], sp = day && day.sections.find(s => s.kind === 'speak');
+    if (sp) {
+      const pts = sp.structure.map(x => x.de), fi = pts.findIndex(p => /^Anschlussfrage/i.test(p));
+      TODAY = { id: cur + '-1a', dayId: cur, day: day.no, teil: 'Teil 1A', kind: 'present', title: sp.topic, target: sp.target || 210,
+        points: pts.filter((_, i) => i !== fi), follow: fi >= 0 ? pts[fi].replace(/^Anschlussfrage:\s*/i, '') : '' };
+    }
+  } catch (e) {}
+  const wanted = location.hash.slice(1);
+  sel = allTasks().find(t => t.id === wanted) || (wanted === 'today' && TODAY) || TODAY || GENERAL[0];
+  renderTasks();
+}
+function renderTasks() {
+  $('#tasks').innerHTML = allTasks().map(t => `<button class="task${t === TODAY ? ' today' : ''}" type="button" data-id="${esc(t.id)}" aria-pressed="${t === sel}"><span><span class="chip">${esc(t.teil)}</span>${t.day ? ` <span class="hw" style="font-size:19px">Tag ${t.day} · bugün</span>` : ''}</span><span class="t" lang="de">${esc(t.title)}</span><span class="k">${esc(KIND[t.kind])}</span></button>`).join('');
+  $('#pickNote').textContent = sel ? sel.title : '';
+}
+$('#tasks').addEventListener('click', e => { const b = e.target.closest('.task'); if (!b) return; sel = allTasks().find(t => t.id === b.dataset.id); renderTasks(); });
+
+/* ---------- settings UI ---------- */
+function renderSet() {
+  document.querySelectorAll('[data-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === set.mode)));
+  $('#modeNote').textContent = set.mode === 'train' ? 'Her konuşmandan sonra Claude önce cümlenin doğru hâlini söyler, sonra cevap verir.' : 'Gerçek sınav gibi: arada düzeltme yok, hepsi sonda.';
+  $('#voices').innerHTML = VOICES.map(([v, n]) => `<button type="button" data-voice="${v}" aria-pressed="${v === set.voice}">${n}</button>`).join('');
+  $('#rate').value = set.rate; $('#rateV').textContent = (+set.rate).toFixed(2).replace('.', ',') + '×';
+  $('#hands').checked = !!set.hands; $('#cap').value = String(set.cap);
+  document.querySelectorAll('[data-stt]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.stt === set.stt)));
+}
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-mode]'); if (m) { set.mode = m.dataset.mode; saveSet(); renderSet(); }
+  const v = e.target.closest('[data-voice]'); if (v) { set.voice = v.dataset.voice; saveSet(); renderSet(); }
+  const s = e.target.closest('[data-stt]'); if (s) { set.stt = s.dataset.stt; saveSet(); renderSet(); }
+});
+$('#rate').addEventListener('input', e => { set.rate = +e.target.value; saveSet(); $('#rateV').textContent = set.rate.toFixed(2).replace('.', ',') + '×'; player.playbackRate = set.rate; });
+$('#hands').addEventListener('change', e => { set.hands = e.target.checked; saveSet(); });
+$('#cap').addEventListener('change', e => { set.cap = +e.target.value; saveSet(); });
+$('#hear').addEventListener('click', async () => {
+  unlockAudio(); $('#hearNote').textContent = 'Hazırlanıyor…';
+  try { const b = await tts('Hallo! Ich bin dein Gesprächspartner. Wollen wir ein bisschen Deutsch sprechen?'); $('#hearNote').textContent = ''; await playBlob(b); }
+  catch (e) { $('#hearNote').innerHTML = `<span class="err">${esc(e.message)}</span>`; }
+});
+
+/* ---------- keys ---------- */
+function show(id) { ['setup', 'pick', 'talk', 'result'].forEach(x => { $('#' + x).hidden = x !== id; }); window.scrollTo(0, 0); }
+$('#saveKeys').addEventListener('click', async () => {
+  const a = $('#kA').value.trim() || keys.anthropic, o = $('#kO').value.trim() || keys.openai, n = $('#keyNote');
+  if (!a || !o) { n.innerHTML = '<span class="err">İki anahtar da gerekli.</span>'; return; }
+  n.textContent = 'Deniyorum…'; $('#saveKeys').disabled = true;
+  const res = await Promise.all([testClaude(a), testOpenAI(o)]); $('#saveKeys').disabled = false;
+  if (res[0] === true && res[1] === true) {
+    keys = { anthropic: a, openai: o }; sv(LS.keys, keys); $('#kA').value = ''; $('#kO').value = '';
+    n.innerHTML = '<span class="keyok">İki anahtar da çalışıyor.</span>'; setTimeout(() => show('pick'), 700);
+  } else n.innerHTML = `<span class="err">${esc([res[0] === true ? '' : 'Claude: ' + res[0], res[1] === true ? '' : 'OpenAI: ' + res[1]].filter(Boolean).join(' · '))}</span>`;
+});
+$('#editKeys').addEventListener('click', () => { $('#keyNote').textContent = 'Boş bıraktığın kutu eski anahtarı korur.'; show('setup'); });
+$('#delKeys').addEventListener('click', () => { keys = { anthropic: '', openai: '' }; try { localStorage.removeItem(LS.keys); } catch (e) {} $('#keyNote').textContent = 'Anahtarlar bu cihazdan silindi.'; show('setup'); });
+async function testClaude(k) {
+  try { for (const model of MODELS_TURN) { const r = await anthropicFetch(k, { model, max_tokens: 1, messages: [{ role: 'user', content: 'Hi' }] }); if (r.ok) { const j = await r.json(); addUsage(model, j.usage); return true; } const m = await errMsg('Claude', r); if (r.status !== 404) return m; } return 'Model bulunamadı.'; }
+  catch (e) { return 'Bağlantı kurulamadı (internet?).'; }
+}
+async function testOpenAI(k) {
+  try { const r = await fetch('https://api.openai.com/v1/models', { headers: { Authorization: 'Bearer ' + k } }); return r.ok ? true : await errMsg('OpenAI', r); }
+  catch (e) { return 'Bağlantı kurulamadı (internet?).'; }
+}
+async function errMsg(who, r) {
+  let j = null, t = ''; try { t = await r.text(); j = JSON.parse(t); } catch (e) {}
+  const msg = (j && j.error && (j.error.message || j.error.type)) || t || '';
+  if (r.status === 401) return who + ' anahtarı geçersiz.';
+  if (/credit balance|billing|insufficient_quota|exceeded your current quota/i.test(msg) || r.status === 402) return who + ' bakiyen bitti ya da kredi yüklenmemiş.';
+  if (r.status === 429) return who + ' çok fazla istek aldı; birkaç saniye bekle.';
+  if (r.status === 529 || r.status >= 500) return who + ' şu an yoğun; tekrar dene.';
+  if (r.status === 404) return who + ': model bulunamadı.';
+  return who + ' hatası (' + r.status + '): ' + msg.slice(0, 140);
+}
+class ApiError extends Error { constructor(m, status) { super(m); this.status = status; } }
+async function net(who, fn) { try { return await fn(); } catch (e) { if (e instanceof ApiError) throw e; throw new ApiError(who + ' bağlanılamadı. İnternet bağlantını kontrol et.', 0); } }
+
+/* ---------- Claude ---------- */
+function anthropicFetch(k, body, signal) {
+  return fetch('https://api.anthropic.com/v1/messages', { method: 'POST', signal, headers: { 'content-type': 'application/json', 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify(body) });
+}
+function addUsage(model, u) { if (!u) return; const p = PRICE[model] || PRICE['claude-sonnet-5-5']; addCost(((u.input_tokens || 0) * p[0] + (u.output_tokens || 0) * p[1]) / 1e6); }
+async function claude({ system, messages, maxTokens, models, onText }) {
+  let lastErr = null;
+  for (const model of models) {
+    const r = await net('Claude’a', () => anthropicFetch(keys.anthropic, { model, max_tokens: maxTokens, system, messages, stream: !!onText }));
+    if (!r.ok) { const m = await errMsg('Claude', r); lastErr = new ApiError(m, r.status); if (r.status === 404) continue; throw lastErr; }
+    if (!onText) { const j = await r.json(); addUsage(model, j.usage); return (j.content || []).map(c => c.text || '').join(''); }
+    const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '', text = '', usage = { input_tokens: 0, output_tokens: 0 };
+    for (;;) {
+      const { done, value } = await rd.read(); if (done) break;
+      buf += dec.decode(value, { stream: true }); let i;
+      while ((i = buf.indexOf('\n\n')) >= 0) {
+        const block = buf.slice(0, i); buf = buf.slice(i + 2);
+        const line = block.split('\n').find(l => l.startsWith('data:')); if (!line) continue;
+        let ev; try { ev = JSON.parse(line.slice(5)); } catch (e) { continue; }
+        if (ev.type === 'message_start' && ev.message && ev.message.usage) Object.assign(usage, ev.message.usage);
+        else if (ev.type === 'content_block_delta' && ev.delta && ev.delta.type === 'text_delta') { text += ev.delta.text; onText(text); }
+        else if (ev.type === 'message_delta' && ev.usage) usage.output_tokens = ev.usage.output_tokens || usage.output_tokens;
+        else if (ev.type === 'error') throw new ApiError('Claude: ' + ((ev.error && ev.error.message) || 'hata'), 500);
+      }
+    }
+    addUsage(model, usage); return text;
+  }
+  throw lastErr || new ApiError('Claude cevap vermedi.', 0);
+}
+
+/* ---------- voice out ---------- */
+const player = new Audio(); player.preload = 'auto'; player.setAttribute('playsinline', '');
+let audioUnlocked = false, curEnd = null, curQueue = null;
+function silentWav() { const n = 2205, b = new ArrayBuffer(44 + n * 2), v = new DataView(b); const w = (o, s) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, 22050, true); v.setUint32(28, 44100, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+  return URL.createObjectURL(new Blob([b], { type: 'audio/wav' })); }
+function unlockAudio() {
+  if (!audioUnlocked) { audioUnlocked = true; try { player.src = silentWav(); const p = player.play(); if (p) p.catch(() => { audioUnlocked = false; }); } catch (e) { audioUnlocked = false; } }
+  ensureCtx();
+}
+async function tts(text) {
+  const r = await net('Sese', () => fetch('https://api.openai.com/v1/audio/speech', { method: 'POST', headers: { Authorization: 'Bearer ' + keys.openai, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'gpt-4o-mini-tts', voice: set.voice, input: String(text).slice(0, 1800), instructions: TTS_INSTR, response_format: 'mp3' }) }));
+  if (!r.ok) throw new ApiError(await errMsg('OpenAI ses', r), r.status);
+  const b = await r.blob(); b.chars = String(text).length; return b;
+}
+function playBlob(blob) {
+  return new Promise(res => {
+    const url = URL.createObjectURL(blob); let fin = false, billed = false;
+    const end = () => { if (fin) return; fin = true; if (!billed) addCost((blob.chars || 80) / 15 / 60 * TTS_PER_MIN); curEnd = null; player.onended = player.onerror = player.onloadedmetadata = null; try { URL.revokeObjectURL(url); } catch (e) {} $('#tapPlay') && $('#tapPlay').remove(); res(); };
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    curEnd = end; player.onended = end; player.onerror = end;
+    player.onloadedmetadata = () => { if (!billed && isFinite(player.duration) && player.duration > 0) { billed = true; addCost(player.duration / 60 * TTS_PER_MIN); } };
+    player.src = url; player.defaultPlaybackRate = set.rate; player.playbackRate = set.rate; try { player.preservesPitch = true; } catch (e) {}
+    const p = player.play();
+    if (p) p.then(() => { player.playbackRate = set.rate; }).catch(() => tapToPlay(end));
+  });
+}
+function tapToPlay(end) {
+  if ($('#tapPlay')) return;
+  const b = document.createElement('button'); b.id = 'tapPlay'; b.type = 'button'; b.className = 'btn pri tapplay'; b.textContent = '▶ Dinlemek için dokun';
+  b.addEventListener('click', () => { player.play().then(() => { player.playbackRate = set.rate; b.remove(); }).catch(end); });
+  $('#dockNote').after(b);
+}
+function stopAudio() { try { player.pause(); } catch (e) {} if (curEnd) curEnd(); }
+function newQueue() {
+  const items = []; let idx = 0, playing = false, closed = false, stopped = false, resolve; const done = new Promise(r => { resolve = r; });
+  const pump = async () => {
+    if (playing || stopped) return;
+    if (idx >= items.length) { if (closed) resolve(); return; }
+    playing = true; const it = items[idx++]; let b = null;
+    try { b = await it.blob; } catch (e) { note(e.message, true); }
+    if (b && !stopped) { phase('speak'); await playBlob(b); }
+    playing = false; pump();
+  };
+  const q = {
+    add(text) { if (!text || stopped) return; const p = tts(text); p.catch(() => {}); items.push({ blob: p }); pump(); },
+    finish() { closed = true; if (!playing && idx >= items.length) resolve(); return done; },
+    stop() { stopped = true; stopAudio(); resolve(); },
+    get stopped() { return stopped; }
+  };
+  curQueue = q; return q;
+}
+function speakText(text) { const q = newQueue(); sentences(text, 320).forEach(c => q.add(c)); return q.finish(); }
+function sentences(text, max) {
+  const parts = String(text).match(/[^.!?…]+[.!?…]+["“”»«]?\s*|[^.!?…]+$/g) || [text], out = []; let cur = '';
+  parts.forEach(p => { if ((cur + p).length > max && cur) { out.push(cur.trim()); cur = p; } else cur += p; });
+  if (cur.trim()) out.push(cur.trim()); return out;
+}
+
+/* ---------- voice in ---------- */
+let actx = null, stream = null, rec = null, chunks = [], vadT = 0, recT0 = 0, sr = null, srText = '';
+function ensureCtx() { try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state !== 'running') actx.resume().catch(() => {}); } catch (e) {} }
+function level(x) { $('#mic').style.setProperty('--lv', Math.max(0, Math.min(1.4, x)).toFixed(2)); }
+let starting = false;
+async function startListening() {
+  if (!S || starting || ph === 'listen' || ph === 'think' || ph === 'hear') return;
+  if (S.task.kind === 'discuss' && !S.side) { note('Önce görüşünü seç.'); return; }
+  starting = true; try { await startListening2(); } finally { starting = false; }
+}
+async function startListening2() {
+  if (curQueue) curQueue.stop(); stopAudio();
+  if (todayCost() >= set.cap) { capHit(); return; }
+  if (set.stt === 'free' && SRC) { startFree(); return; }
+  try { if (navigator.audioSession) navigator.audioSession.type = 'play-and-record'; } catch (e) {}
+  try { stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }); }
+  catch (e) { phase('idle'); note(e && e.name === 'NotAllowedError' ? 'Mikrofon izni verilmedi. iPhone: Ayarlar › Safari › Mikrofon › İzin Ver; sonra sayfayı yenile.' : 'Mikrofon açılamadı.', true); return; }
+  const mime = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus'].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+  chunks = [];
+  try { rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined); } catch (e) { rec = new MediaRecorder(stream); }
+  rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  rec.start(250); recT0 = Date.now(); phase('listen');
+  // voice activity: stop after a pause (longer while presenting)
+  let an = null; ensureCtx();
+  if (actx && actx.state !== 'running') { try { await Promise.race([actx.resume(), new Promise(r => setTimeout(r, 600))]); } catch (e) {} }
+  try { if (actx && actx.state === 'running') { const n = actx.createMediaStreamSource(stream); an = actx.createAnalyser(); an.fftSize = 1024; n.connect(an); } } catch (e) { an = null; }
+  const first = S.task.kind === 'present' && !S.turns.some(t => t.role === 'me');
+  const pause = first ? 4500 : 1500, maxMs = first ? 330000 : 120000;
+  if (!an || !set.hands) note('Bitince mikrofona tekrar dokun.');
+  else if (first) note('Sunumunu yap. Uzun bir duraklamada ya da dokununca biter.');
+  const buf = new Float32Array(1024); let floor = 0.01, spoke = false, last = Date.now();
+  clearInterval(vadT);
+  vadT = setInterval(() => {
+    const now = Date.now();
+    if (an) {
+      an.getFloatTimeDomainData(buf); let s = 0; for (let i = 0; i < buf.length; i++) s += buf[i] * buf[i];
+      const rms = Math.sqrt(s / buf.length); if (!spoke) floor = Math.min(0.04, Math.max(0.003, floor * 0.92 + rms * 0.08));
+      const thr = Math.max(0.018, floor * 3); level(rms / thr);
+      if (rms > thr) { spoke = true; last = now; }
+      if (set.hands && spoke && now - last > pause) return stopListening(true);
+      if (set.hands && !spoke && now - recT0 > 15000) { note('Seni duyamadım. Hazır olunca mikrofona dokun.'); return stopListening(false); }
+    }
+    if (now - recT0 > maxMs) stopListening(true);
+  }, 60);
+}
+function stopListening(send) {
+  clearInterval(vadT); level(0);
+  if (sr) { const s = sr; sr = null; s.__send = send; try { s.stop(); } catch (e) {} return; }
+  if (!rec) return; const r = rec; rec = null; const secs = (Date.now() - recT0) / 1000;
+  phase(send ? 'hear' : 'idle');
+  r.onstop = async () => {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    const blob = new Blob(chunks, { type: r.mimeType || 'audio/mp4' });
+    if (!send || !S || secs < 0.7 || blob.size < 1200) { phase('idle'); return; }
+    S.micSecs += secs; if (S.task.kind === 'present' && !S.turns.some(t => t.role === 'me')) S.presSecs = secs;
+    phase('hear');
+    try { const text = (await transcribe(blob, secs)).trim(); if (!text) { phase('idle'); note('Seni duyamadım, tekrar dene.'); return; } userSays(text); }
+    catch (e) { phase('idle'); note(e.message, true); }
+  };
+  try { r.stop(); } catch (e) { r.onstop(); }
+}
+async function transcribe(blob, secs) {
+  const ext = /mp4|m4a|aac/.test(blob.type) ? 'm4a' : /ogg/.test(blob.type) ? 'ogg' : /wav/.test(blob.type) ? 'wav' : 'webm';
+  const fd = new FormData(); fd.append('file', blob, 'rede.' + ext); fd.append('model', 'gpt-4o-mini-transcribe'); fd.append('language', 'de');
+  fd.append('prompt', 'Ein Deutschlernender spricht in einer Prüfungsübung. Schreib wörtlich auf, was er sagt, auch mit Fehlern.');
+  const r = await net('Konuşma tanımaya', () => fetch('https://api.openai.com/v1/audio/transcriptions', { method: 'POST', headers: { Authorization: 'Bearer ' + keys.openai }, body: fd }));
+  if (!r.ok) throw new ApiError(await errMsg('OpenAI konuşma tanıma', r), r.status);
+  const j = await r.json(); addCost(secs / 60 * STT_PER_MIN); return String(j.text || '');
+}
+function startFree() {
+  srText = ''; const t0 = Date.now();
+  try { sr = new SRC(); } catch (e) { set.stt = 'openai'; saveSet(); note('Cihazın konuşma tanıması yok; OpenAI tanımaya geçtim, tekrar dokun.'); return; }
+  const me = sr; me.lang = 'de-DE'; me.interimResults = true; me.continuous = !IOS;
+  let base = '';
+  me.onresult = e => { let fin = '', inter = ''; for (let i = 0; i < e.results.length; i++) { const x = e.results[i]; if (x.isFinal) fin += x[0].transcript + ' '; else inter += x[0].transcript + ' '; } srText = (base + ' ' + fin).replace(/\s+/g, ' ').trim(); $('#status').textContent = (srText + ' ' + inter).trim().slice(-120) || 'Dinliyorum…'; };
+  me.onerror = e => { if (e && /not-allowed|service-not-allowed/.test(e.error)) { set.stt = 'openai'; saveSet(); note('Cihazın konuşma tanıması açılamadı; OpenAI tanımaya geçtim.', true); } };
+  me.onend = () => {
+    const keep = sr === me && ph === 'listen' && S && S.task.kind === 'present' && !S.turns.some(t => t.role === 'me');
+    if (keep) { base = srText; try { me.start(); return; } catch (e) {} }
+    const send = me.__send !== false; sr = null; level(0);
+    const secs = (Date.now() - t0) / 1000; if (S) S.micSecs += secs;
+    if (send && srText && S) { if (S.task.kind === 'present' && !S.turns.some(t => t.role === 'me')) S.presSecs = secs; userSays(srText); } else phase('idle');
+  };
+  try { me.start(); phase('listen'); note(set.hands ? 'Konuş; durunca gönderilir.' : 'Bitince mikrofona dokun.'); } catch (e) { sr = null; phase('idle'); }
+}
+
+/* ---------- conversation ---------- */
+let S = null, ph = 'idle', clockT = 0, wake = null;
+function phase(p) {
+  ph = p; const m = $('#mic');
+  m.className = 'mic' + (p === 'listen' ? ' listen' : p === 'think' || p === 'hear' ? ' think' : p === 'speak' ? ' speak' : '');
+  const label = { idle: 'Dokun ve konuş', listen: 'Dinliyorum · bitince dokun', hear: 'Anlıyorum…', think: 'Düşünüyor…', speak: 'Konuşuyor · sözünü kes' }[p] || '';
+  $('#micInner').innerHTML = MIC_SVG + esc(label);
+  $('#status').textContent = { listen: 'Ich höre zu …', hear: 'Einen Moment …', think: 'Claude überlegt …', speak: 'Claude spricht …' }[p] || '';
+  $('#end').disabled = p === 'think' || p === 'hear';
+}
+function note(t, bad) { $('#dockNote').innerHTML = bad ? `<span class="err">${esc(t)}</span>` : esc(t || ''); }
+function capHit() { phase('idle'); note('Bugünkü harcama sınırına geldin (' + money(set.cap) + '). İstersen „Daha fazla“dan yükseltebilirsin.', true); }
+$('#mic').addEventListener('click', () => {
+  if (!S) return; unlockAudio();
+  if (ph === 'idle') startListening();
+  else if (ph === 'listen') stopListening(true);
+  else if (ph === 'speak') { if (curQueue) curQueue.stop(); stopAudio(); phase('idle'); startListening(); }
+});
+$('#typeToggle').addEventListener('click', () => { const b = $('#typeBox'); b.hidden = !b.hidden; if (!b.hidden) $('#say').focus(); });
+$('#send').addEventListener('click', () => { const t = $('#say').value.trim(); if (!t || !S || ph === 'think' || ph === 'hear') return; unlockAudio(); if (ph === 'listen') stopListening(false); if (curQueue) curQueue.stop(); $('#say').value = ''; userSays(t); });
+
+function bubble(t, i) {
+  if (t.role === 'p') return `<div class="b p"><div class="who"><span>Claude</span><span>${t.hidden ? `<button class="mini" type="button" data-show="${i}">Metni göster</button> ` : ''}${t.text ? `<button class="mini" type="button" data-play="${i}">Tekrar dinle</button>` : ''}</span></div><div class="txt${t.hidden ? ' hid' : ''}" lang="de">${esc(t.text || '…')}</div></div>`;
+  const c = t.corr === undefined ? '' : t.corr.length ? `<div class="corr">${t.corr.map(x => `<p lang="de">${esc(x)}</p>`).join('')}</div>` : (S.mode === 'train' ? '<div class="corr"><p class="okc">Alles korrekt.</p></div>' : '');
+  return `<div class="b me"><div class="who"><span>Du</span></div><div class="txt" lang="de">${esc(t.text)}</div>${c}</div>`;
+}
+function renderLog() { $('#log').innerHTML = S.turns.map(bubble).join(''); const l = $('#log').lastElementChild; if (l) l.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+$('#log').addEventListener('click', e => {
+  const p = e.target.closest('[data-play]'); if (p && ph !== 'listen') { unlockAudio(); speakText(S.turns[+p.dataset.play].text).then(() => { if (ph === 'speak') phase('idle'); }); return; }
+  const s = e.target.closest('[data-show]'); if (s) { S.turns[+s.dataset.show].hidden = false; renderLog(); }
+});
+
+function system() {
+  const t = S.task; let role = '';
+  if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1. Ich halte eine Präsentation zum Thema „${t.title}“ (Punkte: ${t.points.join('; ')}). Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage${t.follow ? ` (zum Beispiel: „${t.follow}“)` : ''}, nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und beendest das Gespräch.`;
+  if (t.kind === 'summary') role = `Situation: telc Deutsch C1, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage; nach meiner Antwort reagierst du kurz, bedankst dich und beendest das Gespräch.`;
+  if (t.kind === 'discuss') role = `Situation: telc Deutsch C1, Teil 2 (Diskussion). These: „${t.title}“ Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: Geh auf meine Argumente ein, bring neue Gegenargumente mit Beispielen und frag nach. Nach etwa acht Wortwechseln sucht ihr gemeinsam einen Kompromiss, dann beendest du das Gespräch.`;
+  if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell interessierte Fragen und erzähl auch kurz etwas von dir.';
+  const corr = S.mode === 'train'
+    ? 'Training: Prüfe zuerst meine letzte Äußerung. Für jeden Satz mit einem echten Grammatik-, Wortstellungs- oder Wortfehler schreibst du eine Zeile „K: <korrigierte Fassung des ganzen Satzes>“, höchstens zwei Zeilen, ohne Erklärung. Meine Äußerungen kommen aus einer Spracherkennung: Ignoriere Zeichensetzung, Groß- und Kleinschreibung und offensichtliche Erkennungsfehler. Achte besonders auf: Verb am Ende in dass- und weil-Sätzen, Verb an Position 2, Verben mit Präpositionen (nachdenken über, sich verlassen auf, es kommt zu), Adjektivendungen.'
+    : 'Prüfungsmodus: Korrigiere nichts und schreib keine K-Zeilen.';
+  return `${role}\n\nDu sprichst mit mir über eine Sprachausgabe. Sprich natürliches, gesprochenes Deutsch auf C1-Niveau. Antworte kurz: zwei bis vier Sätze, höchstens 60 Wörter. Keine Listen, kein Markdown, keine Emojis, keine Klammern.\n${corr}\n\nAntworte immer genau in diesem Format:\n${S.mode === 'train' ? 'K: … (nur wenn nötig)\n' : ''}A: <deine Antwort>\nWenn das Gespräch laut Aufgabe zu Ende ist, schreib in eine letzte, eigene Zeile: [ENDE]`;
+}
+function buildMessages(extra) {
+  const m = [];
+  S.turns.slice(-18).forEach(t => {
+    const role = t.role === 'p' ? 'assistant' : 'user', content = t.role === 'p' ? (t.raw || ('A: ' + t.text)) : t.text;
+    const last = m[m.length - 1]; if (last && last.role === role) last.content += '\n\n' + content; else m.push({ role, content });
+  });
+  if (!m.length || m[0].role !== 'user') m.unshift({ role: 'user', content: '(Die Übung beginnt.)' });
+  if (m[m.length - 1].role !== 'user') m.push({ role: 'user', content: '(Fahre fort.)' });
+  if (extra) m[m.length - 1].content += '\n\n[Hinweis: ' + extra + ']';
+  return m;
+}
+function parseOut(t) {
+  const corr = []; let ans = '', inA = false;
+  String(t).split('\n').forEach(l => {
+    if (!inA && /^\s*K:/.test(l)) corr.push(l.replace(/^\s*K:\s*/, '').trim());
+    else if (!inA && /^\s*A:/.test(l)) { inA = true; ans += l.replace(/^\s*A:\s*/, ''); }
+    else if (inA) ans += '\n' + l;
+  });
+  return { corr: corr.filter(Boolean), ans: ans.replace(/\[ENDE\]/g, '').trim(), aStarted: inA, end: /\[ENDE\]/.test(t) };
+}
+async function partnerTurn(extra) {
+  if (todayCost() >= set.cap) { capHit(); return; }
+  phase('think'); note('');
+  const meTurn = [...S.turns].reverse().find(t => t.role === 'me');
+  const msgs = buildMessages(extra), sys = system();
+  const pt = { role: 'p', text: '' }; S.turns.push(pt); renderLog();
+  const q = newQueue(); let corrDone = false, firstLen = 0;
+  const giveCorr = c => { if (corrDone) return; corrDone = true; if (S.mode !== 'train' || !meTurn) return; meTurn.corr = c; if (c.length) q.add('Besser: ' + c.join(' ')); };
+  try {
+    const raw = await claude({ system: sys, messages: msgs, maxTokens: 350, models: MODELS_TURN, onText: txt => {
+      const p = parseOut(txt); if (!p.aStarted) return;
+      giveCorr(p.corr);
+      if (!firstLen) { const m = p.ans.match(/^[\s\S]{18,}?[.!?…](?=\s)/); if (m) { firstLen = m[0].length; q.add(m[0].trim()); } }
+      pt.text = p.ans; renderLog();
+    } });
+    const p = parseOut(raw); if (!p.aStarted) p.ans = String(raw).replace(/^\s*K:.*$/mg, '').replace(/\[ENDE\]/g, '').trim();
+    giveCorr(p.corr);
+    const rest = p.ans.slice(firstLen).trim(); if (rest) sentences(rest, 320).forEach(c => q.add(c));
+    pt.text = p.ans; pt.raw = raw.replace(/\[ENDE\]/g, '').trim(); renderLog();
+    await q.finish();
+    if (!S) return;
+    if (p.end) { phase('idle'); note('Konuşma bitti. Değerlendirme hazırlanıyor…'); return finish(); }
+    if (S.task.kind === 'discuss' && S.turns.filter(t => t.role === 'me').length >= 9) note('İstersen artık „Bitir ve değerlendir“e bas.');
+    phase('idle'); if (set.hands && curQueue === q && !q.stopped) startListening();
+  } catch (e) {
+    q.stop(); if (!pt.text) S.turns.splice(S.turns.indexOf(pt), 1); renderLog(); phase('idle'); note(e.message || 'Bir hata oldu, tekrar dene.', true);
+  }
+}
+function userSays(text) {
+  S.turns.push({ role: 'me', text }); renderLog();
+  const mine = S.turns.filter(t => t.role === 'me').length, k = S.task.kind; let extra = '';
+  if (k === 'present' && mine === 1) extra = 'Ich habe meine Präsentation beendet. Stell jetzt deine erste Anschlussfrage.';
+  if (k === 'present' && mine >= 3) extra = 'Das war meine letzte Antwort: Reagiere kurz, bedank dich und beende das Gespräch mit [ENDE].';
+  if (k === 'summary' && mine === 1) extra = 'Das war meine Zusammenfassung. Stell jetzt deine Anschlussfrage.';
+  if (k === 'summary' && mine >= 2) extra = 'Das war meine Antwort: Reagiere kurz, bedank dich und beende mit [ENDE].';
+  partnerTurn(extra);
+}
+
+$('#go').addEventListener('click', async () => {
+  if (!keys.anthropic || !keys.openai) { show('setup'); return; }
+  unlockAudio();
+  S = { task: sel, mode: set.mode, turns: [], micSecs: 0, presSecs: 0, t0: Date.now(), cost: 0, side: null, vortrag: '' };
+  show('talk'); $('#typeBox').hidden = true; note('');
+  $('#tTeil').textContent = sel.teil; $('#tTitle').textContent = sel.title; $('#sidePick').hidden = sel.kind !== 'discuss';
+  $('#tCard').innerHTML = sel.kind === 'present' ? `<details open><summary>Präsentation, ca. 3–4 Minuten: Punkte</summary><ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol></details>`
+    : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Claude hält einen kurzen Vortrag. Fass ihn danach in eigenen Worten zusammen (etwa 1–1,5 Minuten) und beantworte die Frage.'
+    : sel.kind === 'discuss' ? `<b>These:</b> <span lang="de">„${esc(sel.title)}“</span><br>Wähl deine Position. Claude vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende einen Kompromiss.`
+    : 'Unterhaltet euch locker. Antworte ausführlich und stell auch selbst Fragen.';
+  clearInterval(clockT); clockT = setInterval(() => { if (S) $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000);
+  try { if (navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); } catch (e) {}
+  phase('idle'); renderLog();
+  try {
+    if (sel.kind === 'present') {
+      const g = `Herzlich willkommen! Sie halten jetzt Ihre Präsentation zum Thema „${sel.title}“. Sie haben etwa drei bis vier Minuten Zeit. Bitte beginnen Sie, wenn Sie bereit sind.`;
+      S.turns.push({ role: 'p', text: g }); renderLog(); await speakText(g);
+      if (ph === 'speak') phase('idle');
+      if (ph === 'idle') { if (set.hands && S) startListening(); else note('Hazır olunca mikrofona dokun ve sunumuna başla.'); }
+    } else if (sel.kind === 'summary') {
+      phase('think'); note('Claude sunumunu hazırlıyor…');
+      const v = await claude({ system: 'Du bist Prüfungspartner in der mündlichen Prüfung telc Deutsch C1.', models: MODELS_TURN, maxTokens: 500,
+        messages: [{ role: 'user', content: `Halte einen kurzen Vortrag zum Thema „${sel.title}“: 150 bis 190 Wörter, gesprochene Sprache, klare Gliederung (Einleitung, zwei bis drei Punkte mit je einem Beispiel, eigene Meinung, Schluss). Gib nur den Vortragstext aus, ohne Überschrift.` }] });
+      S.vortrag = v.trim(); S.turns.push({ role: 'p', text: S.vortrag, hidden: true, raw: 'A: ' + S.vortrag }); renderLog(); note('');
+      await speakText(S.vortrag); if (ph === 'speak') phase('idle');
+      note('Şimdi sunumu özetle.'); if (ph === 'idle' && set.hands && S) startListening();
+    } else if (sel.kind === 'chat') partnerTurn('Begrüß mich kurz und stell mir eine erste Frage.');
+    else note('Önce görüşünü seç.');
+  } catch (e) { phase('idle'); note(e.message || 'Bir hata oldu.', true); }
+});
+document.querySelectorAll('[data-side]').forEach(b => b.addEventListener('click', () => {
+  if (!S || S.side) return; unlockAudio(); S.side = b.dataset.side; $('#sidePick').hidden = true;
+  partnerTurn('Eröffne die Diskussion: Nenne deine Gegenposition mit einem ersten Argument und frag nach meiner Meinung.');
+}));
+$('#end').addEventListener('click', () => finish());
+
+/* ---------- evaluation ---------- */
+const CONN = ['weil', 'obwohl', 'deshalb', 'deswegen', 'außerdem', 'trotzdem', 'dennoch', 'einerseits', 'andererseits', 'zwar', 'jedoch', 'allerdings', 'dass', 'sodass', 'während', 'falls', 'zum Beispiel', 'meiner Meinung nach', 'im Gegensatz', 'darüber hinaus', 'zusammenfassend'];
+function metrics() {
+  const mine = S.turns.filter(t => t.role === 'me').map(t => t.text).join(' ');
+  const words = mine.match(/[A-Za-zÄÖÜäöüß]+/g) || [], n = words.length, uniq = new Set(words.map(w => w.toLowerCase())).size;
+  const low = mine.toLowerCase();
+  return { words: n, ttr: n ? Math.round(100 * uniq / n) : 0, fill: (mine.match(/\b(äh|ähm|öhm|hm|halt|sozusagen|irgendwie)\b/gi) || []).length,
+    conn: CONN.filter(c => new RegExp('(^|[^a-zäöüß])' + c.toLowerCase() + '([^a-zäöüß]|$)').test(low)),
+    wpm: S.micSecs > 20 ? Math.round(n / (S.micSecs / 60)) : null, turns: S.turns.filter(t => t.role === 'me').length,
+    secs: Math.round((Date.now() - S.t0) / 1000), micSecs: Math.round(S.micSecs) };
+}
+async function finish() {
+  if (!S || ph === 'think' || ph === 'hear') return;
+  if (ph === 'listen') stopListening(false); if (curQueue) curQueue.stop(); stopAudio();
+  const m = metrics();
+  if (!m.turns) { note('Değerlendirme için önce en az bir kez konuş.'); return; }
+  clearInterval(clockT); phase('think'); note('Değerlendirme hazırlanıyor…');
+  const transcript = S.turns.map(t => (t.role === 'p' ? 'PARTNER: ' : 'ICH: ') + t.text).join('\n');
+  const prompt = `Bewerte meine Leistung in dieser Übung zur mündlichen Prüfung telc Deutsch C1 (${S.task.teil}: ${S.task.title}). Meine Beiträge stammen aus einer Spracherkennung: Zeichensetzung kann fehlen, Aussprache ist nicht bewertbar.
+Transkript:
+${transcript}
+Messwerte: ${m.words} Wörter, ${m.ttr}% verschiedene Wörter, ${m.fill} Füllwörter, Konnektoren: ${m.conn.join(', ') || 'keine'}${m.wpm ? ', ' + m.wpm + ' Wörter pro Minute' : ''}.
+Bewerte nach den telc-C1-Kriterien, je 0 bis 5 Punkte: Aufgabenbewältigung, Interaktion und Flüssigkeit, Korrektheit, Wortschatz und Ausdruck. Kommentare und nächster Schritt auf Türkisch, kurz und konkret. Korrekturen: nur meine fehlerhaften Sätze, jeweils nur die korrigierte Fassung, ohne Erklärung (höchstens 8). Redemittel: 4 bis 6 passende C1-Wendungen auf Deutsch, die ich hätte benutzen können.
+Gib NUR JSON zurück: {"kriterien":[{"name":"Aufgabenbewältigung","punkte":0,"kommentar":"..."},{"name":"Interaktion und Flüssigkeit","punkte":0,"kommentar":"..."},{"name":"Korrektheit","punkte":0,"kommentar":"..."},{"name":"Wortschatz und Ausdruck","punkte":0,"kommentar":"..."}],"gesamt":0,"staerken":["..."],"korrekturen":["..."],"redemittel":["..."],"naechster_schritt":"..."}  ("gesamt" = Prozent 0 bis 100)`;
+  let fb = null;
+  try { const t = await claude({ system: 'Du bist erfahrener telc-Prüfer für Deutsch C1. Du antwortest nur mit gültigem JSON.', messages: [{ role: 'user', content: prompt }], maxTokens: 1600, models: MODELS_EVAL }); const j = t.match(/\{[\s\S]*\}/); fb = JSON.parse(j ? j[0] : t); }
+  catch (e) { phase('idle'); note((e && e.message) || 'Değerlendirme alınamadı, tekrar dene.', true); clockT = setInterval(() => { if (S) $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000); return; }
+  try { if (wake) { wake.release(); wake = null; } } catch (e) {}
+  const crit = Array.isArray(fb.kriterien) ? fb.kriterien.slice(0, 4) : [];
+  const pct = Math.max(0, Math.min(100, Math.round(+fb.gesamt || (crit.reduce((a, c) => a + (+c.punkte || 0), 0) / 20 * 100))));
+  const grade = pct >= 92 ? 1 : pct >= 81 ? 2 : pct >= 67 ? 3 : pct >= 50 ? 4 : pct >= 30 ? 5 : 6;
+  const list = a => (Array.isArray(a) ? a : []).map(x => typeof x === 'string' ? x : (x && (x.korrigiert || x.text)) || '').filter(Boolean);
+  const korr = list(fb.korrekturen);
+  const R = $('#result');
+  R.innerHTML = `<div class="card"><p class="hw" style="font-size:24px;color:var(--blue)">Karne · ${esc(S.task.teil)} · ${S.mode === 'train' ? 'Training' : 'Prüfung'}</p><h1 lang="de" style="font-size:clamp(26px,5vw,38px)">${esc(S.task.title)}</h1>
+      <div class="score"><div class="ring" aria-label="Not ${grade}">${grade}</div><div class="facts"><div><b>${pct}%</b><span>telc ölçütleri</span></div><div><b>${m.words}</b><span>kelime</span></div><div><b>${m.wpm === null ? '–' : m.wpm}</b><span>kelime/dakika</span></div><div><b>${m.fill}</b><span>dolgu sözcüğü</span></div><div><b>${fmt(m.secs)}</b><span>süre</span></div><div><b>${money(S.cost)}</b><span>maliyet</span></div></div></div>
+      <div class="crit">${crit.map(c => { const p = Math.max(0, Math.min(5, +c.punkte || 0)); return `<div class="cr"><b lang="de">${esc(c.name)}</b><div class="pbar"><i style="width:${p * 20}%"></i></div><span>${p}/5</span><small>${esc(c.kommentar)}</small></div>`; }).join('')}</div></div>
+    ${korr.length ? `<div class="card"><h2>Doğru hâlleri</h2><div class="corr" style="border:0;margin:0;padding:0">${korr.map(x => `<p lang="de">${esc(x)}</p>`).join('')}</div></div>` : ''}
+    <div class="card"><h2>Kullanabileceğin kalıplar</h2><ul class="clean">${list(fb.redemittel).map(x => `<li lang="de">${esc(x)}</li>`).join('')}</ul><p><b>Kullandığın bağlaçlar:</b> <span lang="de">${esc(m.conn.join(', ') || 'yok')}</span></p></div>
+    <div class="card"><h2>Güçlü yanların</h2><ul class="clean">${list(fb.staerken).map(x => `<li>${esc(x)}</li>`).join('')}</ul><p class="hw" style="font-size:24px;color:var(--red)">${esc(fb.naechster_schritt || '')}</p></div>
+    <p class="note">Sonuç bugünün Karne’sine eklendi; günü bitirince rapora girer.</p>
+    <div class="row"><button class="btn pri" type="button" id="re">Aynı görevi tekrar dene</button><button class="btn" type="button" id="other">Başka görev seç</button><a class="btn" href="../">C1-Heft’e dön</a></div>`;
+  const r = { at: new Date().toISOString(), id: S.task.id, teil: S.task.teil, task: S.task.title, mode: S.mode, pct, grade, words: m.words, wpm: m.wpm, secs: m.secs, cost: +S.cost.toFixed(4), korrekturen: korr.slice(0, 8), next: fb.naechster_schritt || '' };
+  const h = ld(LS.hist, []); h.unshift(r); sv(LS.hist, h.slice(0, 40));
+  writeMain(r); S.done = true;
+  show('result'); phase('idle');
+  $('#re').addEventListener('click', () => $('#go').click());
+  $('#other').addEventListener('click', () => { S = null; renderHist(); show('pick'); });
+}
+function writeMain(r) {
+  try {
+    const st = JSON.parse(localStorage.getItem(MAIN) || 'null') || { days: {}, log: {} }; st.days = st.days || {};
+    const id = (S.task.dayId) || (window.MANIFEST && window.MANIFEST.current); if (!id) return;
+    const d = st.days[id] = st.days[id] || {};
+    d.partner = (d.partner || []).concat([r]).slice(-10);
+    if (S.task.kind === 'present' && S.task.dayId) { d.speak = d.speak || {}; d.speak.done = true; d.speak.secs = Math.max(d.speak.secs || 0, Math.round(S.presSecs || 0)); if (!d.speak.rating) d.speak.rating = Math.max(1, Math.min(5, Math.round(r.pct / 20))); }
+    d.updatedAt = new Date().toISOString();
+    st.log = st.log || {}; st.log[today()] = (st.log[today()] || 0) + Math.round(r.secs);
+    localStorage.setItem(MAIN, JSON.stringify(st));
+  } catch (e) {}
+}
+function renderHist() {
+  const h = ld(LS.hist, []);
+  $('#hist').innerHTML = h.length ? h.slice(0, 12).map(x => `<div><span>${esc(String(x.at).slice(0, 10))} · <span lang="de">${esc(x.teil)}: ${esc(x.task)}</span></span><b>${esc(x.pct)}% · Not ${esc(x.grade)}</b></div>`).join('') : '<p class="note">Henüz konuşma yok. İlk konuşmandan sonra puanların burada görünür.</p>';
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden && ph === 'listen') stopListening(false); });
+
+/* ---------- start ---------- */
+renderSet(); renderCost(); renderHist(); phase('idle');
+show(keys.anthropic && keys.openai ? 'pick' : 'setup');
+loadToday();
+})();
+</script>
+</body>
+</html>
