@@ -1,6 +1,6 @@
 window.MANIFEST = {
  "current": "day4",
- "planV": "s1",
+ "planV": "s2",
  "updated": "2026-11-25",
  "days": [
   {
@@ -777,7 +777,7 @@ window.MANIFEST = {
    "short": "Probeprüfung 1",
    "focus": "Probeprüfung · Lesen 1 · Sprachbausteine · Hören 2 · Sprechen 1A",
    "file": "data/day4.js",
-   "v": "1",
+   "v": "2",
    "words": [
     {
      "dom": "G",
