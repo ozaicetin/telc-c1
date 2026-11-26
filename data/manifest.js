@@ -1336,5 +1336,6 @@ window.MANIFEST = {
     }
    ]
   }
- ]
+ ],
+ "kalipV": "k1"
 };

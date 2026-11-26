@@ -15,7 +15,7 @@ const WEEKDAYS = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 
 /* ---------- state ---------- */
 let state = { v: SCHEMA, days: {} };
-const ui = { view: 'day', day: null, rpos: undefined, busy: false, glErr: false, step: -1, trAll: false, en: true, sheet: false, tro: {}, eno: {}, q: {}, planWeek: 1, order: null, flip: false, trCard: false, sumShown: false, glDay: null, glQ: '', glDom: '', glCover: '', glSt: '', glOpen: {} };
+const ui = { view: 'day', day: null, rpos: undefined, busy: false, glErr: false, step: -1, trAll: false, en: true, sheet: false, tro: {}, eno: {}, q: {}, planWeek: 1, order: null, flip: false, trCard: false, sumShown: false, glDay: null, glQ: '', glDom: '', glCover: '', glSt: '', glOpen: {}, glMode: 'words', kQ: '', kSt: '', kOpen: {} };
 let db = null, saving = false, again = false, saveTimer = null;
 const dirtyDays = new Set();
 
@@ -995,6 +995,66 @@ function glRow(it) {
   return `<details class="ge" data-dom="${it.dom}" data-st="${it.status || ''}" data-q="${esc(q)}"><summary><span class="wde" lang="de">${art}<b>${esc(word)}</b></span><span class="wen" lang="en">${esc(it.en || '')}</span><span class="wmeta"><span class="chip min">Tag ${it.no}</span>${st}</span></summary>
     <div class="wbody"><div class="wline">${glSpk(it.de, 'de-DE')}${it.info ? `<span class="wi" lang="de">${esc(it.info)}</span>` : ''}<span class="wsrc">${esc(it.src)}</span></div>${ex}${tr}</div></details>`;
 }
+/* ---------- Kalıp defteri: grammar patterns of Sprachbausteine, grows with every day's exercises ---------- */
+const K_SEC = { sprachbausteine: 'Sprachbausteine', comeback: 'Fehler-Comeback', wtest: 'Wortschatz', lesen1: 'Lesen 1', korrektur: 'Korrektur', ltrain: 'Lesen-Training' };
+function kalipData() {
+  const K = window.KALIP; if (!K) return null;
+  const cur = MD(MAN().current), lim = cur ? cur.no : 999, hist = {};
+  Object.keys(K.links || {}).forEach(day => {
+    const m = MD(day); if (!m || m.no > lim) return;
+    const res = (state.days[day] || {}).res || {};
+    Object.entries(K.links[day]).forEach(([item, pid]) => {
+      const r = res[item], mm = /^([a-z0-9]+?)_(?:[a-z]+_)?(?:[a-z]*?)(\d+)$/.exec(item), sec = item.split('_')[0];
+      (hist[pid] = hist[pid] || []).push({ no: m.no, day, ok: r ? !!r.ok : null, where: (K_SEC[sec] || sec) + (mm ? ' ' + (+mm[2]) : '') });
+    });
+  });
+  const items = K.items.map(it => { const h = (hist[it.id] || []).sort((a, b) => a.no - b.no); const tried = h.filter(x => x.ok !== null);
+    const st = !h.length ? '' : tried.some(x => !x.ok) ? (tried.length && tried[tried.length - 1].ok ? 'fixed' : 'bad') : tried.length ? 'ok' : 'open';
+    return Object.assign({}, it, { hist: h, st }); });
+  return { cats: K.cats, items };
+}
+function kalipRow(it) {
+  const q = glNorm([it.de, it.en, it.tr, it.note, it.ex, it.fw].filter(Boolean).join(' '));
+  const kas = it.kasus ? it.kasus.split(/\s*\/\s*/).map(x => `<span class="kas k-${esc(x.replace(/[^A-Za-z]/g, ''))}" title="${esc({ A: 'Akkusativ', D: 'Dativ', G: 'Genitiv', N: 'Nominativ', NS: 'Nebensatz: fiil sonda', Adv: 'Zarf: fiil hemen arkada', Inf: 'zu + Infinitiv' }[x] || x)}">${esc({ A: '+ Akk', D: '+ Dat', G: '+ Gen', N: 'Nom', NS: 'yan cümle', Adv: 'zarf', Inf: 'zu + Inf' }[x] || x)}</span>`).join('') : '';
+  const hist = it.hist.map(h => `<span class="kh ${h.ok === null ? 'na' : h.ok ? 'ok' : 'bad'}" title="${esc(h.where)}">Tag ${h.no} ${h.ok === null ? '·' : h.ok ? '✓' : '✗'}</span>`).join('');
+  const st = it.st === 'bad' ? '<span class="wst rep">hata yaptın</span>' : it.st === 'fixed' ? '<span class="wst fx">düzelttin</span>' : '';
+  return `<details class="ge kp" data-st="${it.st}" data-q="${esc(q)}"><summary><span class="wde" lang="de"><b>${esc(it.de)}</b>${kas}</span><span class="wen" lang="en">${esc(it.en)}</span><span class="wmeta">${hist || '<span class="kh none">henüz yok</span>'}${st}</span></summary>
+    <div class="wbody"><p class="knote">${esc(it.note)}</p>${it.fw ? `<p class="kfw" lang="de"><span>Soru / da-biçimi:</span> ${esc(it.fw)}</p>` : ''}<p class="wx" lang="de">${esc(it.ex)}${glSpk(it.ex, 'de-DE')}</p><p class="wx en" lang="en">${esc(it.exEn)}</p><p class="wtr" lang="tr"><b>${esc(it.tr)}</b><br><span>${esc(it.exTr)}</span></p>
+    ${it.hist.length ? `<p class="kwhere">Çalıştığın yerler: ${it.hist.map(h => `Tag ${h.no} · ${esc(h.where)} ${h.ok === null ? '(henüz cevaplanmadı)' : h.ok ? '✓' : '✗'}`).join(' · ')}</p>` : '<p class="kwhere">Henüz bir alıştırmada çıkmadı; sonraki günlerde gelecek.</p>'}</div></details>`;
+}
+function kalipHTML() {
+  const K = kalipData();
+  if (!K) return `<div class="card">Kalıp defteri yükleniyor… Sayfayı yenile.</div>`;
+  const by = {}; K.items.forEach(it => (by[it.cat] = by[it.cat] || []).push(it));
+  const rank = { bad: 0, fixed: 1, ok: 2, open: 3, '': 4 };
+  Object.values(by).forEach(a => a.sort((x, y) => rank[x.st] - rank[y.st]));
+  const nBad = K.items.filter(i => i.st === 'bad').length, nDone = K.items.filter(i => i.st).length;
+  const pills = (act, cur, list) => list.map(([v, l]) => `<button class="pill" type="button" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('');
+  const body = K.cats.filter(c => by[c.id]).map(c => { const a = by[c.id], bad = a.filter(i => i.st === 'bad').length, done = a.filter(i => i.st).length;
+    return `<details class="card gg kg kc-${c.id}" id="kg_${c.id}" data-n="${a.length}"${ui.kOpen && ui.kOpen[c.id] ? ' open' : ''}><summary class="gh"><span class="gtitle"><b lang="de">${esc(c.de)}</b><span class="gtr">${esc(c.tr)}</span></span><span class="gcount gn">${a.length}</span><span class="ghint"><b>Sınavda:</b> ${esc(c.exam)} · ${done} tanesini çalıştın${bad ? ` · <span class="kbad">${bad} hata</span>` : ''}<br>${esc(c.hint)}</span></summary><div class="gl-list">${a.map(kalipRow).join('')}</div></details>`; }).join('');
+  return `<div class="card glhead"><h1>Kalıp defteri</h1>
+      <p>Sprachbausteine’de ve boşluk doldurmada sorulan dilbilgisi kalıpları: fiil + edat, da-/wo- biçimleri, bağlaçlar, ilgi zamirleri, ekler, edilgen … Resmî deneme sınavında 22 boşluğun dağılımı: bağlaç 5, fiil biçimi 4, fiil + edat 3, ek 3, edat + hâl 2, kalıp 2, kelime seçimi 3. Her gün çalıştığın boşluklar buraya bağlanır; <b>✓/✗</b> senin cevapların (yalnızca bu cihazda). Hata yaptıkların her grubun en üstünde.</p>
+      <div class="glctl">
+        <label class="glsearch"><span class="sr">Kalıp ara</span><input id="kq" type="search" autocomplete="off" spellcheck="false" placeholder="Ara: über, Dativ, obwohl, denen …" value="${esc(ui.kQ || '')}"></label>
+        <div class="glrow"><span class="gll">Durum</span><div class="pills" role="group" aria-label="Durum">${pills('kst', ui.kSt || '', [['', 'Hepsi (' + K.items.length + ')'], ['done', 'Çalıştıklarım (' + nDone + ')'], ['bad', 'Hatalarım (' + nBad + ')']])}</div></div>
+        <div class="glrow"><span class="gll">Kendini dene</span><div class="pills" role="group" aria-label="Kapatma modu">${pills('glcover', ui.glCover, [['', 'İkisi açık'], ['de', 'Almanca kapalı'], ['en', 'İngilizce kapalı']])}</div></div>
+      </div>
+      <p class="hint" id="kcount" aria-live="polite">${K.items.length} kalıp</p>
+    </div>
+    <p class="card glnone" hidden>Bu filtreyle eşleşen kalıp yok.</p>
+    ${body}`;
+}
+function applyKalip() {
+  const root = $('.glv'); if (!root || ui.glMode !== 'kalip') return;
+  const toks = glNorm(ui.kQ).split(/\s+/).filter(Boolean), st = ui.kSt || '';
+  let shown = 0, total = 0;
+  $$('.kg', root).forEach(g => { let n = 0;
+    $$('.ge', g).forEach(e => { total++; const s = e.dataset.st; const ok = (!st || (st === 'done' ? !!s : s === 'bad')) && toks.every(t => e.dataset.q.includes(t)); e.hidden = !ok; if (ok) n++; });
+    g.hidden = n === 0; shown += n; if ((toks.length || st) && n) g.open = true;
+    const c = $('.gn', g); if (c) c.textContent = n === +g.dataset.n ? n : n + ' / ' + g.dataset.n; });
+  const cnt = $('#kcount'); if (cnt) cnt.textContent = (shown === total ? total : shown + ' / ' + total) + ' kalıp';
+  const none = $('.glnone', root); if (none) none.hidden = shown > 0;
+}
 function glossaryHTML() {
   const ids = glDays(); glNeed();
   const sel = ui.glDay === 'all' ? ids : [ui.glDay];
@@ -1009,7 +1069,9 @@ function glossaryHTML() {
   const nav = order.map(p => `<button class="glchip pc-${p}" type="button" data-act="glgo" data-g="gg_${p}"><span>${esc((POSM[p] || { tr: p }).tr)}</span><b>${by[p].length}</b></button>`).join('');
   const body = order.map(p => { const M = POSM[p] || { de: p, tr: p, hint: '' };
     return `<details class="card gg pg-${p}" id="gg_${p}" data-n="${by[p].length}"${ui.glOpen && ui.glOpen[p] ? ' open' : ''}><summary class="gh"><span class="gtitle"><b lang="de">${esc(M.de)}</b><span class="gtr">${esc(M.tr)}</span></span><span class="gcount gn">${by[p].length}</span><span class="ghint">${esc(M.hint)}</span></summary><div class="gl-list">${by[p].map(glRow).join('')}</div></details>`; }).join('');
-  return `<div class="stage glv cv-${ui.glCover || 'none'}">
+  const sw = `<div class="glmode" role="tablist" aria-label="Defter"><button type="button" role="tab" data-act="glmode" data-v="words" aria-selected="${ui.glMode !== 'kalip'}">Kelimeler</button><button type="button" role="tab" data-act="glmode" data-v="kalip" aria-selected="${ui.glMode === 'kalip'}">Kalıp defteri <small>dilbilgisi</small></button></div>`;
+  if (ui.glMode === 'kalip') return `<div class="stage glv cv-${ui.glCover || 'none'}">${sw}${kalipHTML()}</div>`;
+  return `<div class="stage glv cv-${ui.glCover || 'none'}">${sw}
     <div class="card glhead"><h1>Kelime defteri</h1>
       <p>Bütün günlerin kelimeleri türüne göre: isim, fiil, sıfat, zarf, kalıp … Başlığa dokun, liste açılır; kelimeye dokun, bilgi, örnek cümle ve Türkçesi açılır. Her yeni günle büyür. Kartta „Neu für mich“ dediğin kelimeler <span class="wst rep">tekrarda</span> etiketiyle görünür.</p>
       <div class="glctl">
@@ -1026,7 +1088,7 @@ function glossaryHTML() {
     ${body}</div>`;
 }
 function applyGl() {
-  const root = $('.glv'); if (!root) return;
+  const root = $('.glv'); if (!root || ui.glMode === 'kalip') return;
   const toks = glNorm(ui.glQ).split(/\s+/).filter(Boolean), filt = toks.length || ui.glSt;
   let shown = 0, total = 0;
   $$('.gg', root).forEach(g => {
@@ -1066,7 +1128,7 @@ function render(opts) {
   app.innerHTML = topHTML() + `<div class="${cls}">${main}${side}</div>` + bar + sheetHTML(day);
   setStatus(lastStatus);
   const rt = $('#route'); if (rt && rt.scrollWidth > rt.clientWidth) { const c = $('.stop.cur', rt); if (c) rt.scrollLeft = Math.max(0, c.offsetLeft - rt.clientWidth / 3); }
-  if (ui.view === 'glossary') applyGl();
+  if (ui.view === 'glossary') { applyGl(); applyKalip(); }
   renderedStep = ui.step;
 }
 function rerender() { const y = window.scrollY; render({ still: true }); window.scrollTo(0, y); }
@@ -1189,6 +1251,8 @@ app.addEventListener('click', e => {
     case 'gldom': ui.glDom = t.dataset.v; glPress('gldom', ui.glDom); applyGl(); return;
     case 'glcover': ui.glCover = t.dataset.v; glPress('glcover', ui.glCover); { const r = $('.glv'); if (r) r.className = 'stage glv cv-' + (ui.glCover || 'none'); } return;
     case 'glst': ui.glSt = t.dataset.v; glPress('glst', ui.glSt); applyGl(); return;
+    case 'glmode': ui.glMode = t.dataset.v; stopSpeech(); render(); return;
+    case 'kst': ui.kSt = t.dataset.v; glPress('kst', ui.kSt); applyKalip(); return;
     case 'glrev': { const e = t.closest('.ge'); if (e) e.classList.add('rv-' + t.dataset.side); return; }
     case 'glgo': { const el = document.getElementById(t.dataset.g); if (el) { el.open = true; ui.glOpen[el.id.slice(3)] = true; el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); } return; }
     case 'reset': t.outerHTML = '<span>Emin misin? Bu günün tüm cevapları silinir. <button class="link" type="button" data-act="resetyes">Evet, sil</button> · <button class="link" type="button" data-act="resetno">Vazgeç</button></span>'; return;
@@ -1232,7 +1296,7 @@ app.addEventListener('change', e => {
   if (t.classList.contains('schk')) { const s = D().speak; s.checks = s.checks || {}; s.checks[t.dataset.i] = t.checked; queueSave(); return; }
   if (t.id === 'sp_rate') { D().speak.rating = t.value ? +t.value : null; queueSave(); return; }
 });
-app.addEventListener('toggle', e => { const g = e.target; if (g && g.classList && g.classList.contains('gg') && g.id) ui.glOpen[g.id.slice(3)] = g.open; }, true);
+app.addEventListener('toggle', e => { const g = e.target; if (g && g.classList && g.classList.contains('gg') && g.id) (g.id.startsWith('kg_') ? ui.kOpen : ui.glOpen)[g.id.slice(3)] = g.open; }, true);
 app.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'wr_text') {
@@ -1243,6 +1307,7 @@ app.addEventListener('input', e => {
   if (t.id === 'sp_notes') { D().speak.notes = t.value; queueSave(); return; }
   if (t.id === 'notes') { D().notes = t.value; queueSave(); return; }
   if (t.id === 'glq') { ui.glQ = t.value; applyGl(); return; }
+  if (t.id === 'kq') { ui.kQ = t.value; applyKalip(); return; }
 });
 document.addEventListener('keydown', e => {
   if (ui.view !== 'day' || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -1295,6 +1360,7 @@ loadScript('data/manifest.js', String(Date.now())).then(() => {
   ids.forEach(id => D(id));
   ui.day = pickStartDay(); ui.glDay = 'all';
   const wk = MD(ui.day) && MD(ui.day).week; if (wk) ui.planWeek = wk;
+  loadScript('data/kaliplar.js', MAN().kalipV || '1').catch(() => {});
   return Promise.all([loadScript('data/plan.js', MAN().planV || '1'), ensureDay(ui.day)]);
 }).then(() => { if (!window.PLAN) throw new Error('plan'); if (PLAN.weeks && PLAN.weeks.length) TOTAL_DAYS = PLAN.weeks.length * 5; render(); }).catch(e => {
   $('#app').innerHTML = '<div class="boot err">Sayfa yüklenemedi. Lütfen sayfayı yenile. (' + esc(e && e.message || '') + ')</div>';
