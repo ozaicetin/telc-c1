@@ -8,7 +8,7 @@ Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github
 
 ## Yapı
 - `src/` → `index.html` kaynağı: `head.html`, `fonts.css`, `base.css`, `theme.css` (C1-Heft tasarımı), `app.js`. `python3 tools/build.py` ile `index.html` üretilir. `index.html`'i elle düzenleme.
-- `data/manifest.js` (günler, kelimeler, `current`), `data/plan.js` (Haziran 2027 planı: 18 etap × 5 gün, `phases`, `milestones`, `examDate`; `weeks[w]` = etap, gün satırında `boss`/`big`/`bil`; değiştirirsen manifestte `planV`'yi artır), `data/dayN.js` (gün içeriği), `data/seed.js` (Tag 1–3 kelime tekrar verisi).
+- `data/manifest.js` (günler, kelimeler, `current`), `data/plan.js` (Haziran 2027 planı: 21 etap × 5 gün, haftada 4 gün, `phases`, `milestones`, `examDate`; `weeks[w]` = etap, gün satırında `boss`/`big`/`bil`; değiştirirsen manifestte `planV`'yi artır), `data/dayN.js` (gün içeriği), `data/seed.js` (Tag 1–3 kelime tekrar verisi).
 - `sw.js` çevrimdışı çalışma (önce ağ, yoksa kayıtlı kopya). `fonts/`, `icons/`, `manifest.webmanifest`.
 - `tools/daykit.py`: gün yazma yardımcıları (`W`, `mc`, `gap`, `rfx`, `note`) ve `save_day()` (doğrular, `data/dayN.js` yazar, manifesti günceller, `current` yapar, sürümü artırır).
 
@@ -20,7 +20,7 @@ Bu depo Özay'ın telc Deutsch C1 çalışma sitesidir: https://ozaicetin.github
 5. Projedeki günlüğü güncelle (gün satırı, hatalar, öğretilen kelimeler, değişiklik geçmişi).
 
 ## Kurallar (öğrencinin)
-Günde en çok 90 dk, haftada 3–4 gün (günler esnek). Hedef sınav Haziran 2027 (19.06.2027). Etap ritmi: 1. gün Lesen + Sprachbausteine, 2. Hören, 3. Schreiben, 4. Sprechen, 5. Boss; Etap 6/10/14/17 büyük deneme (dört gün tam sınav + Bilanz). Gün dosyasında `week` = etap numarası. Yalnızca telc C1 (sektör/lojistik yok, arada konu olarak geçebilir). Günde 20 genel sınav kelimesi, bilinmeyenler 1-3-7-14. Her şey DE, yanında EN, altında açılır TR. Sınav bölümleri gerçek formatta ve sınav modunda (`mock: {label, pts}`: geri sayan süre, „Abgeben“, gerçek puanlar). Önceki günlerin kritik hataları yeni metinlerin içinde tekrar sorulur. Sohbette cevaplar Türkçe ve kısa; Almanca cümle düzeltirken yalnızca doğru cümle.
+Günde en çok 90 dk, haftada 4 gün (günler esnek; 26.11.2026'dan). Hedef sınav Haziran 2027 (19.06.2027). Etap ritmi: 1. gün Lesen + Sprachbausteine, 2. Hören, 3. Schreiben, 4. Sprechen, 5. Boss; Etap 6/11/16/20 büyük deneme (dört gün tam sınav + Bilanz; 6 = resmî Übungstest 1). Gün dosyasında `week` = etap numarası. Yalnızca telc C1 (sektör/lojistik yok, arada konu olarak geçebilir). Günde 20 genel sınav kelimesi, bilinmeyenler 1-3-7-14. Her şey DE, yanında EN, altında açılır TR. Sınav bölümleri gerçek formatta ve sınav modunda (`mock: {label, pts}`: geri sayan süre, „Abgeben“, gerçek puanlar). Önceki günlerin kritik hataları yeni metinlerin içinde tekrar sorulur. Sohbette cevaplar Türkçe ve kısa; Almanca cümle düzeltirken yalnızca doğru cümle.
 
 ## Gerçek sınav ölçüleri (26.11.2026'dan zorunlu)
 Kaynak: resmî telc Deutsch C1 Übungstest 1 (telc.net, ücretsiz: https://www.telc.net/fileadmin/user_upload/mock_exams/Deutsch/telc_deutsch_c1.zip). Öğrenci: „hepsini telc C1 formatına ve sınav sorularına paralel yaz“. Her sınav bölümü bu ölçülerde yazılır; kısaltma yok. Resmî metinleri siteye kopyalama (telif); ölçüleri ve soru tarzını taklit et, metinleri kendin yaz.
@@ -33,7 +33,7 @@ Kaynak: resmî telc Deutsch C1 Übungstest 1 (telc.net, ücretsiz: https://www.t
 - **Schreiben** (48 P, 70 dk): iki konudan biri (Leserbrief, Stellungnahme …), durum + iki alıntı; görüş, argümanlar, artı/eksi, gerekçeli sonuç; ~350 kelime. Ölçütler: Aufgabengerechtheit, Korrektheit, Repertoire, Kommunikative Gestaltung (her biri A/B/C/D = 12/8/4/0).
 - **Mündlich** (48 P): 20 dk hazırlık; 1A iki konudan biri (3–4 dk); 1B partnerin sunumunu özetle + en az bir Anschlussfrage (2–3 dk); 2 üç alıntıdan biri üzerine tartışma (~6 dk). İçerik 16 (1A 6, 1B 4, 2 6) + dil 32 (Flüssigkeit, Repertoire, Grammatik, Aussprache × 8).
 - 90 dk'lık bir günde gerçek boyutta ancak ~45–60 dk sınav bölümü sığar: ısınma (kartlar, tekrar, Comeback) ~30 dk. Bir bölümü kısaltmak yerine bölümü başka güne taşı.
-- Açık iş: sınav modunda `listen` bloğunu bir kez çalınır yap (Hören günü Tag 7'den önce).
+- Sınav modunda `listen` yalnızca bir kez çalar (`lplayonce`, `d.plays[secId]`; satır satır düğmeler, `say` düğmeleri ve „langsamer“ gizli); „Abgeben“den sonra serbest. Gün bütçeleri: 1. gün ısınma ~30 + 2–3 okuma görevi 40–60 · 2. gün ısınma ~30 + Hören 1–3 ~45 · 3. gün ısınma ~15 + yazma (Faz 1 40–50, Etap 7'den tam 70) · 4. gün ısınma ~25 + 20 hazırlık + ~16 konuşma + değerlendirme · 5. gün ısınma ~20 + ~60 deneme.
 
 ## Sprechpartner (canlı konuşma partneri)
 - **Asıl yol (25.11.2026'dan): sitedeki sayfa** https://ozaicetin.github.io/telc-c1/sprechen/ — kaynak `src/sprechen.html`, `python3 tools/build.py` onu `sprechen/index.html` olarak yazar (fontlar `../fonts/`). iPhone Safari'de gerçek mikrofon ve doğal ses.

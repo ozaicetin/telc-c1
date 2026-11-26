@@ -1,6 +1,6 @@
 window.MANIFEST = {
  "current": "day5",
- "planV": "s4",
+ "planV": "s5",
  "updated": "2026-11-25",
  "days": [
   {

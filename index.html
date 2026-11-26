@@ -1152,7 +1152,7 @@ function D(id) {
   id = id || ui.day;
   if (!state.days[id]) state.days[id] = {};
   const d = state.days[id];
-  d.sel = d.sel || {}; d.res = d.res || {}; d.secs = d.secs || {}; d.vocab = d.vocab || {}; d.write = d.write || {}; d.speak = d.speak || {}; d.time = d.time || {}; d.rev = d.rev || {}; d.seenNew = d.seenNew || {}; d.mockT = d.mockT || {};
+  d.sel = d.sel || {}; d.res = d.res || {}; d.secs = d.secs || {}; d.vocab = d.vocab || {}; d.write = d.write || {}; d.speak = d.speak || {}; d.time = d.time || {}; d.rev = d.rev || {}; d.seenNew = d.seenNew || {}; d.mockT = d.mockT || {}; d.plays = d.plays || {};
   if (typeof d.card !== 'number') d.card = 0;
   if (typeof d.notes !== 'string') d.notes = '';
   if (!d.started) d.started = Date.now();
@@ -1475,7 +1475,7 @@ function mcHTML(sec, b, opt) {
   const corrEn = b.optsEn ? LET[b.a] + ') ' + b.optsEn[b.a] : (b.letters ? b.opts[b.a].toUpperCase() : '');
   const enFb = res && b.expEn ? `<div class="fb en ${res.ok ? 'ok' : 'bad'}"><b lang="en">${res.ok ? 'Correct.' : 'Not quite. Correct answer: ' + esc(corrEn)}</b><p class="pl" lang="en">${esc(b.expEn)}</p></div>` : '';
   const btn = hasEn ? `<button class="spk enbtn" type="button" data-act="enitem" data-id="${id}" aria-pressed="${ui.eno[key] ? 'true' : 'false'}" title="English version">EN</button>` : '';
-  const sayB = b.say && TTS ? `<div class="qsay"><button class="btn" type="button" data-act="spk" data-say="${sayIdx(b.say.text)}">▶ ${esc(b.say.label)}</button></div>` : '';
+  const sayB = b.say && TTS && !mockLive(sec) ? `<div class="qsay"><button class="btn" type="button" data-act="spk" data-say="${sayIdx(b.say.text)}">▶ ${esc(b.say.label)}</button></div>` : '';
   const left = `<div class="qrow"><p class="q pl" lang="de">${esc(b.q)}</p>${btn}</div>${sayB}<div class="opts${cls}" role="group" aria-label="Antworten">${opts}</div>${res ? fbHTML(day, it, res) : ''}`;
   const right = hasEn ? `<div class="col en"><span class="collab" lang="en">English version</span><p class="q pl" lang="en">${esc(b.qEn)}</p>${eoptsHTML(b, res)}${enFb}</div>` : '';
   return `<div class="item" data-item="${id}"><div class="bi${enOn ? ' en-on' : ''}" data-bi="${key}"><div class="col de" style="display:grid;gap:10px;align-content:start">${left}</div>${right}</div>${trBox(esc(mcTrText(b)), id)}</div>`;
@@ -1541,13 +1541,14 @@ function noteHTML(b, single, first) {
 function listenHTML(sec, b) {
   const si = SCRIPTS.push(b.announce ? b.script.map(l => Object.assign({}, l, { ann: b.roles[l.who] })) : b.script) - 1, key = sec.id + '_listen';
   const whos = []; b.script.forEach(l => { if (!whos.includes(l.who)) whos.push(l.who); });
-  const per = b.perLine && TTS ? `<div class="lper"><span class="hint">Tek tek dinle:</span>${whos.map(w => `<button class="btn" type="button" data-act="lplay1" data-who="${esc(w)}">▶ ${esc(b.roles[w])}</button>`).join('')}</div>` : '';
+  const live = mockLive(sec), played = live && !!D().plays[sec.id];
+  const per = b.perLine && TTS && !live ? `<div class="lper"><span class="hint">Tek tek dinle:</span>${whos.map(w => `<button class="btn" type="button" data-act="lplay1" data-who="${esc(w)}">▶ ${esc(b.roles[w])}</button>`).join('')}</div>` : '';
   const open = ui.eno[key + '_t'] || !TTS || secDone(sec);
   const lines = b.script.map((l, i) => `<div class="ln"><b>${esc(b.roles[l.who])}</b><div><span lang="de">${esc(l.text)}</span><div class="eng" lang="en">${esc(b.enScript[i])}</div></div></div>`).join('');
   const trl = b.trScript.map((t, i) => esc(b.roles[b.script[i].who]) + ': ' + esc(t)).join('\n\n');
   return `<div class="listen" data-script="${si}"><div class="pt"><span lang="de">${esc(b.title)}</span></div>
-    <div class="lctl">${TTS ? `<button class="btn primary" type="button" data-act="lplay">▶ Anhören</button><button class="btn" type="button" data-act="lstop">■ Stopp</button><label class="slow"><input type="checkbox" class="lslow"> langsamer</label>` : ''}<button class="btn" type="button" data-act="ltrans" aria-expanded="${open ? 'true' : 'false'}">Transkript</button></div>
-    <p class="hint">${TTS ? 'Ses, cihazının Almanca sesiyle çalar. Sınavda her metni yalnızca bir kez duyarsın; önce bir kez dinleyip cevapla, sonra kontrol için tekrar dinle. Ses gelmezse Transkript’i aç.' : 'Bu cihazda sesli okuma yok. Transkripti oku, sonra soruları çöz.'}</p>
+    <div class="lctl">${TTS && live ? `<button class="btn primary" type="button" data-act="lplayonce"${played ? ' disabled' : ''}>${played ? '✓ Gehört' : '▶ Einmal anhören'}</button><button class="btn" type="button" data-act="lstop">■ Stopp</button>` : TTS ? `<button class="btn primary" type="button" data-act="lplay">▶ Anhören</button><button class="btn" type="button" data-act="lstop">■ Stopp</button><label class="slow"><input type="checkbox" class="lslow"> langsamer</label>` : ''}<button class="btn" type="button" data-act="ltrans" aria-expanded="${open ? 'true' : 'false'}">Transkript</button></div>
+    <p class="hint">${TTS && live ? (played ? 'Ses çalındı. Gerçek sınavdaki gibi ikinci kez dinlenmez; notlarınla cevapla. „Abgeben“den sonra istediğin kadar tekrar dinleyebilir, transkripti açabilirsin.' : 'Sınav modu: Ses gerçek sınavdaki gibi yalnızca bir kez çalar; durdurursan yeniden başlatamazsın. Önce soruları oku, dinlerken not al. „Abgeben“den sonra istediğin kadar tekrar dinleyebilirsin.') : TTS ? 'Ses, cihazının Almanca sesiyle çalar. Sınavda her metni yalnızca bir kez duyarsın; önce bir kez dinleyip cevapla, sonra kontrol için tekrar dinle. Ses gelmezse Transkript’i aç.' : 'Bu cihazda sesli okuma yok. Transkripti oku, sonra soruları çöz.'}</p>
     ${per}<div class="ltext${ui.en && open ? ' show-en' : ''}" ${open ? '' : 'hidden'}>${lines}</div>${trBox(trl, key + '_tr')}</div>`;
 }
 function blockHTML(sec, b, idx, single) {
@@ -1755,7 +1756,7 @@ function stepHTML(day, sec, i) {
     <div id="body"${mockLive(sec) ? ` class="mock-live${TTS ? ' tts' : ''}"` : ''}>${stepBody(sec)}</div>`;
 }
 let TOTAL_DAYS = 90;
-const WEEK_GOAL = 3;
+const WEEK_GOAL = 4;
 const RANKS = ['Neuling', 'Lehrling', 'Wortsammler', 'Satzbauer', 'Grammatik-Ass', 'Textprofi', 'Prüfungsjäger', 'C1-Kandidat', 'Fast C1', 'C1-Legende'];
 const XP_LEVEL = 500;
 function todayKey(t) { const d = t ? new Date(t) : new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -2036,7 +2037,7 @@ function planHTML() {
     ${backupHTML()}
     <div class="card"><h2>Çalışma kuralları</h2><ul class="rules">${PLAN.rules.map(r => `<li><b>${esc(r.t)}</b><span>${esc(r.d)}</span></li>`).join('')}</ul></div>
     <div class="card"><h2>Günlük iskelet (90 dakika)</h2><div class="skel" role="img" aria-label="Günlük süre dağılımı">${skBar}</div><ul class="skl">${PLAN.skeleton.map(s => `<li><span class="m">${s.min}′</span><span><b>${esc(s.t)}</b><br>${esc(s.d)}</span></li>`).join('')}</ul></div>
-    <div class="card"><h2>Bir etabın ritmi (5 çalışma günü)</h2><div class="wd">${PLAN.weekdays.map(x => `<div><b>${esc(x.d)}</b><span class="f">${esc(x.f)}</span><span>${esc(x.n)}</span></div>`).join('')}<div><b>Boş günler</b><span class="f">Dinlenme</span><span>Haftada 3–4 gün çalış, gerisi dinlenme. Bir etap takvimde yaklaşık 1,5 hafta sürer. Büyük deneme etaplarında ilk dört gün sınavın dört bölümüdür.</span></div></div></div>
+    <div class="card"><h2>Bir etabın ritmi (5 çalışma günü)</h2><div class="wd">${PLAN.weekdays.map(x => `<div><b>${esc(x.d)}</b><span class="f">${esc(x.f)}</span><span>${esc(x.n)}</span></div>`).join('')}<div><b>Boş günler</b><span class="f">Dinlenme</span><span>Haftada 4 gün çalış, gerisi dinlenme. Bir etap takvimde yaklaşık 1,5 hafta sürer (5 çalışma günü). Büyük deneme etaplarında ilk dört gün sınavın dört bölümüdür.</span></div></div></div>
     <div class="card"><h2>Telc Deutsch C1: sınav formatı ve bizim çalışma karşılığı</h2><div class="tw"><table class="exam"><thead><tr><th>Bölüm</th><th>Format</th><th>Puan</th><th>Süre</th><th>Bizde</th></tr></thead><tbody>${PLAN.exam.map(r => `<tr><td>${esc(r.part)}</td><td>${esc(r.fmt)}</td><td>${esc(r.pts)}</td><td>${esc(r.time)}</td><td>${esc(r.ours)}</td></tr>`).join('')}</tbody></table></div><p class="hint">${esc(PLAN.examNote)}</p></div>
     <div class="card"><h2>Etap etap: ne öğreneceğiz</h2><div class="pills" role="group" aria-label="Etap seç">${PLAN.weeks.map(w => `<button class="pill${w.days.some(x => x.big) ? ' pbig' : ''}" type="button" data-act="week" data-w="${w.w}" aria-pressed="${w.w === ui.planWeek}">Etap ${w.w}</button>`).join('')}</div>
       <div class="wk"><h3>Etap ${W.w}: ${esc(W.title)}${W.dates ? ` <small class="wdate">${esc(W.dates)}</small>` : ''}</h3>${phOf(W.w) ? `<p class="k nocap">Faz ${phOf(W.w).n} · ${esc(phOf(W.w).t)}</p>` : ''}${W.note ? `<p class="hint">${esc(W.note)}</p>` : ''}
@@ -2243,6 +2244,8 @@ app.addEventListener('click', e => {
     case 'enitem': { const id = t.dataset.id, key = 'i_' + id; ui.eno[key] = !ui.eno[key]; const bi = $('[data-bi="' + key + '"]'); if (bi) bi.classList.toggle('en-on', !!ui.eno[key] || (!!D().res[id] && ui.en)); t.setAttribute('aria-pressed', ui.eno[key] ? 'true' : 'false'); return; }
     case 'spk': { const txt = SAY[+t.dataset.say]; if (txt) speakText(txt, 0.95, t.dataset.lang); return; }
     case 'lplay1': { const box = t.closest('.listen'); const sc = SCRIPTS[+box.dataset.script].filter(l => l.who === t.dataset.who); const slow = $('.lslow', box); if (!speakScript(sc, slow && slow.checked ? 0.75 : 0.95)) { $('.ltext', box).hidden = false; } return; }
+    case 'lplayonce': { const sec = curSec(), d = D(); if (!sec || d.plays[sec.id]) return; const box = t.closest('.listen'); const sc = SCRIPTS[+box.dataset.script];
+      if (!speakScript(sc, 0.95)) { $('.ltext', box).hidden = false; return; } d.plays[sec.id] = Date.now(); saveLocal(); t.disabled = true; t.textContent = '✓ Gehört'; return; }
     case 'lplay': { const box = t.closest('.listen'); const sc = SCRIPTS[+box.dataset.script]; const slow = $('.lslow', box).checked; if (!speakScript(sc, slow ? 0.75 : 0.95)) { $('.ltext', box).hidden = false; } return; }
     case 'lstop': stopSpeech(); return;
     case 'ltrans': { const box = t.closest('.listen'); const tx = $('.ltext', box); tx.hidden = !tx.hidden; if (!tx.hidden && ui.en) tx.classList.add('show-en'); t.setAttribute('aria-expanded', tx.hidden ? 'false' : 'true'); ui.eno[curSec().id + '_listen_t'] = !tx.hidden; return; }
