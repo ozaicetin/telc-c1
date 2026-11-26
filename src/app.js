@@ -23,7 +23,7 @@ function D(id) {
   id = id || ui.day;
   if (!state.days[id]) state.days[id] = {};
   const d = state.days[id];
-  d.sel = d.sel || {}; d.res = d.res || {}; d.secs = d.secs || {}; d.vocab = d.vocab || {}; d.write = d.write || {}; d.speak = d.speak || {}; d.time = d.time || {}; d.rev = d.rev || {}; d.seenNew = d.seenNew || {}; d.mockT = d.mockT || {}; d.plays = d.plays || {};
+  d.sel = d.sel || {}; d.res = d.res || {}; d.secs = d.secs || {}; d.vocab = d.vocab || {}; d.write = d.write || {}; d.speak = d.speak || {}; d.time = d.time || {}; d.rev = d.rev || {}; d.seenNew = d.seenNew || {}; d.mockT = d.mockT || {}; d.plays = d.plays || {}; d.kdrill = d.kdrill || {};
   if (typeof d.card !== 'number') d.card = 0;
   if (typeof d.notes !== 'string') d.notes = '';
   if (!d.started) d.started = Date.now();
@@ -137,7 +137,7 @@ function openDay(id, view) {
   stopSpeech();
   ui.busy = true; ui.view = view || 'day'; render();
   ensureDay(id).then(() => {
-    ui.day = id; ui.step = -1; ui.q = {}; ui.order = null; ui.flip = false; ui.rpos = undefined; ui.sheet = false; ui.busy = false;
+    ui.day = id; ui.step = -1; ui.q = {}; ui.order = null; ui.flip = false; ui.rpos = undefined; ui.sheet = false; ui.busy = false; ui.rmode = null; ui.kpos = undefined;
     rememberDay(id); render(); window.scrollTo(0, 0);
   }).catch(() => { ui.busy = false; render(); });
 }
@@ -207,7 +207,7 @@ function secDone(sec) {
   if (sec.kind === 'write') return !!d.write.submitted;
   if (sec.kind === 'speak') return !!d.speak.done;
   if (sec.kind === 'wrap') return !!d.closed;
-  if (sec.kind === 'review') return srsQueue(curDay().no).every(it => d.rev[it.k]);
+  if (sec.kind === 'review') { const kd = d.kdrill || {}; return srsQueue(curDay().no).every(it => d.rev[it.k]) && kQueue(curDay().no).every(x => kd[x.pid]); }
   return false;
 }
 function secPart(sec) {
@@ -216,12 +216,12 @@ function secPart(sec) {
   if (sec.kind === 'quiz') { const its = itemsOf(sec); const n = its.filter(i => d.res[i.id] || (sec.mock && d.sel[i.id] !== undefined)).length; return n && n < its.length ? n + '/' + its.length : ''; }
   if (sec.kind === 'write') return (d.write.text || '').trim() && !d.write.submitted ? 'taslak' : '';
   if (sec.kind === 'speak') return Object.keys(d.speak.checks || {}).length && !d.speak.done ? 'taslak' : '';
-  if (sec.kind === 'review') { const q = srsQueue(curDay().no), n = q.filter(it => d.rev[it.k]).length; return n && n < q.length ? n + '/' + q.length : ''; }
+  if (sec.kind === 'review') { const q = srsQueue(curDay().no), kq = kQueue(curDay().no), kd = d.kdrill || {}, n = q.filter(it => d.rev[it.k]).length + kq.filter(x => kd[x.pid]).length, t = q.length + kq.length; return n && n < t ? n + '/' + t : ''; }
   return '';
 }
 function secStatus(sec) {
   const d = D();
-  if (secDone(sec)) { const s = d.secs[sec.id]; if (sec.kind === 'review') { const q = srsQueue(curDay().no); return { st: 'done', txt: q.length ? q.filter(it => d.rev[it.k] === 'know').length + '/' + q.length : '✓' }; } return { st: 'done', txt: sec.kind === 'quiz' && s ? s.ok + '/' + s.total : '✓' }; }
+  if (secDone(sec)) { const s = d.secs[sec.id]; if (sec.kind === 'review') { const q = srsQueue(curDay().no), kq = kQueue(curDay().no), kd = d.kdrill || {}, t = q.length + kq.length; return { st: 'done', txt: t ? (q.filter(it => d.rev[it.k] === 'know').length + kq.filter(x => kd[x.pid] && kd[x.pid].ok).length) + '/' + t : '✓' }; } return { st: 'done', txt: sec.kind === 'quiz' && s ? s.ok + '/' + s.total : '✓' }; }
   const p = secPart(sec); return { st: p ? 'part' : 'none', txt: p };
 }
 function finalizeSec(sec) {
@@ -325,7 +325,7 @@ function mcTrText(b) {
 function fbHTML(day, it, r) {
   const ok = r && r.ok;
   const corr = it.letters ? it.opts[it.a].toUpperCase() : (LET[it.a] + ') ' + (it.sentences ? '' : it.opts[it.a]));
-  return `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Doğru.' : 'Yanlış. Doğru cevap: ' + esc(corr.trim())}</b><p class="pl">${esc(it.exp)}</p><div class="chips"><span class="chip tagc">${esc(tagLabel(day, it.tag))}</span></div></div>`;
+  return `<div class="fb ${ok ? 'ok' : 'bad'}"><b>${ok ? 'Doğru.' : 'Yanlış. Doğru cevap: ' + esc(corr.trim())}</b>${ok ? `<details class="xmore"><summary>Açıklama</summary><p class="pl">${esc(it.exp)}</p></details>` : expHTML(day.id, it.id, it.exp)}<div class="chips"><span class="chip tagc">${esc(tagLabel(day, it.tag))}</span></div></div>`;
 }
 function eoptsHTML(b, res) {
   if (!b.optsEn) return '';
@@ -382,7 +382,7 @@ function clozeHTML(sec, b) {
   else {
     const bad = b.gaps.map((g, i) => ({ g, i, r: d.res[ids[i]] })).filter(x => !x.r.ok);
     const lab = (g, k) => b.sentences ? LET[k] + ')' : '';
-    foot = (bad.length ? `<ul class="eval">${bad.map(x => `<li><b>Lücke ${x.i + 1}: ${b.sentences ? LET[x.g.a] + ') ' : ''}${esc((x.g.opts || b.sentences)[x.g.a])}</b><br>${esc(x.g.exp)} <span class="chip tagc">${esc(tagLabel(day, x.g.tag))}</span></li>`).join('')}</ul>` : `<p class="allok">Tüm boşluklar doğru.</p>`)
+    foot = (bad.length ? `<ul class="eval">${bad.map(x => `<li><b>Lücke ${x.i + 1}: ${b.sentences ? LET[x.g.a] + ') ' : ''}${esc((x.g.opts || b.sentences)[x.g.a])}</b> <span class="chip tagc">${esc(tagLabel(day, x.g.tag))}</span>${expHTML(day.id, sec.id + '_' + b.id + '_' + (x.i + 1), x.g.exp)}</li>`).join('')}</ul>` : `<p class="allok">Tüm boşluklar doğru.</p>`)
       + `<details class="alls"${bad.length ? '' : ' open'}><summary>Tüm boşluklar için açıklamalar (${b.gaps.length})</summary><ol>${b.gaps.map((g, i) => `<li><b lang="de">${b.sentences ? LET[g.a] + ') ' : ''}${esc((g.opts || b.sentences)[g.a])}</b><br>${esc(g.exp)}${g.opts ? `<div class="optline">${g.opts.map((o, k) => `<span class="${k === g.a ? 'okw' : ''}">${LET[k]}) ${esc(o)} = ${esc(g.optTr[k])}</span>`).join('')}</div>` : ''}</li>`).join('')}</ol></details>`;
   }
   const enOn = checked && ui.en || ui.eno[sec.id + '_' + b.id];
@@ -443,7 +443,7 @@ function resultHTML(sec) {
 }
 function reviewHTML(sec) {
   const d = D(), day = curDay();
-  return `<div class="review">${itemsOf(sec).map(it => { const r = d.res[it.id]; const chosen = r.c >= 0 ? it.opts[r.c] : '—'; return `<div class="rv ${r.ok ? 'ok' : 'bad'}"><div class="rq pl" lang="de">${esc(it.q)}</div><div class="ra">${r.ok ? 'Doğru: <b>' + esc(it.sentences ? LET[it.a] + ') ' + it.opts[it.a] : it.opts[it.a]) + '</b>' : 'Senin cevabın: <s>' + esc(it.sentences ? LET[r.c] : chosen) + '</s> · Doğru: <b>' + esc(it.sentences ? LET[it.a] + ') ' + it.opts[it.a] : it.opts[it.a]) + '</b>'}</div>${r.ok ? '' : `<div class="ra">${esc(it.exp)}</div>`}</div>`; }).join('')}</div>`;
+  return `<div class="review">${itemsOf(sec).map(it => { const r = d.res[it.id]; const chosen = r.c >= 0 ? it.opts[r.c] : '—'; return `<div class="rv ${r.ok ? 'ok' : 'bad'}"><div class="rq pl" lang="de">${esc(it.q)}</div><div class="ra">${r.ok ? 'Doğru: <b>' + esc(it.sentences ? LET[it.a] + ') ' + it.opts[it.a] : it.opts[it.a]) + '</b>' : 'Senin cevabın: <s>' + esc(it.sentences ? LET[r.c] : chosen) + '</s> · Doğru: <b>' + esc(it.sentences ? LET[it.a] + ') ' + it.opts[it.a] : it.opts[it.a]) + '</b>'}</div>${r.ok ? '' : `<div class="ra">${expHTML(curDay().id, it.id, it.exp)}</div>`}</div>`; }).join('')}</div>`;
 }
 function firstOpen(sec) { const d = D(); const its = itemsOf(sec); const i = its.findIndex(x => !d.res[x.id]); return i < 0 ? its.length : i; }
 
@@ -524,8 +524,119 @@ function summaryDeck(sec) {
     ${fresh.length ? `<div class="surface"><h3>Yeni kelimelerin</h3><div class="tw"><table class="vtab"><thead><tr><th lang="de">Deutsch</th><th lang="en">English</th><th>Türkçe</th></tr></thead><tbody>${rows}</tbody></table></div></div>` : ''}`;
 }
 
+/* ---------- simple pattern cards: formula, one-line rule, highlighted example ---------- */
+const KAS_L = { A: '+ Akk', D: '+ Dat', G: '+ Gen', N: 'Nom', NS: 'yan cümle', Adv: 'zarf', Inf: 'zu + Inf' };
+function kById(id) { const K = window.KALIP; if (!K) return null; if (!K._ix) K._ix = Object.fromEntries(K.items.map(x => [x.id, x])); return K._ix[id] || null; }
+function kLinkOf(dayId, itemId) { const K = window.KALIP, m = K && K.links && K.links[dayId]; return m && m[itemId] ? kById(m[itemId]) : null; }
+function kCat(it) { const K = window.KALIP; return (K && K.cats.find(c => c.id === it.cat)) || { tr: '', de: '' }; }
+function reEsc(t) { return String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function kHL(text, terms) {
+  let h = esc(text);
+  [...new Set(terms.filter(t => t && t.length > 1))].sort((a, b) => b.length - a.length).forEach(t => {
+    const re = new RegExp('(^|[^0-9A-Za-zÄÖÜäöüß])(' + reEsc(esc(t)) + ')(?=$|[^0-9A-Za-zÄÖÜäöüß])', 'i');
+    if (!/<mark>[^<]*$/.test(h)) h = h.replace(re, '$1<mark>$2</mark>');
+  });
+  return h;
+}
+function kSplit(it) { // verb + preposition for "nachdenken über" style patterns
+  if (!(it.cat === 'vp' || it.cat === 'nap') || it.de.includes('/') || !/\s/.test(it.de)) return null;
+  const toks = it.de.split(' '); const prep = toks.pop(); return { w: toks.join(' '), p: prep };
+}
+function kTerms(it) {
+  const t = []; if (it.drill) t.push(it.drill.a);
+  const sp = kSplit(it); if (sp) t.push(sp.p);
+  if (it.fw) { const m = /–\s*([A-Za-zÄÖÜäöüß]+)/.exec(it.fw); if (m) t.push(m[1]); }
+  return t;
+}
+function kRule(it) {
+  if (it.kural) return it.kural;
+  const sp = kSplit(it), k = (it.kasus || '').split(/\s*\/\s*/)[0];
+  return (sp ? sp.w + ' ' + sp.p + ' ' + (KAS_L[k] || '') : it.de) + (it.fw ? ' · ' + it.fw.replace(/\s*\(.*\)\s*/, '') : '');
+}
+function kTrap(it) { if (it.kural) return ''; const m = /Tuzak:\s*([^.]+\.?)/.exec(it.note || ''); return m ? m[1] : ''; }
+function kFormula(it) {
+  const kas = (it.kasus || '').split(/\s*\/\s*/).filter(Boolean), sp = kSplit(it);
+  let parts = [], cap = '';
+  const word = String(it.de).split(/[\s/…,]+/).filter(Boolean)[0] || it.de;
+  const Cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  if (sp) {
+    parts = [['ch w', sp.w], ['op', '+'], ['ch p', sp.p]];
+    if (kas[0] && KAS_L[kas[0]]) parts.push(['op', '+'], ['ch k k-' + kas[0], KAS_L[kas[0]].replace(/^\+\s*/, '')]);
+    if (it.fw) { const m = /–\s*([A-Za-zÄÖÜäöüß]+)/.exec(it.fw), q = /^([A-ZÄÖÜa-zäöüß]+\??)/.exec(it.fw); parts.push(['op', '→']); if (q) parts.push(['ch q', q[1].replace(/\?$/, '') + '?']); if (m) parts.push(['ch p', m[1]]); }
+  } else if (kas.includes('NS') || it.id === 'ws-ns') {
+    const c = it.id === 'ws-ns' ? 'dass' : it.drill && it.de.toLowerCase().includes(it.drill.a.toLowerCase()) ? it.drill.a : word;
+    parts = [['ch p', c], ['ch', 'sie'], ['ch ghost', 'hat'], ['ch', 'keine Zeit'], ['ch v mv', 'hat']]; cap = 'Yan cümle: çekimli fiil en sona gider.';
+  } else if (kas.includes('Adv') || it.id === 'ws-v2') {
+    const c = it.id === 'ws-v2' ? 'Heutzutage' : Cap(word);
+    parts = [['ch p', c], ['ch v v2', 'kommt'], ['ch', 'sie'], ['ch', 'später']]; cap = 'Zarf başta: fiil hemen arkasında (2. sıra), özne sonra.';
+  } else if (it.id === 'ws-ns-erst') {
+    parts = [['ch p', 'Weil sie keine Zeit hat,'], ['ch v v2', 'kommt'], ['ch', 'sie'], ['ch', 'später']]; cap = 'Yan cümle 1. sırayı alır; ana cümle fiille başlar.';
+  } else {
+    parts = [['ch w', it.de]]; kas.forEach(k => { if (KAS_L[k]) parts.push(['ch k k-' + k, KAS_L[k]]); });
+  }
+  return `<div class="kf" aria-hidden="true">${parts.map((p, i) => `<span class="${p[0]}" style="--i:${i}">${esc(p[1])}${p[0].includes('v2') ? '<sup>2.</sup>' : ''}</span>`).join('')}</div>${cap ? `<p class="kcap">${esc(cap)}</p>` : ''}`;
+}
+function kMini(it, link) {
+  const c = kCat(it), trap = kTrap(it);
+  return `<div class="kmini kc-${it.cat}"><div class="kmh"><span class="kmc">${esc(c.tr)}</span><b lang="de">${esc(it.de)}</b></div>${kFormula(it)}<p class="kru">${esc(it.kural || '= ' + it.tr)}</p>${trap ? `<p class="ktrap">⚠ ${esc(trap)}</p>` : ''}<p class="kex" lang="de">${kHL(it.ex, kTerms(it))}</p>${link === false ? '' : `<button class="lnk" type="button" data-act="kopen" data-k="${esc(it.id)}">Kalıp defterinde aç</button>`}</div>`;
+}
+function expShort(exp) { const s = String(exp || ''); const m = /^(.+?[.!?])\s+\S/.exec(s); return m && m[1].length < s.length - 3 ? [m[1], s] : [s, '']; }
+function expHTML(dayId, id, exp) {
+  const k = window.KALIP ? kLinkOf(dayId, id) : null, [a, full] = expShort(exp);
+  if (k) return kMini(k) + `<details class="xmore"><summary>Bu sorunun açıklaması</summary><p class="pl">${esc(exp)}</p></details>`;
+  return `<p class="pl">${esc(a)}</p>` + (full ? `<details class="xmore"><summary>Devamı</summary><p class="pl">${esc(full)}</p></details>` : '');
+}
+
+/* ---------- spaced repetition for patterns the student got wrong (1-3-7-14, like the word cards) ---------- */
+const K_OFF = [1, 3, 7, 14];
+function kEvents(uptoNo) {
+  const K = window.KALIP, ev = []; if (!K) return ev;
+  Object.keys(K.links || {}).forEach(day => { const m = MD(day); if (!m || m.no > uptoNo) return; const res = (state.days[day] || {}).res || {};
+    Object.entries(K.links[day]).forEach(([item, pid]) => { const r = res[item]; if (r) ev.push({ no: m.no, pid, ok: !!r.ok, ord: 1 }); }); });
+  mDays().forEach(m => { if (m.no > uptoNo) return; Object.entries((state.days[m.id] || {}).kdrill || {}).forEach(([pid, r]) => ev.push({ no: m.no, pid, ok: !!r.ok, ord: 0 })); });
+  return ev.sort((a, b) => a.no - b.no || a.ord - b.ord);
+}
+function kSrs(uptoNo) {
+  const S = {};
+  kEvents(uptoNo).forEach(e => {
+    const s = S[e.pid];
+    if (!s) { if (!e.ok) S[e.pid] = { origin: e.no, step: 0, due: e.no + 1, lapses: 0, done: false }; return; }
+    if (!e.ok) { Object.assign(s, { origin: e.no, step: 0, due: e.no + 1, lapses: s.lapses + 1, done: false }); return; }
+    if (!s.done && e.no >= s.due) { s.step++; if (s.step >= 4) s.done = true; else s.due = s.origin + K_OFF[s.step]; }
+  });
+  return S;
+}
+function kQueue(no) {
+  if (!window.KALIP) return [];
+  const S = kSrs(no - 1);
+  return Object.entries(S).filter(([pid, s]) => !s.done && s.due <= no && kById(pid) && kById(pid).drill).map(([pid, s]) => ({ pid, s, it: kById(pid) })).sort((a, b) => a.s.due - b.s.due || a.pid.localeCompare(b.pid));
+}
+function hashStr(s) { let h = 2166136261; for (const ch of String(s)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function kDrillBody(day, kq) {
+  const d = D(); d.kdrill = d.kdrill || {};
+  let pos = ui.kpos; if (pos === undefined) { pos = kq.findIndex(x => !d.kdrill[x.pid]); if (pos < 0) pos = kq.length; }
+  pos = Math.max(0, Math.min(pos, kq.length));
+  const ticks = `<div class="ticks">${kq.map((x, i) => `<button class="tk ${d.kdrill[x.pid] ? (d.kdrill[x.pid].ok ? 'know' : 'new') : ''}${i === pos ? ' cur' : ''}" type="button" data-act="kgo" data-i="${i}" aria-label="Kalıp ${i + 1}"></button>`).join('')}</div>`;
+  if (pos >= kq.length) {
+    const ok = kq.filter(x => d.kdrill[x.pid] && d.kdrill[x.pid].ok), bad = kq.filter(x => d.kdrill[x.pid] && !d.kdrill[x.pid].ok), open = kq.filter(x => !d.kdrill[x.pid]);
+    return `<div class="result"><div class="big">${ok.length} doğru · ${bad.length} yarın yeniden${open.length ? ' · ' + open.length + ' açık' : ''}</div>
+      <p>Doğru bildiğin kalıp bir sonraki aralığa geçer (1 → 3 → 7 → 14. gün; dördünü de bilirsen öğrenildi). Yanlış yaptığın kalıp yarın yeniden gelir.</p>
+      <div class="qnav">${open.length ? `<button class="btn primary" type="button" data-act="kgo" data-i="${kq.indexOf(open[0])}">Açık kartlara dön</button>` : ''}</div></div>
+      ${bad.length ? `<div class="surface"><h3>Yarın yeniden gelecek</h3>${bad.map(x => kMini(x.it)).join('')}</div>` : ''}`;
+  }
+  const x = kq[pos], it = x.it, dr = it.drill, ans = d.kdrill[x.pid];
+  const opts = [dr.a].concat(dr.o).map(o => ({ o, h: hashStr(o + '|' + x.pid + '|' + day.id) })).sort((a, b) => a.h - b.h).map(v => v.o);
+  const sent = esc(dr.s).replace('___', ans ? `<span class="kgap ${ans.ok ? 'ok' : 'bad'}">${esc(dr.a)}</span>` : '<span class="kgap">?</span>');
+  const lbl = `Tag ${x.s.origin} hatası · tekrar ${x.s.step + 1}/4${x.s.lapses ? ' · ' + x.s.lapses + '× baştan' : ''}`;
+  const btns = opts.map(o => { const cls = !ans ? '' : o === dr.a ? ' right' : o === ans.c ? ' wrong' : ' dim'; return `<button class="kopt${cls}" type="button" data-act="kpick" data-v="${esc(o)}" lang="de"${ans ? ' disabled' : ''}>${esc(o)}</button>`; }).join('');
+  return `<div class="deck kdeck"><div class="dtop"><span class="qn">Kalıp kartı ${pos + 1} / ${kq.length}</span><span class="chip min">${esc(lbl)}</span><span class="chip min kcatc kc-${it.cat}">${esc(kCat(it).tr)}</span></div>${ticks}
+    <div class="kcard"><p class="ksent" lang="de">${sent}</p><div class="kopts">${btns}</div>
+    ${ans ? `<div class="kres ${ans.ok ? 'ok' : 'bad'}"><b>${ans.ok ? '✓ Doğru!' : '✗ Doğrusu: ' + esc(dr.a)}</b></div>${kMini(it)}` : '<p class="hint">Boşluğa hangisi gelir? Kural kartı cevaptan sonra açılır.</p>'}</div>
+    <div class="qnav"><button class="btn ghost" type="button" data-act="kgo" data-i="${pos - 1}" ${pos === 0 ? 'disabled' : ''}>← Önceki</button>${ans ? `<button class="btn primary" type="button" data-act="knext">Weiter →</button>` : `<button class="btn ghost" type="button" data-act="kgo" data-i="${pos + 1}">Atla →</button>`}</div></div>`;
+}
+
 /* spaced-repetition review (1-3-7-14) */
-function reviewBody(sec) {
+function reviewWordsBody(sec) {
   const day = curDay(), d = D(), q = srsQueue(day.no);
   if (!q.length) {
     const st = srsStats(day.no - 1);
@@ -556,6 +667,16 @@ function reviewBody(sec) {
     <div class="fc ${w.dom}"><div class="fc-front"><div class="fc-de" lang="de">${esc(w.de)}</div><div class="fc-info">${esc(w.info || '')}</div>${spkBtn(w.de)}
     ${ui.flip ? '' : `<button class="btn primary big" type="button" data-act="flip">Aufdecken</button><span class="hint">Önce anlamını hatırlamaya çalış. Boşluk tuşu açar; ← biliyordum, → henüz değil.</span>`}</div>${back}</div>
     <div class="qnav"><button class="btn ghost" type="button" data-act="rgo" data-i="${pos - 1}" ${pos === 0 ? 'disabled' : ''}>← Önceki</button><button class="btn ghost" type="button" data-act="rgo" data-i="${pos + 1}">Atla →</button>${m ? `<span class="chip ${m === 'know' ? 'S' : 'tagc'}">${m === 'know' ? 'bildin' : 'tekrar gelecek'}</span>` : ''}</div></div>`;
+}
+function reviewBody(sec) {
+  const day = curDay(), d = D(), q = srsQueue(day.no), kq = kQueue(day.no);
+  if (!ui.rmode) ui.rmode = q.length && q.some(it => !d.rev[it.k]) ? 'w' : kq.length ? 'k' : 'w';
+  if (ui.rmode === 'k' && !kq.length) ui.rmode = 'w';
+  if (ui.rmode === 'w' && !q.length && kq.length) ui.rmode = 'k';
+  const kd = d.kdrill || {}, wDone = q.filter(it => d.rev[it.k]).length, kDone = kq.filter(x => kd[x.pid]).length;
+  const sw = q.length && kq.length ? `<div class="glmode rsw" role="tablist" aria-label="Tekrar"><button type="button" role="tab" data-act="rmode" data-v="w" aria-selected="${ui.rmode === 'w'}">Kelime kartları <small>${wDone}/${q.length}</small></button><button type="button" role="tab" data-act="rmode" data-v="k" aria-selected="${ui.rmode === 'k'}">Kalıp kartları <small>${kDone}/${kq.length}</small></button></div>` : '';
+  const intro = kq.length ? `<p class="hint">Kalıp kartları: daha önce yanlış yaptığın dilbilgisi kalıpları, kelimeler gibi 1-3-7-14 gün aralıkla geri gelir.</p>` : '';
+  return sw + (ui.rmode === 'k' ? intro + kDrillBody(day, kq) : reviewWordsBody(sec) + (kq.length && !sw ? '' : '') + (kq.length && q.every(it => d.rev[it.k]) && kDone < kq.length ? `<div class="qnav"><button class="btn primary" type="button" data-act="rmode" data-v="k">Kalıp kartlarına geç (${kq.length - kDone})</button></div>` : ''));
 }
 function markReview(m) {
   const day = curDay(), d = D(), q = srsQueue(day.no);
@@ -775,6 +896,7 @@ function reportText(day) {
   const tags = Object.entries(sm.tags).sort((a, b) => b[1] - a[1]);
   if (tags.length) { lines.push('Zayıf konular:'); tags.forEach(t => lines.push('- ' + tagLabel(day, t[0]) + ' (' + t[1] + ' yanlış)')); }
   if (sm.rev) lines.push('Tekrar (1-3-7-14): ' + sm.rev.know + '/' + sm.rev.due + ' bildin' + (sm.rev.again.length ? ' · tekrar gelecek: ' + sm.rev.again.join(', ') : ''));
+  { const kd = d.kdrill || {}, ks = Object.entries(kd); if (ks.length) lines.push('Kalıp tekrarı: ' + ks.filter(([, r]) => r.ok).length + '/' + ks.length + ' doğru' + (ks.some(([, r]) => !r.ok) ? ' · yanlış: ' + ks.filter(([, r]) => !r.ok).map(([p]) => (kById(p) || { de: p }).de).join(', ') : '')); }
   if (sm.vocabNew.length) lines.push('Yeni kelimeler: ' + sm.vocabNew.join(', '));
   if (sm.open && sm.open.length) lines.push('Bitmeyen adımlar: ' + sm.open.join(', '));
   if (sm.wrong.length) { lines.push('Yanlışlar:'); sm.wrong.forEach(w => lines.push('- [' + w.exam + ' · ' + w.id + '] ' + String(w.q).replace(/\s+/g, ' ').slice(0, 140) + ' → seçtiğin: ' + (w.chosen == null ? 'boş' : w.chosen) + ' · doğru: ' + w.correct)); }
@@ -990,16 +1112,20 @@ function glRow(it) {
   const art = m ? `<span class="art a-${m[1]}">${m[1]}</span>` : '';
   const word = m ? it.de.slice(m[0].length) : it.de;
   const st = it.status === 'rep' ? `<span class="wst rep" title="Tekrar listesinde · sıradaki: Tag ${it.due}">tekrarda</span>` : it.status === 'ok' ? '<span class="wst ok" title="1-3-7-14 tekrarı tamamlandı">öğrenildi</span>' : it.status === 'known' ? '<span class="wst kn" title="Kartta „biliyorum“ dedin">biliyordun</span>' : '';
-  const ex = it.ex ? `<p class="wx" lang="de">${esc(it.ex)}${glSpk(it.ex, 'de-DE')}</p>${it.exEn ? `<p class="wx en" lang="en">${esc(it.exEn)}</p>` : ''}` : '';
-  const tr = `<p class="wtr" lang="tr"><b>${esc(it.tr || '')}</b>${it.exTr ? `<br><span>${esc(it.exTr)}</span>` : ''}</p>`;
+  const core = String(word).replace(/^(sich|etw\.|jdm\.\/etw\.|jdm\.)\s+/g, '').split(/\s+/).filter(t => t.length > 3 && !/^(etw\.|jdm\.|sich|in|zu|zur|auf|mit|an|von)$/.test(t));
+  const stems = core.map(t => t.replace(/(en|ern|eln|e|n)$/, '')).filter(t => t.length > 3);
+  const hlEx = t => { let h = esc(t); stems.forEach(st => { const re = new RegExp('([A-Za-zÄÖÜäöüß]*' + reEsc(esc(st)) + '[A-Za-zÄÖÜäöüß]*)', 'i'); if (!h.includes('<mark>')) h = h.replace(re, '<mark>$1</mark>'); }); return h; };
+  const ex = it.ex ? `<p class="kex" lang="de">${hlEx(it.ex)}${glSpk(it.ex, 'de-DE')}</p>${it.exEn ? `<p class="wx en" lang="en">${esc(it.exEn)}</p>` : ''}` : '';
+  const chips = String(it.info || '').split(/\s*·\s*/).filter(x => x && !/^(Nomen|Verb|Adjektiv|Adverb|Adjektiv \/ Adverb|Adverb \/ Adjektiv|Nomen-Verb-Verbindung)$/i.test(x)).map(x => `<span class="ich" lang="de">${esc(/^(der|die|das),\s*(.+)$/.test(x) ? 'Pl. ' + x.replace(/^(der|die|das),\s*/, '') : x)}</span>`).join('');
+  const tr = `<p class="wtr" lang="tr"><b>${esc(it.tr || '')}</b>${it.exTr ? ` · <span>${esc(it.exTr)}</span>` : ''}</p>`;
   return `<details class="ge" data-dom="${it.dom}" data-st="${it.status || ''}" data-q="${esc(q)}"><summary><span class="wde" lang="de">${art}<b>${esc(word)}</b></span><span class="wen" lang="en">${esc(it.en || '')}</span><span class="wmeta"><span class="chip min">Tag ${it.no}</span>${st}</span></summary>
-    <div class="wbody"><div class="wline">${glSpk(it.de, 'de-DE')}${it.info ? `<span class="wi" lang="de">${esc(it.info)}</span>` : ''}<span class="wsrc">${esc(it.src)}</span></div>${ex}${tr}</div></details>`;
+    <div class="wbody"><div class="wline">${glSpk(it.de, 'de-DE')}${chips}<span class="wsrc">${esc(it.src)}</span></div>${ex}${tr}</div></details>`;
 }
 /* ---------- Kalıp defteri: grammar patterns of Sprachbausteine, grows with every day's exercises ---------- */
 const K_SEC = { sprachbausteine: 'Sprachbausteine', comeback: 'Fehler-Comeback', wtest: 'Wortschatz', lesen1: 'Lesen 1', korrektur: 'Korrektur', ltrain: 'Lesen-Training' };
 function kalipData() {
   const K = window.KALIP; if (!K) return null;
-  const cur = MD(MAN().current), lim = cur ? cur.no : 999, hist = {};
+  const cur = MD(MAN().current), lim = cur ? cur.no : 999, hist = {}, SR = kSrs(lim);
   Object.keys(K.links || {}).forEach(day => {
     const m = MD(day); if (!m || m.no > lim) return;
     const res = (state.days[day] || {}).res || {};
@@ -1010,17 +1136,21 @@ function kalipData() {
   });
   const items = K.items.map(it => { const h = (hist[it.id] || []).sort((a, b) => a.no - b.no); const tried = h.filter(x => x.ok !== null);
     const st = !h.length ? '' : tried.some(x => !x.ok) ? (tried.length && tried[tried.length - 1].ok ? 'fixed' : 'bad') : tried.length ? 'ok' : 'open';
-    return Object.assign({}, it, { hist: h, st }); });
+    return Object.assign({}, it, { hist: h, st, srs: SR[it.id] || null }); });
   return { cats: K.cats, items };
 }
 function kalipRow(it) {
-  const q = glNorm([it.de, it.en, it.tr, it.note, it.ex, it.fw].filter(Boolean).join(' '));
-  const kas = it.kasus ? it.kasus.split(/\s*\/\s*/).map(x => `<span class="kas k-${esc(x.replace(/[^A-Za-z]/g, ''))}" title="${esc({ A: 'Akkusativ', D: 'Dativ', G: 'Genitiv', N: 'Nominativ', NS: 'Nebensatz: fiil sonda', Adv: 'Zarf: fiil hemen arkada', Inf: 'zu + Infinitiv' }[x] || x)}">${esc({ A: '+ Akk', D: '+ Dat', G: '+ Gen', N: 'Nom', NS: 'yan cümle', Adv: 'zarf', Inf: 'zu + Inf' }[x] || x)}</span>`).join('') : '';
+  const q = glNorm([it.de, it.en, it.tr, it.note, it.ex, it.fw, it.kural].filter(Boolean).join(' '));
+  const kas = it.kasus ? it.kasus.split(/\s*\/\s*/).map(x => `<span class="kas k-${esc(x.replace(/[^A-Za-z]/g, ''))}">${esc(KAS_L[x] || x)}</span>`).join('') : '';
   const hist = it.hist.map(h => `<span class="kh ${h.ok === null ? 'na' : h.ok ? 'ok' : 'bad'}" title="${esc(h.where)}">Tag ${h.no} ${h.ok === null ? '·' : h.ok ? '✓' : '✗'}</span>`).join('');
   const st = it.st === 'bad' ? '<span class="wst rep">hata yaptın</span>' : it.st === 'fixed' ? '<span class="wst fx">düzelttin</span>' : '';
-  return `<details class="ge kp" data-st="${it.st}" data-q="${esc(q)}"><summary><span class="wde" lang="de"><b>${esc(it.de)}</b>${kas}</span><span class="wen" lang="en">${esc(it.en)}</span><span class="wmeta">${hist || '<span class="kh none">henüz yok</span>'}${st}</span></summary>
-    <div class="wbody"><p class="knote">${esc(it.note)}</p>${it.fw ? `<p class="kfw" lang="de"><span>Soru / da-biçimi:</span> ${esc(it.fw)}</p>` : ''}<p class="wx" lang="de">${esc(it.ex)}${glSpk(it.ex, 'de-DE')}</p><p class="wx en" lang="en">${esc(it.exEn)}</p><p class="wtr" lang="tr"><b>${esc(it.tr)}</b><br><span>${esc(it.exTr)}</span></p>
-    ${it.hist.length ? `<p class="kwhere">Çalıştığın yerler: ${it.hist.map(h => `Tag ${h.no} · ${esc(h.where)} ${h.ok === null ? '(henüz cevaplanmadı)' : h.ok ? '✓' : '✗'}`).join(' · ')}</p>` : '<p class="kwhere">Henüz bir alıştırmada çıkmadı; sonraki günlerde gelecek.</p>'}</div></details>`;
+  const sr = it.srs ? (it.srs.done ? '<span class="kh ok" title="1-3-7-14 tekrarı bitti">öğrenildi</span>' : `<span class="kh rv" title="Tekrar adımında geri gelecek">↻ Tag ${it.srs.due}</span>`) : '';
+  const trap = kTrap(it);
+  return `<details class="ge kp" data-id="${esc(it.id)}" data-st="${it.st}" data-q="${esc(q)}"><summary><span class="wde" lang="de"><b>${esc(it.de)}</b>${kas}</span><span class="wen" lang="en">${esc(it.en)}</span><span class="wmeta">${hist || '<span class="kh none">henüz yok</span>'}${sr}${st}</span></summary>
+    <div class="wbody kb">${kFormula(it)}${it.kural ? `<p class="kru">${esc(it.kural)}</p>` : ''}${trap ? `<p class="ktrap">⚠ ${esc(trap)}</p>` : ''}
+    <p class="kex" lang="de">${kHL(it.ex, kTerms(it))}${glSpk(it.ex, 'de-DE')}</p><p class="wx en" lang="en">${esc(it.exEn)}</p>
+    <p class="wtr" lang="tr"><b>${esc(it.tr)}</b> · <span>${esc(it.exTr)}</span></p>
+    <details class="xmore"><summary>Ayrıntı</summary><p class="pl">${esc(it.note)}</p>${it.fw ? `<p class="pl" lang="de">${esc(it.fw)}</p>` : ''}<p class="kwhere">${it.hist.length ? 'Çalıştığın yerler: ' + it.hist.map(h => `Tag ${h.no} · ${esc(h.where)} ${h.ok === null ? '(henüz cevaplanmadı)' : h.ok ? '✓' : '✗'}`).join(' · ') : 'Henüz bir alıştırmada çıkmadı; sonraki günlerde gelecek.'}</p></details></div></details>`;
 }
 function kalipHTML() {
   const K = kalipData();
@@ -1033,7 +1163,7 @@ function kalipHTML() {
   const body = K.cats.filter(c => by[c.id]).map(c => { const a = by[c.id], bad = a.filter(i => i.st === 'bad').length, done = a.filter(i => i.st).length;
     return `<details class="card gg kg kc-${c.id}" id="kg_${c.id}" data-n="${a.length}"${ui.kOpen && ui.kOpen[c.id] ? ' open' : ''}><summary class="gh"><span class="gtitle"><b lang="de">${esc(c.de)}</b><span class="gtr">${esc(c.tr)}</span></span><span class="gcount gn">${a.length}</span><span class="ghint"><b>Sınavda:</b> ${esc(c.exam)} · ${done} tanesini çalıştın${bad ? ` · <span class="kbad">${bad} hata</span>` : ''}<br>${esc(c.hint)}</span></summary><div class="gl-list">${a.map(kalipRow).join('')}</div></details>`; }).join('');
   return `<div class="card glhead"><h1>Kalıp defteri</h1>
-      <p>Sprachbausteine’de ve boşluk doldurmada sorulan dilbilgisi kalıpları: fiil + edat, da-/wo- biçimleri, bağlaçlar, ilgi zamirleri, ekler, edilgen … Resmî deneme sınavında 22 boşluğun dağılımı: bağlaç 5, fiil biçimi 4, fiil + edat 3, ek 3, edat + hâl 2, kalıp 2, kelime seçimi 3. Her gün çalıştığın boşluklar buraya bağlanır; <b>✓/✗</b> senin cevapların (yalnızca bu cihazda). Hata yaptıkların her grubun en üstünde.</p>
+      <p>Boşluk doldurmada en çok sorulan kalıplar. Başlığa dokun → liste; kalıba dokun → kural + örnek. <b>✓/✗</b> senin cevapların; yanlış yaptıkların <span class="kh rv">↻</span> ile tekrar adımında geri gelir.</p>
       <div class="glctl">
         <label class="glsearch"><span class="sr">Kalıp ara</span><input id="kq" type="search" autocomplete="off" spellcheck="false" placeholder="Ara: über, Dativ, obwohl, denen …" value="${esc(ui.kQ || '')}"></label>
         <div class="glrow"><span class="gll">Durum</span><div class="pills" role="group" aria-label="Durum">${pills('kst', ui.kSt || '', [['', 'Hepsi (' + K.items.length + ')'], ['done', 'Çalıştıklarım (' + nDone + ')'], ['bad', 'Hatalarım (' + nBad + ')']])}</div></div>
@@ -1073,7 +1203,7 @@ function glossaryHTML() {
   if (ui.glMode === 'kalip') return `<div class="stage glv cv-${ui.glCover || 'none'}">${sw}${kalipHTML()}</div>`;
   return `<div class="stage glv cv-${ui.glCover || 'none'}">${sw}
     <div class="card glhead"><h1>Kelime defteri</h1>
-      <p>Bütün günlerin kelimeleri türüne göre: isim, fiil, sıfat, zarf, kalıp … Başlığa dokun, liste açılır; kelimeye dokun, bilgi, örnek cümle ve Türkçesi açılır. Her yeni günle büyür. Kartta „Neu für mich“ dediğin kelimeler <span class="wst rep">tekrarda</span> etiketiyle görünür.</p>
+      <p>Başlığa dokun → liste; kelimeye dokun → örnek ve Türkçesi. <span class="wst rep">tekrarda</span> = kartta „Neu für mich“ dediklerin.</p>
       <div class="glctl">
         <label class="glsearch"><span class="sr">Kelime ara</span><input id="glq" type="search" autocomplete="off" spellcheck="false" placeholder="Ara: Almanca, İngilizce veya Türkçe" value="${esc(ui.glQ)}"></label>
         <div class="glrow"><span class="gll">Gün</span><div class="pills" role="group" aria-label="Gün">${dayPills}</div></div>
@@ -1128,7 +1258,7 @@ function render(opts) {
   app.innerHTML = topHTML() + `<div class="${cls}">${main}${side}</div>` + bar + sheetHTML(day);
   setStatus(lastStatus);
   const rt = $('#route'); if (rt && rt.scrollWidth > rt.clientWidth) { const c = $('.stop.cur', rt); if (c) rt.scrollLeft = Math.max(0, c.offsetLeft - rt.clientWidth / 3); }
-  if (ui.view === 'glossary') { applyGl(); applyKalip(); }
+  if (ui.view === 'glossary') { applyGl(); applyKalip(); if (ui.kFocus) { const el = document.querySelector('.kp[data-id="' + ui.kFocus + '"]'); ui.kFocus = null; if (el) { el.open = true; const g = el.closest('.kg'); if (g) g.open = true; setTimeout(() => el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' }), 30); } } }
   renderedStep = ui.step;
 }
 function rerender() { const y = window.scrollY; render({ still: true }); window.scrollTo(0, y); }
@@ -1252,6 +1382,11 @@ app.addEventListener('click', e => {
     case 'glcover': ui.glCover = t.dataset.v; glPress('glcover', ui.glCover); { const r = $('.glv'); if (r) r.className = 'stage glv cv-' + (ui.glCover || 'none'); } return;
     case 'glst': ui.glSt = t.dataset.v; glPress('glst', ui.glSt); applyGl(); return;
     case 'glmode': ui.glMode = t.dataset.v; stopSpeech(); render(); return;
+    case 'rmode': ui.rmode = t.dataset.v; ui.kpos = undefined; ui.flip = false; rerender(); return;
+    case 'kgo': ui.kpos = +t.dataset.i; rerender(); return;
+    case 'kpick': { const day = curDay(), kq = kQueue(day.no), d = D(); let pos = ui.kpos; if (pos === undefined) pos = kq.findIndex(x => !d.kdrill[x.pid]); const x = kq[pos]; if (!x || d.kdrill[x.pid]) return; d.kdrill[x.pid] = { c: t.dataset.v, ok: t.dataset.v === x.it.drill.a, ts: Date.now() }; ui.kpos = pos; queueSave(); rerender(); return; }
+    case 'knext': { const day = curDay(), kq = kQueue(day.no), d = D(), pos = ui.kpos === undefined ? 0 : ui.kpos; const n = kq.findIndex((x, i) => i > pos && !d.kdrill[x.pid]), any = kq.findIndex(x => !d.kdrill[x.pid]); ui.kpos = n >= 0 ? n : any >= 0 ? any : kq.length; rerender(); if (ui.kpos >= kq.length) window.scrollTo(0, 0); return; }
+    case 'kopen': { const it = kById(t.dataset.k); if (!it) return; stopSpeech(); ui.view = 'glossary'; ui.glMode = 'kalip'; ui.kQ = ''; ui.kSt = ''; ui.kOpen[it.cat] = true; ui.kFocus = it.id; render(); return; }
     case 'kst': ui.kSt = t.dataset.v; glPress('kst', ui.kSt); applyKalip(); return;
     case 'glrev': { const e = t.closest('.ge'); if (e) e.classList.add('rv-' + t.dataset.side); return; }
     case 'glgo': { const el = document.getElementById(t.dataset.g); if (el) { el.open = true; ui.glOpen[el.id.slice(3)] = true; el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); } return; }
