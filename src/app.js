@@ -15,7 +15,7 @@ const WEEKDAYS = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma'];
 
 /* ---------- state ---------- */
 let state = { v: SCHEMA, days: {} };
-const ui = { view: 'day', day: null, rpos: undefined, busy: false, glErr: false, step: -1, trAll: false, en: true, sheet: false, tro: {}, eno: {}, q: {}, planWeek: 1, order: null, flip: false, trCard: false, sumShown: false, glDay: null, glQ: '', glDom: '', glCover: '' };
+const ui = { view: 'day', day: null, rpos: undefined, busy: false, glErr: false, step: -1, trAll: false, en: true, sheet: false, tro: {}, eno: {}, q: {}, planWeek: 1, order: null, flip: false, trCard: false, sumShown: false, glDay: null, glQ: '', glDom: '', glCover: '', glSt: '', glOpen: {} };
 let db = null, saving = false, again = false, saveTimer = null;
 const dirtyDays = new Set();
 
@@ -137,7 +137,7 @@ function openDay(id, view) {
   stopSpeech();
   ui.busy = true; ui.view = view || 'day'; render();
   ensureDay(id).then(() => {
-    ui.day = id; ui.step = -1; ui.q = {}; ui.order = null; ui.flip = false; ui.rpos = undefined; ui.sheet = false; ui.busy = false; ui.glDay = id;
+    ui.day = id; ui.step = -1; ui.q = {}; ui.order = null; ui.flip = false; ui.rpos = undefined; ui.sheet = false; ui.busy = false;
     rememberDay(id); render(); window.scrollTo(0, 0);
   }).catch(() => { ui.busy = false; render(); });
 }
@@ -930,70 +930,114 @@ function topHTML() {
 /* ---------- glossary (English tab) ---------- */
 const glNorm = s => String(s || '').replace(/İ/g, 'i').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ß/g, 'ss').replace(/ı/g, 'i');
 const glSpeak = t => String(t).replace(/\s*\/\s*/g, ', ').replace(/…/g, ', ').replace(/[()]/g, ', ').replace(/\s+/g, ' ').trim();
-function glossaryGroups(dayId) {
-  const day = DAYS[dayId], out = [];
-  if (!day) return out;
-  const mk = (id, title, titleEn, dom, src, items) => { if (items.length) out.push({ key: dayId + '_' + id, no: day.no, title, titleEn, dom, src, items }); };
-  day.sections.forEach(sec => {
-    if (sec.kind !== 'cards' || !sec.words) return;
-    [['S', 'Tageswörter · Sektor', 'Words of the day · sector'], ['G', 'Tageswörter · Allgemein', 'Words of the day · general']].forEach(([dom, t, te]) => {
-      mk('words_' + dom, t, te, dom, 'Kelime kartları', sec.words.filter(w => w.dom === dom).map(w => ({ de: w.de, en: w.en, tr: w.tr, ex: w.ex, exEn: w.exEn, exTr: w.exTr, info: w.info, dom })));
+/* ---------- word list (Kelimeler): grouped by word type, grows day by day ---------- */
+const POSM = {
+  n: { de: 'Nomen', tr: 'İsimler', hint: 'Artikel renkli: der · die · das' },
+  v: { de: 'Verben', tr: 'Fiiller', hint: 'Açınca çekim biçimleri ve edatı' },
+  adj: { de: 'Adjektive & Partizipien', tr: 'Sıfatlar', hint: 'Cümlede ek alır: ein erschwinglicher Preis' },
+  adv: { de: 'Adverbien', tr: 'Zarflar', hint: 'Ek almaz; cümle başındaysa fiil ikinci sırada' },
+  kon: { de: 'Konnektoren & Präpositionen', tr: 'Bağlaç ve edatlar', hint: 'Fiilin yerine ve hâle dikkat' },
+  kalip: { de: 'Ausdrücke & Nomen-Verb-Verbindungen', tr: 'Kalıplar', hint: 'Bütün olarak öğren; Sprachbausteine’de çok çıkar' },
+  rm: { de: 'Redemittel & Prüfungssprache', tr: 'Kalıp cümleler', hint: 'Yazma ve konuşmada hazır cümleler' },
+  str: { de: 'Prüfungsstrategien', tr: 'Sınav stratejileri', hint: 'Nasıl çözülür' },
+};
+const POS_ORDER = ['n', 'v', 'adj', 'adv', 'kon', 'kalip', 'rm', 'str'];
+const GL_PREP = new Set(['auf', 'mit', 'zu', 'für', 'von', 'an', 'über', 'um', 'in', 'aus', 'bei', 'nach', 'vor', 'gegen', 'unter', 'zwischen']);
+function posGuess(de, info, group) {
+  // same rules as tools/wordpos.py; data normally carries `pos`, this is only a fallback
+  const s = String(de || '').trim(), inf = String(info || '').trim().toLowerCase();
+  if (/strateg/i.test(group || '')) return 'str';
+  if (inf.startsWith('nomen-verb')) return 'kalip';
+  if (/[.!?:…]$/.test(s) || s.includes('…')) return 'rm';
+  for (const [pre, p] of [['nomen', 'n'], ['verb', 'v'], ['adverb', 'adv'], ['adjektiv', 'adj'], ['partizip', 'adj'], ['konnektor', 'kon'], ['präposition', 'kon'], ['ausdruck', 'kalip'], ['redemittel', 'rm']]) if (inf.startsWith(pre)) return p;
+  let toks = s.replace(/\([^)]*\)/g, ' ').split(/\s+/).filter(t => t && t !== '/' && !/^(sich|etw\.|jdm\.\/etw\.|jdm\.|jdn\.|jds\.)$/.test(t));
+  while (toks.length && GL_PREP.has(toks[0])) toks.shift();
+  if (!toks.length) return 'kalip';
+  const verbish = t => /^[a-zäöü]/.test(t) && /(en|ern|eln)$/.test(t);
+  if (/^(der|die|das)$/.test(toks[0])) return toks.slice(1).some(verbish) ? 'kalip' : 'n';
+  if (toks.length === 1) return /^[A-ZÄÖÜ]/.test(toks[0]) ? 'n' : verbish(toks[0]) ? 'v' : 'adj';
+  if (toks[toks.length - 1] === 'sein' || verbish(toks[toks.length - 1])) return 'kalip';
+  return toks.length === 2 && GL_PREP.has(toks[1]) ? 'adj' : 'kalip';
+}
+function glDays() { const cur = MD(MAN().current), lim = cur ? cur.no : 999; return mDays().filter(m => m.no <= lim).map(m => m.id); }
+function glNeed() {
+  const ids = glDays(); if (ui.glDay == null || (ui.glDay !== 'all' && !ids.includes(ui.glDay))) ui.glDay = 'all';
+  const sel = ui.glDay === 'all' ? ids : [ui.glDay];
+  return sel.filter(id => { const m = MD(id); return m && !m.archive && !DAYS[id]; });
+}
+function glItems(sel) {
+  const out = [], seen = new Set(), srs = srsBuild(MD(MAN().current) ? MD(MAN().current).no : 999);
+  const add = it => { const k = glNorm(it.de); if (!it.de || seen.has(k)) return; seen.add(k); out.push(it); };
+  sel.forEach(id => {
+    const m = MD(id); if (!m) return;
+    const st = state.days[id] || {};
+    (m.words || []).forEach((w, i) => {
+      const s = srs[id + ':' + i];
+      const status = s ? (s.done ? 'ok' : 'rep') : (st.vocab && st.vocab[i] === 'know') ? 'known' : '';
+      add(Object.assign({}, w, { dom: w.dom || 'G', pos: w.pos || posGuess(w.de, w.info), no: m.no, src: 'Kelime kartı', status, due: s && !s.done ? s.due : null }));
     });
-  });
-  (day.glossary || []).forEach(g => mk(g.id, g.title, g.titleEn, g.dom, g.src, g.items.map(i => Object.assign({ dom: g.dom }, i))));
-  day.sections.forEach(sec => {
-    if (!sec.helpers || !sec.helpers.length) return;
-    const w = sec.kind === 'write', dom = sec.dom === 'S' ? 'S' : 'G';
-    mk('help_' + sec.id, w ? 'Schreiben · Redemittel' : 'Sprechen · Redemittel', w ? 'Writing · useful phrases' : 'Speaking · useful phrases', dom, w ? 'Schreiben' : 'Sprechen', sec.helpers.map(h => ({ de: h.de, en: h.en, tr: h.tr, dom })));
+    const day = DAYS[id]; if (!day) return;
+    (day.glossary || []).forEach(g => g.items.forEach(it => add(Object.assign({ dom: g.dom || 'G' }, it, { pos: it.pos || posGuess(it.de, it.info, g.id), no: m.no, src: g.title }))));
+    day.sections.forEach(sec => (sec.helpers || []).forEach(h => add(Object.assign({ dom: sec.dom === 'S' ? 'S' : 'G' }, h, { pos: 'rm', no: m.no, src: sec.kind === 'write' ? 'Schreiben · Redemittel' : 'Sprechen · Redemittel' }))));
   });
   return out;
 }
-function glDays() { return liveIds(); }
-function glNeed() { if (ui.glDay !== 'all' && !liveIds().includes(ui.glDay)) ui.glDay = liveIds().includes(ui.day) ? ui.day : liveIds()[0]; return (ui.glDay === 'all' ? liveIds() : [ui.glDay]).filter(id => !DAYS[id]); }
+function glSortKey(de) { return glNorm(String(de).replace(/^(der|die|das)\s+/, '').replace(/^(sich\s+(\(\w+\.\)\s+)?)?(etw\.\s+|jdm\.\/etw\.\s+|jdm\.\s+)?/, '').replace(/^(auf|mit|zu|für|von|an|über|in)\s+etw\.\s+(\(\w+\.\)\s+)?/, '')); }
 function glSpk(t, lang) { return TTS ? `<button class="spk mini" type="button" data-act="spk" data-lang="${lang}" data-say="${sayIdx(glSpeak(t))}" aria-label="${lang === 'de-DE' ? 'Vorlesen' : 'Read aloud'}">▶</button>` : ''; }
-function glEntry(it, key) {
+function glRow(it) {
   const q = glNorm([it.de, it.en, it.tr, it.ex, it.exEn, it.exTr, it.info].filter(Boolean).join(' '));
-  const col = (side, lang, w, ex, info) => `<div class="gc ${side}" lang="${lang}"><button class="cvbtn" type="button" data-act="glrev" data-side="${side}" lang="tr" aria-label="${side === 'de' ? 'Almanca' : 'İngilizce'} metni göster">Göster</button><span class="gcl" aria-hidden="true">${side}</span><div class="cvr"><div class="gw"><span class="gt">${esc(w)}</span>${glSpk(w, lang === 'de' ? 'de-DE' : 'en-US')}</div>${info ? `<div class="gi">${esc(info)}</div>` : ''}${ex ? `<p class="gx">${esc(ex)}${glSpk(ex, lang === 'de' ? 'de-DE' : 'en-US')}</p>` : ''}</div></div>`;
-  const trHtml = `<b>${esc(it.tr)}</b>` + (it.exTr ? `\n<em>${esc(it.exTr)}</em>` : '');
-  return `<article class="ge" data-dom="${it.dom}" data-q="${esc(q)}"><div class="gcols">${col('de', 'de', it.de, it.ex, it.info)}${col('en', 'en', it.en, it.exEn, '')}</div>${trBox(trHtml, 'gl_' + key)}</article>`;
+  const m = it.pos === 'n' && /^(der|die|das)\s/.exec(it.de);
+  const art = m ? `<span class="art a-${m[1]}">${m[1]}</span>` : '';
+  const word = m ? it.de.slice(m[0].length) : it.de;
+  const st = it.status === 'rep' ? `<span class="wst rep" title="Tekrar listesinde · sıradaki: Tag ${it.due}">tekrarda</span>` : it.status === 'ok' ? '<span class="wst ok" title="1-3-7-14 tekrarı tamamlandı">öğrenildi</span>' : it.status === 'known' ? '<span class="wst kn" title="Kartta „biliyorum“ dedin">biliyordun</span>' : '';
+  const ex = it.ex ? `<p class="wx" lang="de">${esc(it.ex)}${glSpk(it.ex, 'de-DE')}</p>${it.exEn ? `<p class="wx en" lang="en">${esc(it.exEn)}</p>` : ''}` : '';
+  const tr = `<p class="wtr" lang="tr"><b>${esc(it.tr || '')}</b>${it.exTr ? `<br><span>${esc(it.exTr)}</span>` : ''}</p>`;
+  return `<details class="ge" data-dom="${it.dom}" data-st="${it.status || ''}" data-q="${esc(q)}"><summary><span class="wde" lang="de">${art}<b>${esc(word)}</b></span><span class="wen" lang="en">${esc(it.en || '')}</span><span class="wmeta"><span class="chip min">Tag ${it.no}</span>${st}</span></summary>
+    <div class="wbody"><div class="wline">${glSpk(it.de, 'de-DE')}${it.info ? `<span class="wi" lang="de">${esc(it.info)}</span>` : ''}<span class="wsrc">${esc(it.src)}</span></div>${ex}${tr}</div></details>`;
 }
 function glossaryHTML() {
-  const ids = glDays();
-  if (ui.glDay !== 'all' && !ids.includes(ui.glDay)) ui.glDay = ids.includes(ui.day) ? ui.day : ids[0];
+  const ids = glDays(); glNeed();
   const sel = ui.glDay === 'all' ? ids : [ui.glDay];
-  const groups = sel.flatMap(glossaryGroups), multi = ui.glDay === 'all';
-  const total = groups.reduce((a, g) => a + g.items.length, 0);
-  const dayPills = ids.map(id => `<button class="pill" type="button" data-act="glday" data-v="${id}" aria-pressed="${ui.glDay === id}">Gün ${MD(id) ? MD(id).no : id}</button>`).join('') + (ids.length > 1 ? `<button class="pill" type="button" data-act="glday" data-v="all" aria-pressed="${ui.glDay === 'all'}">Tüm günler</button>` : '');
+  const items = glItems(sel), by = {};
+  items.forEach(it => { (by[it.pos] = by[it.pos] || []).push(it); });
+  const order = POS_ORDER.filter(p => by[p] && by[p].length).concat(Object.keys(by).filter(p => !POS_ORDER.includes(p)));
+  order.forEach(p => by[p].sort((a, b) => glSortKey(a.de).localeCompare(glSortKey(b.de), 'de')));
+  const total = items.length, rep = items.filter(i => i.status === 'rep').length;
   const pills = (act, cur, list) => list.map(([v, l]) => `<button class="pill" type="button" data-act="${act}" data-v="${v}" aria-pressed="${cur === v}">${l}</button>`).join('');
-  const nav = groups.map(g => `<button class="glchip ${g.dom}" type="button" data-act="glgo" data-g="gg_${g.key}" title="${esc(g.title)}"><i></i><span lang="de">${esc(g.title.replace(/\s*\(.*\)\s*$/, ''))}</span><b>${g.items.length}</b></button>`).join('');
-  const body = groups.map(g => `<section class="card gg" id="gg_${g.key}" data-n="${g.items.length}" data-dom="${g.dom}"><header class="gh"><div class="ghr"><h2 lang="de">${esc(g.title)}</h2></div><p class="ghe" lang="en">${esc(g.titleEn)}</p><div class="gmeta">${domChip(g.dom)}${multi ? `<span class="chip min">Gün ${g.no}</span>` : ''}<span class="chip min">${esc(g.src)}</span><span class="chip min gn">${g.items.length} madde</span></div></header><div class="gl-list">${g.items.map((it, i) => glEntry(it, g.key + '_' + i)).join('')}</div></section>`).join('');
+  const dayPills = pills('glday', ui.glDay, [['all', 'Tüm günler']].concat(ids.map(id => [id, 'Tag ' + MD(id).no])));
+  const hasS = items.some(i => i.dom === 'S');
+  const nav = order.map(p => `<button class="glchip pc-${p}" type="button" data-act="glgo" data-g="gg_${p}"><span>${esc((POSM[p] || { tr: p }).tr)}</span><b>${by[p].length}</b></button>`).join('');
+  const body = order.map(p => { const M = POSM[p] || { de: p, tr: p, hint: '' };
+    return `<details class="card gg pg-${p}" id="gg_${p}" data-n="${by[p].length}"${ui.glOpen && ui.glOpen[p] ? ' open' : ''}><summary class="gh"><span class="gtitle"><b lang="de">${esc(M.de)}</b><span class="gtr">${esc(M.tr)}</span></span><span class="gcount gn">${by[p].length}</span><span class="ghint">${esc(M.hint)}</span></summary><div class="gl-list">${by[p].map(glRow).join('')}</div></details>`; }).join('');
   return `<div class="stage glv cv-${ui.glCover || 'none'}">
-    <div class="card glhead"><div class="hero" style="border:0;padding:0;box-shadow:none"><div class="eyebrow" lang="en">English</div><h1>Çalışma sözlüğü: Deutsch ↔ English</h1></div>
-      <p>Gün gün büyüyen sözlük. Her maddede Almanca ve İngilizce yan yana durur; altındaki “Türkçesi” düğmesine basınca Türkçe karşılığı ve örnek cümlenin çevirisi açılır. Puanlanmaz, rapora girmez.</p>
+    <div class="card glhead"><h1>Kelime defteri</h1>
+      <p>Bütün günlerin kelimeleri türüne göre: isim, fiil, sıfat, zarf, kalıp … Başlığa dokun, liste açılır; kelimeye dokun, bilgi, örnek cümle ve Türkçesi açılır. Her yeni günle büyür. Kartta „Neu für mich“ dediğin kelimeler <span class="wst rep">tekrarda</span> etiketiyle görünür.</p>
       <div class="glctl">
-        <label class="glsearch"><span class="sr">Sözlükte ara</span><input id="glq" type="search" autocomplete="off" spellcheck="false" placeholder="Ara: Almanca, İngilizce veya Türkçe" value="${esc(ui.glQ)}"></label>
+        <label class="glsearch"><span class="sr">Kelime ara</span><input id="glq" type="search" autocomplete="off" spellcheck="false" placeholder="Ara: Almanca, İngilizce veya Türkçe" value="${esc(ui.glQ)}"></label>
         <div class="glrow"><span class="gll">Gün</span><div class="pills" role="group" aria-label="Gün">${dayPills}</div></div>
-        <div class="glrow"><span class="gll">Alan</span><div class="pills" role="group" aria-label="Alan">${pills('gldom', ui.glDom, [['', 'Hepsi'], ['S', 'Sektör'], ['G', 'Genel C1']])}</div></div>
+        <div class="glrow"><span class="gll">Durum</span><div class="pills" role="group" aria-label="Durum">${pills('glst', ui.glSt || '', [['', 'Hepsi'], ['rep', 'Tekrardakiler (' + rep + ')']])}</div></div>
+        ${hasS ? `<div class="glrow"><span class="gll">Alan</span><div class="pills" role="group" aria-label="Alan">${pills('gldom', ui.glDom, [['', 'Hepsi'], ['G', 'Genel C1'], ['S', 'Sektör (Tag 1–3)']])}</div></div>` : ''}
         <div class="glrow"><span class="gll">Kendini dene</span><div class="pills" role="group" aria-label="Kapatma modu">${pills('glcover', ui.glCover, [['', 'İkisi açık'], ['de', 'Almanca kapalı'], ['en', 'İngilizce kapalı']])}</div></div>
       </div>
-      <div class="glnav" role="group" aria-label="Gruplara git">${nav}</div>
-      <p class="hint" id="glcount" aria-live="polite">${total} madde · ${groups.length} grup</p>
+      <div class="glnav" role="group" aria-label="Türlere git">${nav}</div>
+      <p class="hint" id="glcount" aria-live="polite">${total} kelime ve kalıp</p>
     </div>
-    <p class="card glnone" hidden>Bu aramayla eşleşen madde yok. Başka bir kelime dene veya filtreleri “Hepsi” yap.</p>
+    <p class="card glnone" hidden>Bu aramayla eşleşen kelime yok. Başka bir kelime dene veya filtreleri „Hepsi“ yap.</p>
     ${body}</div>`;
 }
 function applyGl() {
   const root = $('.glv'); if (!root) return;
-  const toks = glNorm(ui.glQ).split(/\s+/).filter(Boolean);
-  let shown = 0, total = 0, gs = 0;
+  const toks = glNorm(ui.glQ).split(/\s+/).filter(Boolean), filt = toks.length || ui.glSt;
+  let shown = 0, total = 0;
   $$('.gg', root).forEach(g => {
     let n = 0;
-    $$('.ge', g).forEach(e => { total++; const ok = (!ui.glDom || e.dataset.dom === ui.glDom) && toks.every(t => e.dataset.q.includes(t)); e.hidden = !ok; if (ok) n++; });
-    g.hidden = n === 0; if (n) gs++; shown += n;
-    const c = $('.gn', g); if (c) c.textContent = (n === +g.dataset.n ? n : n + ' / ' + g.dataset.n) + ' madde';
+    $$('.ge', g).forEach(e => { total++; const ok = (!ui.glDom || e.dataset.dom === ui.glDom) && (!ui.glSt || e.dataset.st === ui.glSt) && toks.every(t => e.dataset.q.includes(t)); e.hidden = !ok; if (ok) n++; });
+    g.hidden = n === 0; shown += n;
+    if (filt && n) g.open = true;
+    const c = $('.gn', g); if (c) c.textContent = n === +g.dataset.n ? n : n + ' / ' + g.dataset.n;
     const b = $('[data-g="' + g.id + '"]', root); if (b) { b.hidden = n === 0; const bn = $('b', b); if (bn) bn.textContent = n; }
   });
-  const cnt = $('#glcount'); if (cnt) cnt.textContent = (shown === total ? total : shown + ' / ' + total) + ' madde · ' + gs + ' grup';
+  const cnt = $('#glcount'); if (cnt) cnt.textContent = (shown === total ? total : shown + ' / ' + total) + ' kelime ve kalıp';
   const none = $('.glnone', root); if (none) none.hidden = shown > 0;
 }
 function glPress(act, cur) { $$('[data-act="' + act + '"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === cur))); }
@@ -1143,9 +1187,10 @@ app.addEventListener('click', e => {
     case 'week': ui.planWeek = +t.dataset.w; render(); return;
     case 'glday': ui.glDay = t.dataset.v; ui.glErr = false; stopSpeech(); render(); window.scrollTo(0, 0); return;
     case 'gldom': ui.glDom = t.dataset.v; glPress('gldom', ui.glDom); applyGl(); return;
-    case 'glcover': ui.glCover = t.dataset.v; glPress('glcover', ui.glCover); { const r = $('.glv'); if (r) { r.className = 'stage glv cv-' + (ui.glCover || 'none'); $$('.ge', r).forEach(e => e.classList.remove('rv-de', 'rv-en')); } } return;
+    case 'glcover': ui.glCover = t.dataset.v; glPress('glcover', ui.glCover); { const r = $('.glv'); if (r) r.className = 'stage glv cv-' + (ui.glCover || 'none'); } return;
+    case 'glst': ui.glSt = t.dataset.v; glPress('glst', ui.glSt); applyGl(); return;
     case 'glrev': { const e = t.closest('.ge'); if (e) e.classList.add('rv-' + t.dataset.side); return; }
-    case 'glgo': { const el = document.getElementById(t.dataset.g); if (el) el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); return; }
+    case 'glgo': { const el = document.getElementById(t.dataset.g); if (el) { el.open = true; ui.glOpen[el.id.slice(3)] = true; el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' }); } return; }
     case 'reset': t.outerHTML = '<span>Emin misin? Bu günün tüm cevapları silinir. <button class="link" type="button" data-act="resetyes">Evet, sil</button> · <button class="link" type="button" data-act="resetno">Vazgeç</button></span>'; return;
     case 'resetno': render(); return;
     case 'resetyes': delete state.days[ui.day]; D(); migrateDay(ui.day); ui.q = {}; ui.rpos = undefined; ui.order = null; queueSave(); ui.step = -1; render(); window.scrollTo(0, 0); return;
@@ -1187,6 +1232,7 @@ app.addEventListener('change', e => {
   if (t.classList.contains('schk')) { const s = D().speak; s.checks = s.checks || {}; s.checks[t.dataset.i] = t.checked; queueSave(); return; }
   if (t.id === 'sp_rate') { D().speak.rating = t.value ? +t.value : null; queueSave(); return; }
 });
+app.addEventListener('toggle', e => { const g = e.target; if (g && g.classList && g.classList.contains('gg') && g.id) ui.glOpen[g.id.slice(3)] = g.open; }, true);
 app.addEventListener('input', e => {
   const t = e.target;
   if (t.id === 'wr_text') {
@@ -1247,7 +1293,7 @@ render();
 loadScript('data/manifest.js', String(Date.now())).then(() => {
   const ids = liveIds(); if (!ids.length) throw new Error('manifest');
   ids.forEach(id => D(id));
-  ui.day = pickStartDay(); ui.glDay = ui.day;
+  ui.day = pickStartDay(); ui.glDay = 'all';
   const wk = MD(ui.day) && MD(ui.day).week; if (wk) ui.planWeek = wk;
   return Promise.all([loadScript('data/plan.js', MAN().planV || '1'), ensureDay(ui.day)]);
 }).then(() => { if (!window.PLAN) throw new Error('plan'); if (PLAN.weeks && PLAN.weeks.length) TOTAL_DAYS = PLAN.weeks.length * 5; render(); }).catch(e => {

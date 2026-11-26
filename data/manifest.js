@@ -15,6 +15,7 @@ window.MANIFEST = {
    "words": [
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Vereinbarkeit",
      "info": "von Beruf und Familie",
      "en": "compatibility; work-life balance",
@@ -28,6 +29,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Fachkräftemangel",
      "info": "nur Singular",
      "en": "shortage of skilled workers",
@@ -41,6 +43,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "entlasten",
      "info": "entlastete, hat entlastet",
      "en": "to relieve; to ease the burden on",
@@ -54,6 +57,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Plombe",
      "info": "Pl. die Plomben; auch: das Siegel",
      "en": "seal (security seal)",
@@ -64,6 +68,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "einführen",
      "info": "führte ein, hat eingeführt",
      "en": "to introduce; to bring in",
@@ -77,6 +82,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "der Datenlogger",
      "info": "Pl. die Datenlogger",
      "en": "data logger",
@@ -90,6 +96,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "bewältigen",
      "info": "bewältigte, hat bewältigt",
      "en": "to cope with; to manage",
@@ -100,6 +107,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "berücksichtigen",
      "info": "berücksichtigte, hat berücksichtigt",
      "en": "to take into account",
@@ -113,6 +121,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Unversehrtheit",
      "info": "nur Singular",
      "en": "integrity; intactness",
@@ -126,6 +135,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Voraussetzung",
      "info": "Pl. die Voraussetzungen",
      "en": "prerequisite; precondition",
@@ -139,6 +149,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "adj",
      "de": "gesperrt",
      "info": "Adjektiv; sperren = blockieren",
      "en": "blocked; on hold",
@@ -152,6 +163,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Quarantäne",
      "info": "nur Singular",
      "en": "quarantine",
@@ -165,6 +177,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Freigabe",
      "info": "Pl. die Freigaben",
      "en": "release; approval",
@@ -175,6 +188,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "der Vorbehalt",
      "info": "unter Vorbehalt",
      "en": "reservation; qualification",
@@ -188,6 +202,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "das Verfalldatum",
      "info": "Pl. die Verfalldaten",
      "en": "expiry date",
@@ -201,6 +216,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Kehrseite",
      "info": "Pl. die Kehrseiten",
      "en": "downside; flip side",
@@ -214,6 +230,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Rückverfolgbarkeit",
      "info": "nur Singular",
      "en": "traceability",
@@ -227,6 +244,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "ausgleichen",
      "info": "glich aus, hat ausgeglichen",
      "en": "to compensate; to balance out",
@@ -240,6 +258,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "v",
      "de": "beanstanden",
      "info": "beanstandete, hat beanstandet",
      "en": "to raise a complaint about; to reject",
@@ -253,6 +272,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "befürworten",
      "info": "befürwortete, hat befürwortet",
      "en": "to support; to be in favour of",
@@ -276,6 +296,7 @@ window.MANIFEST = {
    "words": [
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Erreichbarkeit",
      "info": "ständige Erreichbarkeit",
      "en": "availability; being reachable",
@@ -289,6 +310,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "der Frachtbrief",
      "info": "Pl. die Frachtbriefe · international auf der Straße: CMR",
      "en": "consignment note; CMR (road transport)",
@@ -302,6 +324,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Entgrenzung",
      "info": "der Arbeit",
      "en": "blurring of boundaries (between work and private life)",
@@ -312,6 +335,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "das Analysenzertifikat",
      "info": "Pl. die Analysenzertifikate · kurz: CoA",
      "en": "certificate of analysis (CoA)",
@@ -325,6 +349,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "abschalten",
      "info": "schaltete ab, hat abgeschaltet",
      "en": "to switch off; to unwind",
@@ -338,6 +363,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "das Temperaturprotokoll",
      "info": "Pl. die Temperaturprotokolle",
      "en": "temperature record; temperature log",
@@ -348,6 +374,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "sich abgrenzen",
      "info": "von + Dativ",
      "en": "to set boundaries; to distance oneself",
@@ -361,6 +388,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Packliste",
      "info": "Pl. die Packlisten",
      "en": "packing list",
@@ -371,6 +399,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Präsenzpflicht",
      "info": "im Büro",
      "en": "obligation to be present (in the office)",
@@ -384,6 +413,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "der Absender",
      "info": "Pl. die Absender · ↔ der Empfänger",
      "en": "sender; consignor",
@@ -397,6 +427,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. gestalten",
      "info": "gestaltete, hat gestaltet",
      "en": "to shape; to organise; to arrange",
@@ -407,6 +438,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "der Empfänger",
      "info": "Pl. die Empfänger",
      "en": "recipient; consignee",
@@ -417,6 +449,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. beeinträchtigen",
      "info": "beeinträchtigte, hat beeinträchtigt",
      "en": "to impair; to affect negatively",
@@ -430,6 +463,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Unstimmigkeit",
      "info": "Pl. die Unstimmigkeiten",
      "en": "discrepancy; inconsistency",
@@ -443,6 +477,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Rufbereitschaft",
      "info": "Pl. selten",
      "en": "on-call duty",
@@ -453,6 +488,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "v",
      "de": "etw. abzeichnen",
      "info": "zeichnete ab, hat abgezeichnet",
      "en": "to initial; to sign off",
@@ -466,6 +502,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "mit etw. einhergehen",
      "info": "ging einher, ist einhergegangen",
      "en": "to go hand in hand with",
@@ -479,6 +516,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "v",
      "de": "etw. nachreichen",
      "info": "reichte nach, hat nachgereicht",
      "en": "to submit later; to hand in afterwards",
@@ -492,6 +530,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "zwangsläufig",
      "info": "Adjektiv / Adverb",
      "en": "inevitably; necessarily",
@@ -505,6 +544,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Aufbewahrungsfrist",
      "info": "Pl. die Aufbewahrungsfristen",
      "en": "retention period",
@@ -531,6 +571,7 @@ window.MANIFEST = {
    "words": [
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Arbeitszeitverkürzung",
      "info": "Pl. die Arbeitszeitverkürzungen",
      "en": "reduction in working hours",
@@ -541,6 +582,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Abweichungsmeldung",
      "info": "Pl. die Abweichungsmeldungen",
      "en": "deviation report",
@@ -554,6 +596,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Lohnausgleich",
      "info": "bei vollem Lohnausgleich",
      "en": "pay compensation; (with) no loss of pay",
@@ -567,6 +610,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Wettbewerbsfähigkeit",
      "info": "Sg.",
      "en": "competitiveness",
@@ -577,6 +621,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Temperaturabweichung",
      "info": "Pl. die Temperaturabweichungen",
      "en": "temperature excursion",
@@ -587,6 +632,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. umsetzen",
      "info": "setzte um, hat umgesetzt",
      "en": "to implement; to put into practice",
@@ -600,6 +646,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Leistungsfähigkeit",
      "info": "Sg.",
      "en": "performance; capacity to perform",
@@ -610,6 +657,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "v",
      "de": "etw. feststellen",
      "info": "stellte fest, hat festgestellt",
      "en": "to detect; to establish",
@@ -620,6 +668,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. abwägen",
      "info": "wog ab, hat abgewogen",
      "en": "to weigh up",
@@ -633,6 +682,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "ausschlaggebend",
      "info": "Adjektiv",
      "en": "decisive",
@@ -646,6 +696,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "adj",
      "de": "betroffen",
      "info": "Adjektiv / Partizip",
      "en": "affected",
@@ -659,6 +710,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "kalip",
      "de": "etw. in Betracht ziehen",
      "info": "zog in Betracht, hat in Betracht gezogen",
      "en": "to consider; to take into account",
@@ -669,6 +721,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Einwand",
      "info": "Pl. die Einwände",
      "en": "objection",
@@ -682,6 +735,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Ursachenanalyse",
      "info": "Pl. die Ursachenanalysen",
      "en": "root cause analysis",
@@ -695,6 +749,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. einräumen",
      "info": "räumte ein, hat eingeräumt",
      "en": "to concede; to admit",
@@ -708,6 +763,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "nachhaltig",
      "info": "Adjektiv",
      "en": "lasting; sustainable",
@@ -718,6 +774,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Korrekturmaßnahme",
      "info": "Pl. die Korrekturmaßnahmen",
      "en": "corrective action",
@@ -728,6 +785,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. entkräften",
      "info": "entkräftete, hat entkräftet",
      "en": "to refute; to invalidate (an argument)",
@@ -741,6 +799,7 @@ window.MANIFEST = {
     },
     {
      "dom": "S",
+     "pos": "n",
      "de": "die Vorbeugemaßnahme",
      "info": "Pl. die Vorbeugemaßnahmen",
      "en": "preventive action",
@@ -754,6 +813,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adv",
      "de": "zweifellos",
      "info": "Adverb",
      "en": "undoubtedly",
@@ -777,10 +837,11 @@ window.MANIFEST = {
    "short": "Probeprüfung 1",
    "focus": "Probeprüfung · Lesen 1 · Sprachbausteine · Hören 2 · Sprechen 1A",
    "file": "data/day4.js",
-   "v": "2",
+   "v": "3",
    "words": [
     {
      "dom": "G",
+     "pos": "adj",
      "de": "oberflächlich",
      "info": "Adjektiv · ↔ gründlich",
      "en": "superficial; superficially",
@@ -794,6 +855,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "sich (Dat.) etw. aneignen",
      "info": "eignete sich an, hat sich angeeignet",
      "en": "to acquire (knowledge, a skill)",
@@ -807,6 +869,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adv",
      "de": "nachweislich",
      "info": "Adverb / Adjektiv",
      "en": "demonstrably; provably",
@@ -817,6 +880,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Stellenwert",
      "info": "Sg. · einen hohen Stellenwert haben",
      "en": "importance; status",
@@ -830,6 +894,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "umstritten",
      "info": "Adjektiv · ↔ unbestritten",
      "en": "controversial; disputed",
@@ -843,6 +908,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Wegwerfgesellschaft",
      "info": "Sg.",
      "en": "throwaway society",
@@ -853,6 +919,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Lebensdauer",
      "info": "Sg.",
      "en": "lifespan; service life",
@@ -863,6 +930,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Verbraucher",
      "info": "Pl. die Verbraucher · die Verbraucherin",
      "en": "consumer",
@@ -873,6 +941,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "auf etw. (Akk.) verzichten",
      "info": "verzichtete, hat verzichtet",
      "en": "to do without; to give up",
@@ -883,6 +952,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "zu etw. (Dat.) beitragen",
      "info": "trug bei, hat beigetragen · dazu beitragen, … zu + Inf.",
      "en": "to contribute to",
@@ -893,6 +963,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Aufwand",
      "info": "Sg. · mit geringem Aufwand",
      "en": "effort; expense",
@@ -903,6 +974,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Schlafmangel",
      "info": "Sg.",
      "en": "lack of sleep; sleep deprivation",
@@ -913,6 +985,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. unterschätzen",
      "info": "unterschätzte, hat unterschätzt · ↔ überschätzen",
      "en": "to underestimate",
@@ -926,6 +999,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "nachlassen",
      "info": "ließ nach, hat nachgelassen",
      "en": "to decrease; to wear off",
@@ -936,6 +1010,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "erheblich",
      "info": "Adjektiv / Adverb",
      "en": "considerable; considerably",
@@ -949,6 +1024,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "kalip",
      "de": "etw. in Kauf nehmen",
      "info": "nahm in Kauf, hat in Kauf genommen",
      "en": "to accept (a disadvantage)",
@@ -962,6 +1038,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "das Ehrenamt",
      "info": "Pl. die Ehrenämter · ehrenamtlich",
      "en": "voluntary work; honorary post",
@@ -972,6 +1049,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "sich für etw. (Akk.) engagieren",
      "info": "engagierte sich, hat sich engagiert",
      "en": "to be committed to; to get involved in",
@@ -982,6 +1060,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Zusammenhalt",
      "info": "Sg. · der gesellschaftliche Zusammenhalt",
      "en": "cohesion; solidarity",
@@ -992,6 +1071,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. gewährleisten",
      "info": "gewährleistete, hat gewährleistet",
      "en": "to ensure; to guarantee",
@@ -1011,10 +1091,11 @@ window.MANIFEST = {
    "short": "Lesen 2 + 3 · Originalformat",
    "focus": "Leseverstehen 2 · Leseverstehen 3 · Fehler-Comeback · Lesen 1 Training",
    "file": "data/day5.js",
-   "v": "2",
+   "v": "3",
    "words": [
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Wohnungsnot",
      "info": "Nomen · die, kein Plural",
      "en": "housing shortage",
@@ -1025,6 +1106,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "erschwinglich",
      "info": "Adjektiv · ≈ bezahlbar",
      "en": "affordable",
@@ -1038,6 +1120,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Mietpreisbremse",
      "info": "Nomen · die, -n",
      "en": "rent cap (limit on rent increases)",
@@ -1048,6 +1131,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Verdrängung",
      "info": "Nomen · die, -en · verdrängen",
      "en": "displacement (being pushed out)",
@@ -1058,6 +1142,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. sanieren",
      "info": "Verb · sanierte, hat saniert",
      "en": "to renovate (thoroughly)",
@@ -1068,6 +1153,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Leerstand",
      "info": "Nomen · der, kein Plural",
      "en": "vacancy (empty buildings)",
@@ -1081,6 +1167,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Nachverdichtung",
      "info": "Nomen · die, -en · verdichten",
      "en": "densification (building more on existing land)",
@@ -1091,6 +1178,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "das Wohneigentum",
      "info": "Nomen · das, kein Plural",
      "en": "home ownership",
@@ -1101,6 +1189,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Zuzug",
      "info": "Nomen · der, Zuzüge · ↔ der Wegzug",
      "en": "influx, people moving in",
@@ -1111,6 +1200,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. vorantreiben",
      "info": "Verb · trieb voran, hat vorangetrieben",
      "en": "to push ahead, to drive forward",
@@ -1121,6 +1211,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "sich abzeichnen",
      "info": "Verb · zeichnete sich ab, hat sich abgezeichnet",
      "en": "to become apparent, to emerge",
@@ -1134,6 +1225,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "etw. eindämmen",
      "info": "Verb · dämmte ein, hat eingedämmt",
      "en": "to curb, to contain",
@@ -1147,6 +1239,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "v",
      "de": "auf etw. ausweichen",
      "info": "Verb · wich aus, ist ausgewichen",
      "en": "to switch to (as an alternative)",
@@ -1160,6 +1253,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Anbindung",
      "info": "Nomen · die, -en · an + Akk.",
      "en": "connection, transport link",
@@ -1170,6 +1264,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "das Quartier",
      "info": "Nomen · das, -e · ≈ das Viertel",
      "en": "neighbourhood, district",
@@ -1180,6 +1275,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "kalip",
      "de": "etw. in Anspruch nehmen",
      "info": "Nomen-Verb-Verbindung",
      "en": "to make use of; to take up (time)",
@@ -1193,6 +1289,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "kalip",
      "de": "Abhilfe schaffen",
      "info": "Nomen-Verb-Verbindung",
      "en": "to remedy (a problem)",
@@ -1206,6 +1303,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "der Ansturm",
      "info": "Nomen · der, kein Plural (meist)",
      "en": "rush, onslaught",
@@ -1216,6 +1314,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "n",
      "de": "die Auflage",
      "info": "Nomen · die, -n",
      "en": "requirement, condition (official)",
@@ -1226,6 +1325,7 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
+     "pos": "adj",
      "de": "zumutbar",
      "info": "Adjektiv · ↔ unzumutbar",
      "en": "reasonable, acceptable (to expect of sb.)",

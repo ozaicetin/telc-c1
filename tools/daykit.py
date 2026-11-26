@@ -14,8 +14,10 @@ import json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAN = os.path.join(ROOT, 'data', 'manifest.js')
 
-def W(dom, de, info, en, tr, ex, exEn, exTr):
-    return {'dom': dom, 'de': de, 'info': info, 'en': en, 'tr': tr, 'ex': ex, 'exEn': exEn, 'exTr': exTr}
+def W(dom, de, info, en, tr, ex, exEn, exTr, pos=None):
+    w = {'dom': dom, 'de': de, 'info': info, 'en': en, 'tr': tr, 'ex': ex, 'exEn': exEn, 'exTr': exTr}
+    if pos: w['pos'] = pos  # n v adj adv kon kalip rm str (tools/wordpos.py); guessed in save_day if missing
+    return w
 
 def mc(id, dom, tag, q, qEn, tr, opts, optsEn, optTr, a, exp, expEn, **kw):
     b = {'type': 'mc', 'id': id, 'dom': dom, 'tag': tag, 'q': q, 'qEn': qEn, 'tr': tr, 'opts': opts, 'optsEn': optsEn, 'optTr': optTr, 'a': a, 'exp': exp, 'expEn': expEn}
@@ -94,10 +96,16 @@ def validate(day, words, man):
     return err
 
 def save_day(day, words, date, short, v=None):
+    from wordpos import annotate
+    bad = annotate(words)
+    for s in day['sections']:
+        if s.get('kind') == 'cards' and s.get('words'): bad += annotate(s['words'])
+    for g in day.get('glossary', []): bad += annotate(g['items'], g.get('id', ''))
+    if bad: raise SystemExit('NOT SAVED: word type unclear, pass pos=… for: ' + ', '.join(map(str, bad)))
     man = load_manifest()
     err = validate(day, words, man)
     if err: raise SystemExit('NOT SAVED:\n- ' + '\n- '.join(err))
-    mw = [{k: w[k] for k in ('dom', 'de', 'info', 'en', 'tr', 'ex', 'exEn', 'exTr') if w.get(k)} for w in words]
+    mw = [{k: w[k] for k in ('dom', 'pos', 'de', 'info', 'en', 'tr', 'ex', 'exEn', 'exTr') if w.get(k)} for w in words]
     for s in day['sections']:
         if s['kind'] == 'quiz' and s['id'] == 'wtest':
             for b in s['blocks']:
