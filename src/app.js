@@ -479,19 +479,22 @@ function mockHead(sec) {
 function mockFoot(sec) {
   const m = mockPts(sec);
   if (m.done) return resultHTML(sec);
-  const n = mockAnswered(sec), left = m.n - n;
-  const conf = ui.mconfirm === sec.id && left ? `<p class="mockwarn">${left} soru boş. Boş sorular 0 puan sayılır. Yine de teslim etmek için tekrar “Abgeben”e bas.</p>` : '';
+  const n = mockAnswered(sec), left = m.n - n, used = D().mockT[sec.id] || 0, early = used < sec.min * 30;
+  const umin = Math.max(1, Math.round(used / 60)), rest = Math.max(1, Math.round(sec.min - used / 60));
+  const conf = ui.mconfirm === sec.id ? (left ? `<p class="mockwarn">${left} soru boş. Boş sorular 0 puan sayılır. Yine de teslim etmek için tekrar “Abgeben”e bas.</p>` : '')
+    + (early ? `<p class="mockwarn early">Sürenin yalnızca ${umin} dakikasını kullandın, ${rest} dakika daha var. Teslim etmeden önce her cevabını metinde bir kez daha kontrol et; Tag 4 ve 5’te puanların çoğu acelede gitti. Yine de teslim etmek için tekrar “Abgeben”e bas.</p>` : '') : '';
   return `<div class="mockfoot">${conf}<div class="qnav"><button class="btn primary big" type="button" data-act="mocksub">Abgeben</button><span class="hint" id="mockprog">${n}/${m.n} beantwortet</span></div><p class="hint">Sınav modu: cevaplar teslimden sonra kontrol edilir; o zamana kadar seçimini değiştirebilirsin. İngilizce ve Türkçe yardımlar teslimden sonra açılır.</p></div>`;
 }
 function mockSubmit() {
   const sec = curSec(), d = D(); if (!mockLive(sec)) return;
   const items = itemsOf(sec), left = items.filter(it => d.sel[it.id] === undefined).length;
-  if (left && ui.mconfirm !== sec.id) { ui.mconfirm = sec.id; rerender(); nudge('.mockfoot'); return; }
+  const early = (d.mockT[sec.id] || 0) < sec.min * 30;
+  if ((left || early) && ui.mconfirm !== sec.id) { ui.mconfirm = sec.id; rerender(); nudge('.mockfoot'); return; }
   ui.mconfirm = null;
   items.forEach(it => { const s = d.sel[it.id]; d.res[it.id] = { c: s === undefined ? -1 : s, ok: s === it.a ? 1 : 0 }; });
   finalizeSec(sec); queueSave(); render(); const r = $('#result'); if (r) r.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0);
 }
-function mockProg() { const sec = curSec(); if (!mockLive(sec)) return; const el = $('#mockprog'); if (el) el.textContent = mockAnswered(sec) + '/' + itemsOf(sec).length + ' beantwortet'; const w = $('.mockwarn'); if (w && !itemsOf(sec).some(it => D().sel[it.id] === undefined)) w.remove();
+function mockProg() { const sec = curSec(); if (!mockLive(sec)) return; const el = $('#mockprog'); if (el) el.textContent = mockAnswered(sec) + '/' + itemsOf(sec).length + ' beantwortet'; const w = $('.mockwarn:not(.early)'); if (w && !itemsOf(sec).some(it => D().sel[it.id] === undefined)) w.remove();
 }
 
 /* vocabulary deck */

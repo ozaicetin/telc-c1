@@ -1,5 +1,5 @@
 window.MANIFEST = {
- "current": "day5",
+ "current": "day6",
  "planV": "s5",
  "updated": "2026-11-25",
  "days": [
@@ -1335,7 +1335,261 @@ window.MANIFEST = {
      "exTr": "Birçok kişi bir saatlik yol süresini hâlâ katlanılabilir buluyor."
     }
    ]
+  },
+  {
+   "id": "day6",
+   "no": 6,
+   "week": 2,
+   "date": "30.11.2026",
+   "title": "Leseverstehen 1 + Sprachbausteine: Medien und Digitalisierung",
+   "short": "Lesen 1 + Sprachbausteine",
+   "focus": "Leseverstehen 1 · Sprachbausteine · Lesen 2 Training · Fehler-Comeback",
+   "file": "data/day6.js",
+   "v": "1",
+   "words": [
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Glaubwürdigkeit",
+     "info": "Nomen · die, kein Plural · glaubwürdig",
+     "en": "credibility",
+     "tr": "güvenilirlik, inandırıcılık",
+     "ex": "Wenn eine Zeitung ihre Fehler nicht korrigiert, verliert sie an Glaubwürdigkeit.",
+     "exEn": "If a newspaper does not correct its mistakes, it loses credibility.",
+     "exTr": "Bir gazete hatalarını düzeltmezse güvenilirliğini yitirir.",
+     "q": [
+      "wtest_w01"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Falschmeldung",
+     "info": "Nomen · die, -en · ≈ Fake News",
+     "en": "false report",
+     "tr": "yalan haber, asılsız haber",
+     "ex": "Falschmeldungen verbreiten sich im Netz oft schneller als ihre Richtigstellung.",
+     "exEn": "False reports often spread faster online than their correction.",
+     "exTr": "Yalan haberler internette çoğu zaman düzeltmelerinden daha hızlı yayılıyor."
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "etw. verbreiten",
+     "info": "Verb · verbreitete, hat verbreitet · sich verbreiten",
+     "en": "to spread",
+     "tr": "yaymak (sich verbreiten: yayılmak)",
+     "ex": "Wer ein Gerücht teilt, ohne es zu prüfen, verbreitet es weiter.",
+     "exEn": "Anyone who shares a rumour without checking it spreads it further.",
+     "exTr": "Bir söylentiyi kontrol etmeden paylaşan kişi onu yaymaya devam eder.",
+     "q": [
+      "wtest_w02"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "etw. überprüfen",
+     "info": "Verb · überprüfte, hat überprüft (untrennbar)",
+     "en": "to check, to verify",
+     "tr": "kontrol etmek, doğrulamak",
+     "ex": "Bevor man eine Nachricht teilt, sollte man die Quelle überprüfen.",
+     "exEn": "Before sharing a piece of news, you should check the source.",
+     "exTr": "Bir haberi paylaşmadan önce kaynağı kontrol etmek gerekir."
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Reichweite",
+     "info": "Nomen · die, -n",
+     "en": "reach, range",
+     "tr": "erişim, ulaşılan kitle",
+     "ex": "Mit einem einzigen Video erreichte die Influencerin eine Reichweite von zwei Millionen Menschen.",
+     "exEn": "With a single video, the influencer reached two million people.",
+     "exTr": "Influencer tek bir videoyla iki milyon kişilik bir erişime ulaştı."
+    },
+    {
+     "dom": "G",
+     "pos": "adj",
+     "de": "ausgewogen",
+     "info": "Adjektiv · ↔ einseitig",
+     "en": "balanced",
+     "tr": "dengeli, tarafsız",
+     "ex": "Ein guter Bericht stellt die Argumente beider Seiten ausgewogen dar.",
+     "exEn": "A good report presents the arguments of both sides in a balanced way.",
+     "exTr": "İyi bir haber iki tarafın argümanlarını dengeli biçimde sunar.",
+     "q": [
+      "wtest_w03"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "adj",
+     "de": "einseitig",
+     "info": "Adjektiv · ↔ ausgewogen",
+     "en": "one-sided",
+     "tr": "tek taraflı",
+     "ex": "Wer nur einen einzigen Kanal nutzt, bekommt schnell ein einseitiges Bild.",
+     "exEn": "Anyone who uses only one channel quickly gets a one-sided picture.",
+     "exTr": "Yalnızca tek bir kanal kullanan kişi çabucak tek taraflı bir resim edinir."
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Meinungsbildung",
+     "info": "Nomen · die, kein Plural",
+     "en": "opinion forming",
+     "tr": "kanaat oluşumu, fikir oluşturma",
+     "ex": "Soziale Medien spielen für die Meinungsbildung junger Menschen eine große Rolle.",
+     "exEn": "Social media play a big role in how young people form their opinions.",
+     "exTr": "Sosyal medya gençlerin fikir oluşturmasında büyük rol oynuyor."
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "der Datenschutz",
+     "info": "Nomen · der, kein Plural",
+     "en": "data protection",
+     "tr": "veri koruma",
+     "ex": "Viele kostenlose Apps nehmen es mit dem Datenschutz nicht so genau.",
+     "exEn": "Many free apps are not very careful about data protection.",
+     "exTr": "Birçok ücretsiz uygulama veri korumaya pek özen göstermiyor."
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "etw. preisgeben",
+     "info": "Verb · gab preis, hat preisgegeben",
+     "en": "to reveal, to disclose",
+     "tr": "(bilgi) açığa vermek, ifşa etmek",
+     "ex": "In sozialen Netzwerken geben viele Nutzer mehr über sich preis, als ihnen bewusst ist.",
+     "exEn": "On social networks many users reveal more about themselves than they realise.",
+     "exTr": "Sosyal ağlarda birçok kullanıcı kendisi hakkında farkında olduğundan fazlasını açığa veriyor.",
+     "q": [
+      "wtest_w04"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Überwachung",
+     "info": "Nomen · die, -en · überwachen",
+     "en": "surveillance, monitoring",
+     "tr": "gözetim, izleme",
+     "ex": "Kritiker warnen vor einer lückenlosen Überwachung durch Kameras mit Gesichtserkennung.",
+     "exEn": "Critics warn against total surveillance by cameras with facial recognition.",
+     "exTr": "Eleştirmenler yüz tanımalı kameralarla kesintisiz gözetime karşı uyarıyor."
+    },
+    {
+     "dom": "G",
+     "pos": "n",
+     "de": "die Filterblase",
+     "info": "Nomen · die, -n",
+     "en": "filter bubble",
+     "tr": "filtre balonu (hep aynı görüşleri görmek)",
+     "ex": "Wer nur sieht, was der Algorithmus ihm vorschlägt, lebt leicht in einer Filterblase.",
+     "exEn": "Anyone who only sees what the algorithm suggests easily lives in a filter bubble.",
+     "exTr": "Yalnızca algoritmanın önerdiğini gören kişi kolayca bir filtre balonunda yaşar."
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "etw. verstärken",
+     "info": "Verb · verstärkte, hat verstärkt",
+     "en": "to intensify, to reinforce",
+     "tr": "güçlendirmek, artırmak",
+     "ex": "Empörte Kommentare verstärken die Reichweite eines Beitrags.",
+     "exEn": "Outraged comments increase the reach of a post.",
+     "exTr": "Öfkeli yorumlar bir gönderinin erişimini artırır."
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "sich auf etw. auswirken",
+     "info": "Verb · wirkte sich aus, hat sich ausgewirkt · + Akk.",
+     "en": "to affect, to have an effect on",
+     "tr": "…i etkilemek, …e etki etmek",
+     "ex": "Wie wirkt sich die ständige Nutzung des Smartphones auf die Konzentration aus?",
+     "exEn": "How does constant smartphone use affect concentration?",
+     "exTr": "Akıllı telefonun sürekli kullanımı konsantrasyonu nasıl etkiliyor?",
+     "q": [
+      "wtest_w05"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "v",
+     "de": "auf etw. hinweisen",
+     "info": "Verb · wies hin, hat hingewiesen · + Akk.",
+     "en": "to point out",
+     "tr": "…e dikkat çekmek, belirtmek",
+     "ex": "Die Forscher weisen darauf hin, dass die Studie nur wenige Teilnehmer hatte.",
+     "exEn": "The researchers point out that the study had only a few participants.",
+     "exTr": "Araştırmacılar çalışmanın az katılımcısı olduğuna dikkat çekiyor."
+    },
+    {
+     "dom": "G",
+     "pos": "adj",
+     "de": "gezielt",
+     "info": "Adjektiv / Adverb",
+     "en": "targeted; deliberately",
+     "tr": "hedefli; bilinçli olarak, kasıtlı",
+     "ex": "Manche Gruppen streuen gezielt Falschmeldungen, um Wahlen zu beeinflussen.",
+     "exEn": "Some groups deliberately spread false reports to influence elections.",
+     "exTr": "Bazı gruplar seçimleri etkilemek için bilinçli olarak yalan haber yayıyor."
+    },
+    {
+     "dom": "G",
+     "pos": "kalip",
+     "de": "auf der Hand liegen",
+     "info": "Redewendung · ≈ offensichtlich sein",
+     "en": "to be obvious",
+     "tr": "apaçık ortada olmak",
+     "ex": "Die Vorteile digitaler Medien liegen auf der Hand: Sie sind schnell und überall verfügbar.",
+     "exEn": "The advantages of digital media are obvious: they are fast and available everywhere.",
+     "exTr": "Dijital medyanın avantajları apaçık ortada: hızlılar ve her yerde erişilebilirler.",
+     "q": [
+      "wtest_w06"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "kalip",
+     "de": "ins Gewicht fallen",
+     "info": "Redewendung · ≈ wichtig sein, zählen",
+     "en": "to carry weight, to matter",
+     "tr": "önem taşımak, ağır basmak",
+     "ex": "Bei der Entscheidung fällt vor allem der Datenschutz ins Gewicht.",
+     "exEn": "Data protection is what matters most in the decision.",
+     "exTr": "Kararda özellikle veri koruma ağır basıyor.",
+     "q": [
+      "wtest_w07"
+     ]
+    },
+    {
+     "dom": "G",
+     "pos": "kalip",
+     "de": "mit etw. Schritt halten",
+     "info": "Redewendung · hielt Schritt, hat Schritt gehalten · + Dat.",
+     "en": "to keep pace with",
+     "tr": "…e ayak uydurmak",
+     "ex": "Viele Schulen können mit der technischen Entwicklung kaum Schritt halten.",
+     "exEn": "Many schools can hardly keep pace with technical development.",
+     "exTr": "Birçok okul teknik gelişmeye zorlukla ayak uyduruyor."
+    },
+    {
+     "dom": "G",
+     "pos": "kalip",
+     "de": "etw. infrage stellen",
+     "info": "Nomen-Verb-Verbindung · auch: in Frage stellen",
+     "en": "to call into question",
+     "tr": "sorgulamak, …den şüphe etmek",
+     "ex": "Die neue Studie stellt die bisherigen Ergebnisse infrage.",
+     "exEn": "The new study calls the previous results into question.",
+     "exTr": "Yeni çalışma şimdiye kadarki sonuçları sorguluyor."
+    }
+   ]
   }
  ],
- "kalipV": "k2"
+ "kalipV": "k3"
 };

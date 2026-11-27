@@ -127,6 +127,9 @@ NVV = [
     ('nvv-bezug', 'Bezug nehmen auf + A', 'to refer to', '-e atıfta bulunmak', 'In Ihrem Leserbrief sollten Sie auf den Artikel Bezug nehmen.', 'In your letter to the editor you should refer to the article.', 'Okur mektubunda makaleye atıfta bulunmalısın.', 'Yazma görevinde çok kullanışlı.'),
     ('nvv-kraft', 'in Kraft treten', 'to come into force', 'yürürlüğe girmek', 'Die neue Richtlinie tritt im nächsten Jahr in Kraft.', 'The new directive comes into force next year.', 'Yeni yönerge gelecek yıl yürürlüğe giriyor.', ''),
     ('nvv-einfluss', 'Einfluss nehmen auf + A / Einfluss haben auf + A', 'to influence', 'etkilemek', 'Der Einzelne hat wenig Einfluss auf den Wohnungsmarkt.', 'The individual has little influence on the housing market.', 'Bireyin konut piyasası üzerinde az etkisi var.', ''),
+    ('nvv-hand', 'auf der Hand liegen', 'to be obvious', 'apaçık ortada olmak', 'Die Vorteile digitaler Medien liegen auf der Hand.', 'The advantages of digital media are obvious.', 'Dijital medyanın avantajları apaçık ortada.', 'Tuzak: auf der Zunge liegen = dilinin ucunda olmak. Özne bir şey (die Vorteile, der Grund), kişi değil.'),
+    ('nvv-gewicht', 'ins Gewicht fallen', 'to matter, to carry weight', 'önem taşımak, ağır basmak', 'Der höhere Preis fällt kaum ins Gewicht.', 'The higher price hardly matters.', 'Yüksek fiyat pek önem taşımıyor.', 'Tuzak: jdm. ins Wort fallen = sözünü kesmek; ins Wasser fallen = (plan) suya düşmek. Sık kalıp: kaum / stark ins Gewicht fallen.'),
+    ('nvv-schritt', 'mit etw. Schritt halten', 'to keep pace with', '…e ayak uydurmak', 'Viele Schulen können mit der Digitalisierung kaum Schritt halten.', 'Many schools can hardly keep pace with digitalisation.', 'Birçok okul dijitalleşmeye zorlukla ayak uyduruyor.', 'mit + Dativ: mit der Entwicklung, mit dem Tempo. „halten“ çekimlenir: hielt Schritt, hat Schritt gehalten.'),
 ]
 for id, de, en, tr, ex, exEn, exTr, note in NVV:
     k(id, 'nvv', de, '', en, tr, note or 'İsim ve fiili birlikte öğren; Sprachbausteine’de isim ya da fiil boş bırakılır.', ex, exEn, exTr)
@@ -180,7 +183,7 @@ KU = {
  'nvv-betracht': 'in Betracht ziehen = düşünmek · kommen = söz konusu olmak.', 'nvv-abhilfe': 'Abhilfe schaffen = çare bulmak.', 'nvv-rolle': 'eine Rolle spielen = rol oynamak.',
  'nvv-kritik': 'Kritik üben an + Dativ = eleştirmek.', 'nvv-ausdruck': 'zum Ausdruck bringen = ifade etmek.', 'nvv-frage': 'in Frage kommen = mümkün olmak · infrage stellen = sorgulamak.',
  'nvv-massnahmen': 'Maßnahmen ergreifen = önlem almak.', 'nvv-entscheidung': 'eine Entscheidung treffen (machen değil).', 'nvv-ruecksicht': 'Rücksicht nehmen auf + Akk.',
- 'nvv-bezug': 'Bezug nehmen auf + Akk = atıfta bulunmak.', 'nvv-kraft': 'in Kraft treten = yürürlüğe girmek.', 'nvv-einfluss': 'Einfluss haben / nehmen auf + Akk.',
+ 'nvv-bezug': 'Bezug nehmen auf + Akk = atıfta bulunmak.', 'nvv-kraft': 'in Kraft treten = yürürlüğe girmek.', 'nvv-einfluss': 'Einfluss haben / nehmen auf + Akk.', 'nvv-hand': 'auf der Hand liegen = apaçık ortada olmak.', 'nvv-gewicht': 'ins Gewicht fallen = önem taşımak (kaum ins Gewicht fallen = pek önemli değil).', 'nvv-schritt': 'mit + Dat Schritt halten = ayak uydurmak.',
  'rel-nom-akk': 'Cinsiyet önceki isimden, hâl yan cümleden.', 'rel-denen': 'Çoğul + Dativ → denen (auf denen, mit denen).', 'rel-dessen': 'Sahiplik: dessen (er/nötr) · deren (dişi/çoğul).',
  'rel-praep': 'Edat başa, zamir edatın hâlinde: in der, über den.', 'rel-was-wo': 'alles / etwas / nichts → was · yer → wo.',
  'ws-v2': 'Zarf başta → fiil 2. sırada, sonra özne.', 'ws-ns': 'dass, weil, ob … → çekimli fiil en sonda.', 'ws-ns-erst': 'Yan cümle başta → ana cümle fiille başlar.',
@@ -269,6 +272,9 @@ DR = {
  'nvv-bezug': ('Ich nehme ___ auf Ihren Artikel vom 3. Mai.', 'Bezug', ['Rücksicht', 'Einfluss', 'Abhilfe']),
  'nvv-kraft': ('Das neue Gesetz tritt im Januar in ___.', 'Kraft', ['Frage', 'Betracht', 'Kauf']),
  'nvv-einfluss': ('Der Einzelne hat wenig ___ auf den Markt.', 'Einfluss', ['Rücksicht', 'Bezug', 'Kritik']),
+ 'nvv-hand': ('Die Gründe für den Erfolg der App liegen auf der ___.', 'Hand', ['Zunge', 'Spur', 'Seite']),
+ 'nvv-gewicht': ('Die paar Euro mehr fallen kaum ins ___.', 'Gewicht', ['Wort', 'Wasser', 'Auge']),
+ 'nvv-schritt': ('Die Gesetze können mit der Technik kaum ___ halten.', 'Schritt', ['Tempo', 'Fuß', 'Linie']),
  'rel-nom-akk': ('Das sind Geräte, ___ man leicht reparieren kann.', 'die', ['denen', 'deren', 'der']),
  'rel-denen': ('Es gibt Portale, auf ___ Vermieter Wohnungen anbieten.', 'denen', ['die', 'deren', 'der']),
  'rel-dessen': ('Die Mieter, ___ Verträge bald enden, suchen eine neue Wohnung.', 'deren', ['dessen', 'denen', 'die']),
@@ -316,6 +322,16 @@ LINKS = {
         'comeback_cb_9': 'vp-engagieren', 'comeback_cb_10': 'end-dat-ein', 'comeback_cb_11': 'rel-denen', 'comeback_cb_12': 'vf-lassen',
         'comeback_cb_13': 'kon-trotzdem', 'comeback_ws1': 'ws-ns', 'comeback_ws2': 'ws-v2', 'comeback_ws3': 'ws-ns', 'comeback_ws4': 'ws-ns-erst',
         'wtest_w06': 'nvv-anspruch', 'wtest_w05': 'nvv-abhilfe',
+    },
+    'day6': {
+        'comeback_cb_3': 'vp-kommen-zu', 'comeback_cb_4': 'vp-nachdenken', 'comeback_cb_6': 'nvv-verfuegung', 'comeback_cb_7': 'kon-sowohl',
+        'comeback_cb_9': 'rel-denen', 'comeback_cb_10': 'rel-nom-akk',
+        'wtest_w05': 'vp-auswirken', 'wtest_w06': 'nvv-hand', 'wtest_w07': 'nvv-gewicht',
+        'sprachbausteine_sb_2': 'vp-nachdenken', 'sprachbausteine_sb_4': 'vp-auswirken', 'sprachbausteine_sb_5': 'vf-passiv-praet',
+        'sprachbausteine_sb_6': 'nvv-kauf', 'sprachbausteine_sb_9': 'vp-kommen-zu', 'sprachbausteine_sb_10': 'kon-obwohl', 'sprachbausteine_sb_11': 'kon-deshalb',
+        'sprachbausteine_sb_12': 'vf-k2', 'sprachbausteine_sb_13': 'vf-werden', 'sprachbausteine_sb_14': 'kon-weil', 'sprachbausteine_sb_15': 'vp-verlassen',
+        'sprachbausteine_sb_16': 'kon-dass', 'sprachbausteine_sb_17': 'rel-nom-akk', 'sprachbausteine_sb_19': 'kon-je', 'sprachbausteine_sb_20': 'nvv-rolle',
+        'sprachbausteine_sb_21': 'prep-dat',
     },
 }
 for d, m in LINKS.items():
