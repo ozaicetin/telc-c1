@@ -333,7 +333,7 @@ ul.clean{margin:0;padding-left:1.1em;display:grid;gap:4px}
   <section id="talk" class="stage" hidden>
     <div class="bar"><div><span class="chip" id="tTeil"></span> <b id="tTitle"></b></div><div class="row"><span class="clock" id="clock">0:00</span><button class="btn small" type="button" id="end">Bitir ve değerlendir</button></div></div>
     <div class="taskcard" id="tCard"></div>
-    <div class="row" id="sidePick" hidden><span>Tezle ilgili görüşün:</span><button class="btn" type="button" data-side="pro">Ich bin dafür</button><button class="btn" type="button" data-side="contra">Ich bin dagegen</button></div>
+    <div class="row" id="sidePick" hidden><span>Tez ya da alıntıyla ilgili görüşün:</span><button class="btn" type="button" data-side="pro">Ich bin dafür</button><button class="btn" type="button" data-side="contra">Ich bin dagegen</button></div>
     <div class="log" id="log" aria-live="polite"></div>
     <div class="dock">
       <div class="status" id="status"></div>
@@ -388,14 +388,17 @@ let TODAY = null;
 /* Shared task list for both speaking-partner pages (site page and the free claude.ai page).
    Edit here, then run python3 tools/build.py. */
 const GENERAL = [
-  { id: 'b-homeoffice', teil: 'Teil 1B', kind: 'summary', title: 'Homeoffice – Freiheit oder Falle?' },
-  { id: 'b-autofrei', teil: 'Teil 1B', kind: 'summary', title: 'Autofreie Innenstädte' },
-  { id: 'b-social', teil: 'Teil 1B', kind: 'summary', title: 'Smartphones im Unterricht' },
-  { id: 'd-noten', teil: 'Teil 2', kind: 'discuss', title: 'Schulnoten sollten abgeschafft werden.' },
-  { id: 'd-ki', teil: 'Teil 2', kind: 'discuss', title: 'Künstliche Intelligenz wird mehr Arbeitsplätze schaffen als vernichten.' },
-  { id: 'd-reparatur', teil: 'Teil 2', kind: 'discuss', title: 'Hersteller sollten gesetzlich verpflichtet werden, Geräte reparierbar zu bauen.' },
-  { id: 'd-viertage', teil: 'Teil 2', kind: 'discuss', title: 'Die Vier-Tage-Woche sollte gesetzlich eingeführt werden.' },
-  { id: 'd-demokratie', teil: 'Teil 2', kind: 'discuss', title: 'Soziale Medien schaden der Demokratie mehr, als sie ihr nützen.' },
+  { id: 'b-gebuehren', teil: 'Teil 1B', kind: 'summary', title: 'Studiengebühren – gerecht oder unsozial?' },
+  { id: 'b-lehre', teil: 'Teil 1B', kind: 'summary', title: 'Digitale Lehre: Vorlesung im Hörsaal oder online?' },
+  { id: 'b-gruppe', teil: 'Teil 1B', kind: 'summary', title: 'Gruppenarbeit im Studium: sinnvoll oder ungerecht?' },
+  { id: 'b-senioren', teil: 'Teil 1B', kind: 'summary', title: 'Seniorenstudium: Universität im Alter' },
+  { id: 'z-kant', teil: 'Teil 2', kind: 'discuss', title: 'Habe Mut, dich deines eigenen Verstandes zu bedienen!', by: 'Immanuel Kant' },
+  { id: 'z-goethe', teil: 'Teil 2', kind: 'discuss', title: 'Es ist nicht genug, zu wissen, man muss auch anwenden.', by: 'Johann Wolfgang von Goethe' },
+  { id: 'z-wittgenstein', teil: 'Teil 2', kind: 'discuss', title: 'Die Grenzen meiner Sprache bedeuten die Grenzen meiner Welt.', by: 'Ludwig Wittgenstein' },
+  { id: 'z-probieren', teil: 'Teil 2', kind: 'discuss', title: 'Probieren geht über Studieren.', by: 'Sprichwort' },
+  { id: 'z-bacon', teil: 'Teil 2', kind: 'discuss', title: 'Wissen ist Macht.', by: 'Francis Bacon' },
+  { id: 'd-ki', teil: 'Teil 2', kind: 'discuss', title: 'Künstliche Intelligenz wird das Studium mehr verbessern als gefährden.' },
+  { id: 'd-noten', teil: 'Teil 2', kind: 'discuss', title: 'Noten sollten an Hochschulen abgeschafft werden.' },
   { id: 'frei', teil: 'Alltag', kind: 'chat', title: 'Freies Gespräch: Wie war dein Tag?', tr: 'Rahat sohbet: günün, işin, boş zamanın, planların.' },
   { id: 'r-arzt', teil: 'Alltag', kind: 'role', title: 'Beim Hausarzt: Beschwerden schildern', who: 'Frau Dr. Brandt, Hausärztin in Berlin', me: 'ein Patient, der seit einer Woche starke Rückenschmerzen hat und arbeiten muss', goal: 'Lass mich meine Beschwerden genau beschreiben, frag nach Details (seit wann, wo, wie stark, Auslöser), schlag eine Behandlung vor und kläre, ob ich eine Krankschreibung brauche.', tr: 'Sen hastasın: bir haftadır sırtın ağrıyor. Şikâyetini ayrıntılı anlat, soru sor, gerekirse rapor (Krankschreibung) iste.' },
   { id: 'r-wohnung', teil: 'Alltag', kind: 'role', title: 'Wohnungsbesichtigung', who: 'Herr Lehmann, Vermieter einer Zweizimmerwohnung in Berlin-Lichtenberg', me: 'ein Interessent, der die Wohnung besichtigt', goal: 'Beantworte meine Fragen zu Miete, Nebenkosten, Kaution, Heizung und Einzugstermin, frag mich nach Beruf und Einkommensnachweis und bring eine kleine Komplikation ein (zum Beispiel viele andere Interessenten).', tr: 'Ev bakmaya geldin: kira, yan giderler, depozito, taşınma tarihi hakkında soru sor; kendini iyi tanıt.' },
@@ -704,9 +707,9 @@ $('#log').addEventListener('click', e => {
 
 function system() {
   const t = S.task; let role = '';
-  if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1. Ich halte eine Präsentation zum Thema „${t.title}“ (Punkte: ${t.points.join('; ')}). Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage${t.follow ? ` (zum Beispiel: „${t.follow}“)` : ''}, nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und beendest das Gespräch.`;
-  if (t.kind === 'summary') role = `Situation: telc Deutsch C1, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage; nach meiner Antwort reagierst du kurz, bedankst dich und beendest das Gespräch.`;
-  if (t.kind === 'discuss') role = `Situation: telc Deutsch C1, Teil 2 (Diskussion). These: „${t.title}“ Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: Geh auf meine Argumente ein, bring neue Gegenargumente mit Beispielen und frag nach. Nach etwa acht Wortwechseln sucht ihr gemeinsam einen Kompromiss, dann beendest du das Gespräch.`;
+  if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1 Hochschule. Ich halte eine Präsentation zum Thema „${t.title}“ (Punkte: ${t.points.join('; ')}). Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage${t.follow ? ` (zum Beispiel: „${t.follow}“)` : ''}, nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und beendest das Gespräch.`;
+  if (t.kind === 'summary') role = `Situation: telc Deutsch C1 Hochschule, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage; nach meiner Antwort reagierst du kurz, bedankst dich und beendest das Gespräch.`;
+  if (t.kind === 'discuss') role = `Situation: telc Deutsch C1 Hochschule, Teil 2 (Diskussion). ${t.by ? 'Zitat' : 'These'}: „${t.title}“${t.by ? ' (' + t.by + '). Klärt zuerst, wie ihr das Zitat versteht; danach: Inwiefern stimmt ihr zu, welche Gründe und Beispiele gibt es, und wie reagiert ihr auf die Argumente des anderen?' : ''} Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: Geh auf meine Argumente ein, bring neue Gegenargumente mit Beispielen und frag nach. Nach etwa acht Wortwechseln sucht ihr gemeinsam einen Kompromiss, dann beendest du das Gespräch.`;
   if (t.kind === 'role') role = `Situation: Rollenspiel aus dem Alltag in Deutschland. Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle, sprich so natürlich wie im echten Leben (gern auch umgangssprachlich, wenn es passt), reagiere realistisch und stell Rückfragen. Nach etwa zehn Wortwechseln oder wenn das Anliegen geklärt ist, verabschiedest du dich passend und beendest das Gespräch.`;
   if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell interessierte Fragen und erzähl auch kurz etwas von dir.';
   const corr = S.mode === 'train'
@@ -780,7 +783,7 @@ $('#go').addEventListener('click', async () => {
   $('#tTeil').textContent = sel.teil; $('#tTitle').textContent = sel.title; $('#sidePick').hidden = sel.kind !== 'discuss';
   $('#tCard').innerHTML = sel.kind === 'present' ? `<details open><summary>Präsentation, ca. 3–4 Minuten: Punkte</summary><ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol></details>`
     : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Claude hält einen kurzen Vortrag. Fass ihn danach in eigenen Worten zusammen (etwa 1–1,5 Minuten) und beantworte die Frage.'
-    : sel.kind === 'discuss' ? `<b>These:</b> <span lang="de">„${esc(sel.title)}“</span><br>Wähl deine Position. Claude vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende einen Kompromiss.`
+    : sel.kind === 'discuss' ? `<b>${sel.by ? 'Zitat' : 'These'}:</b> <span lang="de">„${esc(sel.title)}“${sel.by ? ' (' + esc(sel.by) + ')' : ''}</span><br>Wähl deine Position. Claude vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende einen Kompromiss.`
     : sel.kind === 'role' ? `<b>Rollenspiel.</b> ${esc(sel.tr)}`
     : 'Unterhaltet euch locker. Antworte ausführlich und stell auch selbst Fragen.';
   clearInterval(clockT); clockT = setInterval(() => { if (S) $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000);
@@ -794,7 +797,7 @@ $('#go').addEventListener('click', async () => {
       if (ph === 'idle') { if (set.hands && S) startListening(); else note('Hazır olunca mikrofona dokun ve sunumuna başla.'); }
     } else if (sel.kind === 'summary') {
       phase('think'); note('Claude sunumunu hazırlıyor…');
-      const v = await claude({ system: 'Du bist Prüfungspartner in der mündlichen Prüfung telc Deutsch C1.', models: MODELS_TURN, maxTokens: 500,
+      const v = await claude({ system: 'Du bist Prüfungspartner in der mündlichen Prüfung telc Deutsch C1 Hochschule.', models: MODELS_TURN, maxTokens: 500,
         messages: [{ role: 'user', content: `Halte einen kurzen Vortrag zum Thema „${sel.title}“: 150 bis 190 Wörter, gesprochene Sprache, klare Gliederung (Einleitung, zwei bis drei Punkte mit je einem Beispiel, eigene Meinung, Schluss). Gib nur den Vortragstext aus, ohne Überschrift.` }] });
       S.vortrag = v.trim(); S.turns.push({ role: 'p', text: S.vortrag, hidden: true, raw: 'A: ' + S.vortrag }); renderLog(); note('');
       await speakText(S.vortrag); if (ph === 'speak') phase('idle');
@@ -828,7 +831,7 @@ async function finish() {
   if (!m.turns) { note('Değerlendirme için önce en az bir kez konuş.'); return; }
   clearInterval(clockT); phase('think'); note('Değerlendirme hazırlanıyor…');
   const transcript = S.turns.map(t => (t.role === 'p' ? 'PARTNER: ' : 'ICH: ') + t.text).join('\n');
-  const prompt = `Bewerte meine Leistung in dieser Übung zur mündlichen Prüfung telc Deutsch C1 (${S.task.teil}: ${S.task.title}). Meine Beiträge stammen aus einer Spracherkennung: Zeichensetzung kann fehlen, Aussprache ist nicht bewertbar.
+  const prompt = `Bewerte meine Leistung in dieser Übung zur mündlichen Prüfung telc Deutsch C1 Hochschule (${S.task.teil}: ${S.task.title}). Meine Beiträge stammen aus einer Spracherkennung: Zeichensetzung kann fehlen, Aussprache ist nicht bewertbar.
 Transkript:
 ${transcript}
 Messwerte: ${m.words} Wörter, ${m.ttr}% verschiedene Wörter, ${m.fill} Füllwörter, Konnektoren: ${m.conn.join(', ') || 'keine'}${m.wpm ? ', ' + m.wpm + ' Wörter pro Minute' : ''}.

@@ -124,7 +124,7 @@ details summary{cursor:pointer;color:var(--blue);font-size:15px}
   <section id="talk" class="stage" hidden>
     <div class="head"><div><span class="chip" id="tTeil"></span> <b id="tTitle"></b></div><div class="row"><span class="clock" id="clock">0:00</span><button class="btn" type="button" id="end">Bitir ve değerlendir</button></div></div>
     <div class="taskcard" id="tCard"></div>
-    <div class="row" id="sidePick" hidden><span>Tezle ilgili görüşün:</span><button class="btn" type="button" data-side="pro">Ich bin dafür</button><button class="btn" type="button" data-side="contra">Ich bin dagegen</button></div>
+    <div class="row" id="sidePick" hidden><span>Tez ya da alıntıyla ilgili görüşün:</span><button class="btn" type="button" data-side="pro">Ich bin dafür</button><button class="btn" type="button" data-side="contra">Ich bin dagegen</button></div>
     <div class="log" id="log" aria-live="polite"></div>
     <div class="dock">
       <div class="status" id="status"></div>
@@ -307,9 +307,9 @@ function recStart() {
 function brief() {
   const t = S.task;
   let role = '';
-  if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1, Teil 1A/1B. Ich halte eine Präsentation zum Thema „${t.title}“. Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage dazu (wie in Teil 1B, z. B. „${t.follow}“), nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und setzt "ende": true.`;
-  if (t.kind === 'summary') role = `Situation: telc Deutsch C1, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage, nach meiner Antwort reagierst du kurz, bedankst dich und setzt "ende": true.`;
-  if (t.kind === 'discuss') role = `Situation: telc Deutsch C1, Teil 2 (Diskussion). These: „${t.title}“ Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: gehe auf meine Argumente ein, bringe neue Gegenargumente mit Beispielen, frage nach, und wenn ich einen Kompromiss vorschlage, suche mit mir eine gemeinsame Lösung.`;
+  if (t.kind === 'present') role = `Situation: Simulation der mündlichen Prüfung telc Deutsch C1 Hochschule, Teil 1A/1B. Ich halte eine Präsentation zum Thema „${t.title}“. Du bist mein Prüfungspartner. Nach meiner Präsentation stellst du mir eine Anschlussfrage dazu (wie in Teil 1B, z. B. „${t.follow}“), nach meiner Antwort höchstens noch eine zweite. Danach bedankst du dich kurz und setzt "ende": true.`;
+  if (t.kind === 'summary') role = `Situation: telc Deutsch C1 Hochschule, Teil 1B. Du hast gerade diesen Kurzvortrag gehalten: """${S.vortrag}""". Ich fasse ihn zusammen. Danach stellst du mir eine Anschlussfrage, nach meiner Antwort reagierst du kurz, bedankst dich und setzt "ende": true.`;
+  if (t.kind === 'discuss') role = `Situation: telc Deutsch C1 Hochschule, Teil 2 (Diskussion). ${t.by ? 'Zitat' : 'These'}: „${t.title}“${t.by ? ' (' + t.by + '). Klärt zuerst, wie ihr das Zitat versteht; danach: Inwiefern stimmt ihr zu, welche Gründe und Beispiele gibt es, und wie reagiert ihr auf die Argumente des anderen?' : ''} Ich bin ${S.side === 'pro' ? 'dafür' : 'dagegen'}, du vertrittst sachlich die Gegenposition: gehe auf meine Argumente ein, bringe neue Gegenargumente mit Beispielen, frage nach, und wenn ich einen Kompromiss vorschlage, suche mit mir eine gemeinsame Lösung.`;
   if (t.kind === 'role') role = `Situation: Rollenspiel aus dem Alltag in Deutschland. Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle, sprich so natürlich wie im echten Leben (gern auch umgangssprachlich, wenn es passt), reagiere realistisch und stell Rückfragen. Nach etwa zehn Wortwechseln oder wenn das Anliegen geklärt ist, verabschiedest du dich passend und setzt "ende": true.`;
   if (t.kind === 'chat') role = 'Situation: lockeres Gespräch unter Bekannten über meinen Tag, Arbeit, Freizeit und Pläne. Stelle interessierte Fragen und erzähl auch kurz etwas von dir.';
   const corr = S.mode === 'train'
@@ -357,7 +357,7 @@ $('#go').addEventListener('click', async () => {
   $('#tTeil').textContent = sel.teil; $('#tTitle').textContent = sel.title; $('#sidePick').hidden = sel.kind !== 'discuss';
   $('#tCard').innerHTML = sel.kind === 'present' ? `<b>Präsentation, ca. 3–4 Minuten.</b> Gehe auf diese Punkte ein:<ol>${sel.points.map(p => `<li lang="de">${esc(p)}</li>`).join('')}</ol>`
     : sel.kind === 'summary' ? '<b>Hör gut zu:</b> Dein Partner hält einen kurzen Vortrag. Fasse ihn danach in eigenen Worten zusammen (ca. 1–1,5 Minuten) und beantworte seine Frage.'
-    : sel.kind === 'discuss' ? `<b>These:</b> <span lang="de">„${esc(sel.title)}“</span><br>Wähle deine Position. Dein Partner vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende vielleicht einen Kompromiss.`
+    : sel.kind === 'discuss' ? `<b>${sel.by ? 'Zitat' : 'These'}:</b> <span lang="de">„${esc(sel.title)}“${sel.by ? ' (' + esc(sel.by) + ')' : ''}</span><br>Wähle deine Position. Dein Partner vertritt die Gegenposition. Begründe, reagiere auf seine Argumente, findet am Ende vielleicht einen Kompromiss.`
     : sel.kind === 'role' ? `<b>Rollenspiel.</b> ${esc(sel.tr || '')}`
     : 'Unterhaltet euch locker. Antworte ausführlich, stelle auch selbst Fragen.';
   clearInterval(clockT); clockT = setInterval(() => { $('#clock').textContent = fmt((Date.now() - S.t0) / 1000); }, 1000);
@@ -366,7 +366,7 @@ $('#go').addEventListener('click', async () => {
     if (sel.kind === 'present') await partnerSays(`Herzlich willkommen! Sie halten jetzt Ihre Präsentation zum Thema „${sel.title}“. Sie haben etwa drei bis vier Minuten Zeit. Bitte beginnen Sie.`);
     else if (sel.kind === 'summary') {
       setBusy(true, 'Partner hazırlanıyor…');
-      const v = await ask(`Halte als mein Prüfungspartner (telc Deutsch C1, Teil 1A) einen kurzen Vortrag zum Thema „${sel.title}“: 160 bis 200 Wörter, gesprochene Sprache, klare Gliederung (Einleitung, zwei bis drei Punkte mit Beispiel, eigene Meinung, Schluss). Gib NUR JSON zurück: {"vortrag":"..."}`, 'default');
+      const v = await ask(`Halte als mein Prüfungspartner (telc Deutsch C1 Hochschule, Teil 1A) einen kurzen Vortrag zum Thema „${sel.title}“: 160 bis 200 Wörter, gesprochene Sprache, klare Gliederung (Einleitung, zwei bis drei Punkte mit Beispiel, eigene Meinung, Schluss). Gib NUR JSON zurück: {"vortrag":"..."}`, 'default');
       S.vortrag = String(v.vortrag || ''); setBusy(false);
       await partnerSays(S.vortrag, true); status('Şimdi özetle. Mikrofona bas ya da yaz.');
     } else if (sel.kind === 'chat' || sel.kind === 'role') {
@@ -430,11 +430,11 @@ function appPrompt() {
   let role = '', start = '';
   if (t.kind === 'present') { role = `Ich halte eine Präsentation (3 bis 4 Minuten) zum Thema „${t.title}“ mit diesen Punkten: ${t.points.join('; ')}. Unterbrich mich nicht, bis ich „fertig“ sage. Danach stellst du mir als Prüfungspartner eine Anschlussfrage, zum Beispiel „${t.follow}“, und nach meiner Antwort noch eine zweite.`; start = 'sag mir, dass ich beginnen kann.'; }
   if (t.kind === 'summary') { role = `Halte zuerst einen kurzen Vortrag (etwa anderthalb Minuten) zum Thema „${t.title}“ mit klarer Gliederung und eigener Meinung. Ich fasse ihn danach zusammen, dann stellst du mir eine Anschlussfrage.`; start = 'beginne mit deinem Vortrag.'; }
-  if (t.kind === 'discuss') { role = `Wir diskutieren die These „${t.title}“ (Teil 2). Frag mich zuerst nach meiner Position und vertritt dann sachlich die Gegenposition: reagiere auf meine Argumente, bring Gegenargumente mit Beispielen, frag nach, und versuch am Ende, mit mir einen Kompromiss zu finden.`; start = 'frag mich nach meiner Position.'; }
+  if (t.kind === 'discuss') { role = `Wir diskutieren ${t.by ? 'das Zitat' : 'die These'} „${t.title}“${t.by ? ' (' + t.by + ')' : ''} (Teil 2). Kläre zuerst mit mir, wie wir es verstehen. Frag mich zuerst nach meiner Position und vertritt dann sachlich die Gegenposition: reagiere auf meine Argumente, bring Gegenargumente mit Beispielen, frag nach, und versuch am Ende, mit mir einen Kompromiss zu finden.`; start = 'frag mich nach meiner Position.'; }
   if (t.kind === 'role') { role = `Rollenspiel aus dem Alltag in Deutschland: Du bist ${t.who}. Ich bin ${t.me}. ${t.goal} Bleib in deiner Rolle und sprich so natürlich wie im echten Leben.`; start = 'beginne das Gespräch in deiner Rolle.'; }
   if (t.kind === 'chat') { role = 'Wir führen ein lockeres Gespräch über meinen Tag, meine Arbeit, meine Freizeit und meine Pläne. Stell mir interessierte Fragen.'; start = 'begrüß mich und stell mir die erste Frage.'; }
   const corr = train ? 'Wenn ich Fehler mache, sag zuerst nur die korrigierte Fassung meines Satzes, ohne Erklärung, und antworte dann.' : 'Korrigiere mich während des Gesprächs nicht, wie in der echten Prüfung.';
-  return `Du bist mein Gesprächspartner für die mündliche Prüfung telc Deutsch C1 (${t.teil}). Wir sprechen nur Deutsch. ${role}\n\nRegeln: Sprich natürliches, eher schnelles Deutsch auf C1-Niveau. Antworte kurz, in 2 bis 4 Sätzen, und beende deine Beiträge meist mit einer Frage oder einem Gegenargument. ${corr}\n\nWenn ich „Bewertung, bitte“ sage, bewerte mich nach den telc-C1-Kriterien Aufgabenbewältigung, Interaktion und Flüssigkeit, Korrektheit sowie Wortschatz und Ausdruck (je 0 bis 5 Punkte), nenne die korrigierten Fassungen meiner fehlerhaften Sätze und vier passende Redemittel. Die Kommentare zur Bewertung bitte auf Türkisch.\n\nWenn du bereit bist, ${start}`;
+  return `Du bist mein Gesprächspartner für die mündliche Prüfung telc Deutsch C1 Hochschule (${t.teil}). Wir sprechen nur Deutsch. ${role}\n\nRegeln: Sprich natürliches, eher schnelles Deutsch auf C1-Niveau. Antworte kurz, in 2 bis 4 Sätzen, und beende deine Beiträge meist mit einer Frage oder einem Gegenargument. ${corr}\n\nWenn ich „Bewertung, bitte“ sage, bewerte mich nach den telc-C1-Kriterien Aufgabenbewältigung, Interaktion und Flüssigkeit, Korrektheit sowie Wortschatz und Ausdruck (je 0 bis 5 Punkte), nenne die korrigierten Fassungen meiner fehlerhaften Sätze und vier passende Redemittel. Die Kommentare zur Bewertung bitte auf Türkisch.\n\nWenn du bereit bist, ${start}`;
 }
 $('#appCopy').addEventListener('click', async () => {
   const txt = appPrompt(), ta = $('#appText'); ta.value = txt; ta.hidden = false;
@@ -463,7 +463,7 @@ async function finish() {
   stopSpeak(); clearInterval(clockT); clearTimeout(autoT);
   setBusy(true, 'Değerlendirme hazırlanıyor…');
   const transcript = S.turns.map(t => (t.role === 'p' ? 'PARTNER: ' : 'ICH: ') + t.text).join('\n');
-  const input = `Bewerte meine Leistung in dieser Übung zur mündlichen Prüfung telc Deutsch C1 (${S.task.teil}: ${S.task.title}). Meine Beiträge stammen aus der Spracherkennung: Zeichensetzung kann fehlen, Aussprache ist nicht bewertbar.
+  const input = `Bewerte meine Leistung in dieser Übung zur mündlichen Prüfung telc Deutsch C1 Hochschule (${S.task.teil}: ${S.task.title}). Meine Beiträge stammen aus der Spracherkennung: Zeichensetzung kann fehlen, Aussprache ist nicht bewertbar.
 Transkript:
 ${transcript}
 Messwerte: ${m.words} Wörter, ${m.ttr}% verschiedene Wörter, ${m.fill} Füllwörter, Konnektoren: ${m.conn.join(', ') || 'keine'}${m.wpm ? ', ' + m.wpm + ' Wörter pro Minute' : ''}.

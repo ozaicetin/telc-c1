@@ -1,6 +1,6 @@
 window.MANIFEST = {
  "current": "day6",
- "planV": "s5",
+ "planV": "s6",
  "updated": "2026-11-25",
  "days": [
   {
@@ -1341,11 +1341,11 @@ window.MANIFEST = {
    "no": 6,
    "week": 2,
    "date": "30.11.2026",
-   "title": "Leseverstehen 1 + Sprachbausteine: Medien und Digitalisierung",
+   "title": "Leseverstehen 1 + Sprachbausteine: Medien, Digitalisierung und Wissenschaft",
    "short": "Lesen 1 + Sprachbausteine",
    "focus": "Leseverstehen 1 · Sprachbausteine · Lesen 2 Training · Fehler-Comeback",
    "file": "data/day6.js",
-   "v": "1",
+   "v": "2",
    "words": [
     {
      "dom": "G",
@@ -1388,14 +1388,14 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
-     "pos": "v",
-     "de": "etw. überprüfen",
-     "info": "Verb · überprüfte, hat überprüft (untrennbar)",
-     "en": "to check, to verify",
-     "tr": "kontrol etmek, doğrulamak",
-     "ex": "Bevor man eine Nachricht teilt, sollte man die Quelle überprüfen.",
-     "exEn": "Before sharing a piece of news, you should check the source.",
-     "exTr": "Bir haberi paylaşmadan önce kaynağı kontrol etmek gerekir."
+     "pos": "n",
+     "de": "die Stichprobe",
+     "info": "Nomen · die, -n · Wissenschaftssprache",
+     "en": "sample (in a study)",
+     "tr": "örneklem (araştırmada)",
+     "ex": "Die Stichprobe bestand aus 180 Freiwilligen zwischen 18 und 65 Jahren.",
+     "exEn": "The sample consisted of 180 volunteers aged between 18 and 65.",
+     "exTr": "Örneklem 18 ile 65 yaş arasındaki 180 gönüllüden oluşuyordu."
     },
     {
      "dom": "G",
@@ -1424,14 +1424,14 @@ window.MANIFEST = {
     },
     {
      "dom": "G",
-     "pos": "adj",
-     "de": "einseitig",
-     "info": "Adjektiv · ↔ ausgewogen",
-     "en": "one-sided",
-     "tr": "tek taraflı",
-     "ex": "Wer nur einen einzigen Kanal nutzt, bekommt schnell ein einseitiges Bild.",
-     "exEn": "Anyone who uses only one channel quickly gets a one-sided picture.",
-     "exTr": "Yalnızca tek bir kanal kullanan kişi çabucak tek taraflı bir resim edinir."
+     "pos": "n",
+     "de": "die Kontrollgruppe",
+     "info": "Nomen · die, -n · Wissenschaftssprache",
+     "en": "control group",
+     "tr": "kontrol grubu",
+     "ex": "Die Kontrollgruppe nutzte ihr Smartphone wie gewohnt.",
+     "exEn": "The control group used their smartphones as usual.",
+     "exTr": "Kontrol grubu akıllı telefonunu her zamanki gibi kullandı."
     },
     {
      "dom": "G",
@@ -1472,13 +1472,13 @@ window.MANIFEST = {
     {
      "dom": "G",
      "pos": "n",
-     "de": "die Überwachung",
-     "info": "Nomen · die, -en · überwachen",
-     "en": "surveillance, monitoring",
-     "tr": "gözetim, izleme",
-     "ex": "Kritiker warnen vor einer lückenlosen Überwachung durch Kameras mit Gesichtserkennung.",
-     "exEn": "Critics warn against total surveillance by cameras with facial recognition.",
-     "exTr": "Eleştirmenler yüz tanımalı kameralarla kesintisiz gözetime karşı uyarıyor."
+     "de": "die Erhebung",
+     "info": "Nomen · die, -en · ≈ die Umfrage, die Datenerhebung",
+     "en": "survey, data collection",
+     "tr": "anket, veri toplama",
+     "ex": "Laut einer aktuellen Erhebung verbringen Erwachsene täglich rund zwei Stunden in sozialen Netzwerken.",
+     "exEn": "According to a recent survey, adults spend around two hours a day on social networks.",
+     "exTr": "Güncel bir ankete göre yetişkinler günde yaklaşık iki saat sosyal ağlarda geçiriyor."
     },
     {
      "dom": "G",
